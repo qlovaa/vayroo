@@ -2,375 +2,2587 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slop Academy™</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+<title>KACPER™ — The Official Glazing Department</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #030305;
+    color: #fff;
+    font-family: "Inter", sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+}
+
+button,
+a {
+    cursor: none;
+}
+
+::selection {
+    background: #8b5cf6;
+    color: white;
+}
+
+
+/* =========================================================
+   LOADING SCREEN
+========================================================= */
+
+.loader {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: #030305;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 1s ease, visibility 1s ease;
+}
+
+.loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-content {
+    text-align: center;
+}
+
+.loader-logo {
+    font-size: clamp(50px, 12vw, 120px);
+    font-weight: 900;
+    letter-spacing: -8px;
+    background: linear-gradient(
+        90deg,
+        #fff,
+        #8b5cf6,
+        #22d3ee,
+        #fff
+    );
+    background-size: 300%;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: gradient 2s linear infinite;
+}
+
+.loader-text {
+    color: #666;
+    font-size: 12px;
+    letter-spacing: 4px;
+    margin-top: 15px;
+}
+
+.loader-bar {
+    width: 280px;
+    height: 3px;
+    background: #15151b;
+    border-radius: 10px;
+    margin: 25px auto 0;
+    overflow: hidden;
+}
+
+.loader-progress {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg,#8b5cf6,#22d3ee);
+    animation: loading 2.5s forwards;
+}
+
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+#particles {
+    position: fixed;
+    inset: 0;
+    z-index: -5;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.aurora {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -4;
+    overflow: hidden;
+}
+
+.blob {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: .12;
+}
+
+.blob.one {
+    background: #8b5cf6;
+    left: -200px;
+    top: 10%;
+    animation: blobOne 15s ease-in-out infinite alternate;
+}
+
+.blob.two {
+    background: #06b6d4;
+    right: -200px;
+    top: 35%;
+    animation: blobTwo 18s ease-in-out infinite alternate;
+}
+
+.blob.three {
+    background: #ec4899;
+    left: 30%;
+    bottom: -300px;
+    animation: blobThree 20s ease-in-out infinite alternate;
+}
+
+.grid {
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 70px 70px;
+    mask-image: linear-gradient(to bottom, black, transparent 80%);
+}
+
+
+/* =========================================================
+   CURSOR
+========================================================= */
+
+.cursor-dot {
+    position: fixed;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: white;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%,-50%);
+    box-shadow:
+        0 0 10px white,
+        0 0 25px #8b5cf6;
+}
+
+.cursor-ring {
+    position: fixed;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255,255,255,.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99998;
+    transform: translate(-50%,-50%);
+    transition:
+        width .2s,
+        height .2s,
+        background .2s,
+        border .2s;
+}
+
+.cursor-ring.hover {
+    width: 65px;
+    height: 65px;
+    background: rgba(139,92,246,.08);
+    border-color: #8b5cf6;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+nav {
+    position: fixed;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(1150px, 92%);
+    height: 65px;
+    z-index: 5000;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 20px;
+
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 18px;
+
+    background: rgba(8,8,12,.65);
+    backdrop-filter: blur(25px);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.3),
+        inset 0 1px rgba(255,255,255,.04);
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+.logo span {
+    color: #8b5cf6;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+nav a {
+    color: #777;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    transition: .3s;
+}
+
+nav a:hover {
+    color: white;
+}
+
+.nav-cta {
+    border: 0;
+    padding: 11px 16px;
+    border-radius: 10px;
+    color: white;
+    font-weight: 800;
+    background: linear-gradient(135deg,#8b5cf6,#06b6d4);
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: 150px 20px 100px;
+}
+
+.hero-inner {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 15px;
+    border-radius: 50px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.1);
+    color: #999;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    animation: float 4s ease-in-out infinite;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #4ade80;
+}
+
+.hero h1 {
+    font-size: clamp(75px, 14vw, 190px);
+    line-height: .8;
+    letter-spacing: -12px;
+    font-weight: 900;
+    margin-top: 35px;
+
+    background:
+        linear-gradient(
+            110deg,
+            #fff 5%,
+            #c4b5fd 30%,
+            #22d3ee 55%,
+            #fff 75%,
+            #8b5cf6 100%
+        );
+
+    background-size: 300%;
+    -webkit-background-clip: text;
+    color: transparent;
+
+    animation: gradient 6s linear infinite;
+}
+
+.hero h1 small {
+    display: block;
+    font-size: .14em;
+    letter-spacing: 5px;
+    line-height: 1;
+    margin-top: 30px;
+    color: #777;
+    -webkit-text-fill-color: #777;
+}
+
+.hero-description {
+    max-width: 650px;
+    margin: 45px auto 0;
+    color: #888;
+    font-size: 17px;
+    line-height: 1.8;
+}
+
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 35px;
+}
+
+.btn {
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-weight: 800;
+    border: 1px solid rgba(255,255,255,.1);
+    transition: .3s;
+}
+
+.btn-primary {
+    color: white;
+    background: linear-gradient(135deg,#7c3aed,#06b6d4);
+    box-shadow: 0 0 40px rgba(124,58,237,.2);
+}
+
+.btn-secondary {
+    color: white;
+    background: rgba(255,255,255,.04);
+}
+
+.btn:hover {
+    transform: translateY(-5px);
+}
+
+
+/* =========================================================
+   SCROLL INDICATOR
+========================================================= */
+
+.scroll {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #555;
+    font-size: 10px;
+    letter-spacing: 3px;
+}
+
+.scroll::after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 40px;
+    margin: 10px auto;
+    background: linear-gradient(#555,transparent);
+}
+
+
+/* =========================================================
+   MARQUEE
+========================================================= */
+
+.marquee {
+    overflow: hidden;
+    border-top: 1px solid rgba(255,255,255,.06);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    padding: 18px 0;
+    background: rgba(255,255,255,.015);
+}
+
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 25s linear infinite;
+}
+
+.marquee span {
+    font-size: 13px;
+    font-weight: 800;
+    color: #555;
+    margin: 0 30px;
+    white-space: nowrap;
+}
+
+.marquee b {
+    color: #8b5cf6;
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+section.content {
+    padding: 130px 7%;
+}
+
+.label {
+    color: #8b5cf6;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    margin-bottom: 18px;
+}
+
+.title {
+    font-size: clamp(45px,7vw,85px);
+    letter-spacing: -5px;
+    line-height: .95;
+    font-weight: 900;
+}
+
+.description {
+    color: #777;
+    max-width: 650px;
+    line-height: 1.8;
+    margin-top: 20px;
+}
+
+
+/* =========================================================
+   LIVE STATS
+========================================================= */
+
+.live-grid {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 15px;
+}
+
+.live-card {
+    position: relative;
+    padding: 30px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.07);
+    background: rgba(255,255,255,.025);
+    overflow: hidden;
+    transition: .4s;
+}
+
+.live-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,.04),
+        transparent
+    );
+    transform: translateX(-100%);
+    transition: .6s;
+}
+
+.live-card:hover::after {
+    transform: translateX(100%);
+}
+
+.live-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(139,92,246,.4);
+}
+
+.live-number {
+    font-size: 42px;
+    font-weight: 900;
+    background: linear-gradient(90deg,#fff,#8b5cf6);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.live-card p {
+    color: #666;
+    margin-top: 7px;
+    font-size: 13px;
+}
+
+.live-now {
+    color: #4ade80;
+    font-size: 10px;
+    margin-top: 15px;
+}
+
+
+/* =========================================================
+   KACPER PROFILE
+========================================================= */
+
+.profile {
+    margin-top: 60px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 30px;
+    padding: 70px;
+    min-height: 550px;
+
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 70px;
+    align-items: center;
+
+    position: relative;
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 80% 40%,
+            rgba(139,92,246,.16),
+            transparent 35%
+        ),
+        rgba(255,255,255,.025);
+}
+
+.profile::before {
+    content: "K";
+    position: absolute;
+    right: -80px;
+    bottom: -200px;
+    font-size: 650px;
+    line-height: .8;
+    font-weight: 900;
+    color: rgba(255,255,255,.018);
+}
+
+.profile h3 {
+    font-size: 75px;
+    letter-spacing: -5px;
+    margin: 15px 0 20px;
+}
+
+.verified {
+    color: #4ade80;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.profile-text {
+    color: #777;
+    line-height: 1.8;
+    max-width: 550px;
+}
+
+.profile-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 25px;
+}
+
+.tag {
+    padding: 8px 12px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px;
+    color: #888;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   RATING CIRCLE
+========================================================= */
+
+.rating {
+    width: 350px;
+    height: 350px;
+    margin: auto;
+    border-radius: 50%;
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        conic-gradient(
+            #8b5cf6,
+            #22d3ee,
+            #8b5cf6,
+            #22d3ee,
+            #8b5cf6
+        );
+
+    animation: spinSlow 12s linear infinite;
+}
+
+.rating::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    background: #07070b;
+    border-radius: 50%;
+}
+
+.rating-content {
+    position: relative;
+    text-align: center;
+}
+
+.rating-content strong {
+    display: block;
+    font-size: 80px;
+    font-weight: 900;
+    background: linear-gradient(90deg,#fff,#8b5cf6);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.rating-content span {
+    color: #555;
+    font-size: 10px;
+    letter-spacing: 3px;
+}
+
+
+/* =========================================================
+   ACHIEVEMENTS
+========================================================= */
+
+.achievements {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 15px;
+    margin-top: 60px;
+}
+
+.achievement {
+    min-height: 260px;
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.07);
+    background: rgba(255,255,255,.025);
+    position: relative;
+    overflow: hidden;
+    transition: .4s;
+}
+
+.achievement:hover {
+    transform: translateY(-10px) perspective(700px) rotateX(3deg);
+    border-color: rgba(139,92,246,.35);
+}
+
+.achievement-number {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    color: #222;
+    font-size: 50px;
+    font-weight: 900;
+}
+
+.achievement-icon {
+    font-size: 35px;
+    margin-bottom: 30px;
+}
+
+.achievement h3 {
+    margin-bottom: 12px;
+}
+
+.achievement p {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   TIMELINE
+========================================================= */
+
+.timeline {
+    max-width: 850px;
+    margin: 70px auto 0;
+    position: relative;
+}
+
+.timeline::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+        transparent,
+        #8b5cf6,
+        #22d3ee,
+        transparent
+    );
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 65px;
+    padding-bottom: 55px;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: 11px;
+    top: 4px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #8b5cf6;
+    box-shadow: 0 0 25px #8b5cf6;
+}
+
+.timeline-year {
+    color: #8b5cf6;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.timeline h3 {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+.timeline p {
+    color: #666;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   QUOTE
+========================================================= */
+
+.quote {
+    padding: 160px 7%;
+    text-align: center;
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(124,58,237,.14),
+            transparent 45%
+        );
+}
+
+.quote-text {
+    max-width: 1050px;
+    margin: auto;
+    font-size: clamp(35px,6vw,75px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -4px;
+}
+
+.gradient-text {
+    background: linear-gradient(90deg,#8b5cf6,#22d3ee);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+
+/* =========================================================
+   LEADERBOARD
+========================================================= */
+
+.leaderboard {
+    max-width: 950px;
+    margin: 60px auto 0;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.leader {
+    display: grid;
+    grid-template-columns: 70px 1fr 150px;
+    padding: 23px 30px;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    transition: .3s;
+}
+
+.leader:last-child {
+    border-bottom: 0;
+}
+
+.leader:hover {
+    background: rgba(255,255,255,.035);
+}
+
+.rank {
+    color: #555;
+    font-weight: 900;
+}
+
+.rank.first {
+    color: #facc15;
+}
+
+.name {
+    font-weight: 800;
+}
+
+.score {
+    text-align: right;
+    color: #8b5cf6;
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   HYPE METER
+========================================================= */
+
+.hype-box {
+    max-width: 900px;
+    margin: 60px auto 0;
+    padding: 35px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 20px;
+    background: rgba(255,255,255,.025);
+}
+
+.hype-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.hype-top span:first-child {
+    color: #777;
+    font-size: 12px;
+}
+
+.hype-value {
+    color: #22d3ee;
+    font-weight: 900;
+}
+
+.hype-bar {
+    height: 13px;
+    border-radius: 20px;
+    background: #15151b;
+    overflow: hidden;
+}
+
+.hype-fill {
+    height: 100%;
+    width: 97%;
+    border-radius: inherit;
+    background: linear-gradient(
+        90deg,
+        #8b5cf6,
+        #22d3ee,
+        #ec4899
+    );
+    background-size: 200%;
+    animation:
+        gradient 3s linear infinite,
+        hypePulse 2s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   KACPER AI
+========================================================= */
+
+.ai {
+    max-width: 900px;
+    margin: 60px auto 0;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 22px;
+    background: #08080d;
+    overflow: hidden;
+}
+
+.ai-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ai-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 15px #4ade80;
+}
+
+.ai-header span {
+    color: #777;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.ai-body {
+    padding: 30px;
+}
+
+.ai-response {
+    min-height: 100px;
+    color: #aaa;
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.ai-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 25px;
+}
+
+.ai-btn {
+    padding: 10px 14px;
+    border-radius: 9px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.035);
+    color: #aaa;
+    font-size: 11px;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.ai-btn:hover {
+    color: white;
+    border-color: #8b5cf6;
+}
+
+
+/* =========================================================
+   FINAL
+========================================================= */
+
+.final {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.final-inner {
+    max-width: 1000px;
+}
+
+.final h2 {
+    font-size: clamp(60px,11vw,150px);
+    line-height: .82;
+    letter-spacing: -9px;
+    font-weight: 900;
+}
+
+.final p {
+    max-width: 600px;
+    color: #666;
+    margin: 35px auto;
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+    border-top: 1px solid rgba(255,255,255,.07);
+    padding: 35px 7%;
+    display: flex;
+    justify-content: space-between;
+    color: #444;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 35px;
+    transform: translateX(-50%) translateY(100px);
+    padding: 15px 22px;
+    border-radius: 12px;
+    background: rgba(12,12,17,.95);
+    border: 1px solid rgba(139,92,246,.5);
+    box-shadow: 0 0 50px rgba(139,92,246,.2);
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    z-index: 999999;
+    opacity: 0;
+    transition: .5s;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+
+/* =========================================================
+   SCROLL REVEAL
+========================================================= */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(45px);
+    transition:
+        opacity 1s cubic-bezier(.2,.8,.2,1),
+        transform 1s cubic-bezier(.2,.8,.2,1);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   KEYFRAMES
+========================================================= */
+
+@keyframes gradient {
+    0% {
+        background-position: 0%;
     }
+
+    100% {
+        background-position: 300%;
+    }
+}
+
+@keyframes loading {
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes float {
+    0%,100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes marquee {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes spinSlow {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes hypePulse {
+    0%,100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.4);
+    }
+}
+
+@keyframes blobOne {
+    to {
+        transform: translate(350px,100px) scale(1.3);
+    }
+}
+
+@keyframes blobTwo {
+    to {
+        transform: translate(-300px,-150px) scale(.8);
+    }
+}
+
+@keyframes blobThree {
+    to {
+        transform: translate(200px,-300px) scale(1.2);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:900px) {
 
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f5f0ff;
-      color: #251b35;
+        cursor: auto;
     }
 
-    header {
-      background: #6c2bd9;
-      color: white;
-      padding: 18px 7%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      box-shadow: 0 4px 15px rgba(0,0,0,.2);
+    .cursor-dot,
+    .cursor-ring {
+        display: none;
     }
 
-    .logo {
-      font-size: 28px;
-      font-weight: 900;
+    nav ul {
+        display: none;
     }
 
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin-left: 25px;
-      font-weight: bold;
+    .live-grid {
+        grid-template-columns: 1fr 1fr;
     }
 
-    nav a:hover {
-      text-decoration: underline;
+    .profile {
+        grid-template-columns: 1fr;
+        padding: 40px 25px;
+        text-align: center;
     }
 
-    .hero {
-      text-align: center;
-      padding: 90px 20px;
-      background: linear-gradient(135deg, #d9c2ff, #fff2a8);
+    .profile-text {
+        margin: auto;
+    }
+
+    .profile-tags {
+        justify-content: center;
+    }
+
+    .achievements {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media(max-width:600px) {
+
+    section.content {
+        padding: 90px 5%;
     }
 
     .hero h1 {
-      font-size: 64px;
-      margin-bottom: 15px;
+        letter-spacing: -5px;
     }
 
-    .hero p {
-      font-size: 21px;
-      max-width: 650px;
-      margin: auto;
+    .live-grid {
+        grid-template-columns: 1fr;
     }
 
-    .warning {
-      display: inline-block;
-      margin-top: 25px;
-      background: #ff3b3b;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 30px;
-      font-weight: bold;
+    .achievements {
+        grid-template-columns: 1fr;
     }
 
-    section {
-      padding: 65px 7%;
+    .rating {
+        width: 250px;
+        height: 250px;
     }
 
-    .section-title {
-      text-align: center;
-      font-size: 38px;
-      margin-bottom: 40px;
+    .rating-content strong {
+        font-size: 60px;
     }
 
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 25px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 7px 20px rgba(0,0,0,.12);
-      transition: .2s;
-    }
-
-    .card:hover {
-      transform: translateY(-7px);
-    }
-
-    .product-image {
-      height: 190px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 90px;
-      background: #eee5ff;
-    }
-
-    .card-content {
-      padding: 22px;
-    }
-
-    .card h3 {
-      font-size: 22px;
-      margin-bottom: 8px;
-    }
-
-    .description {
-      color: #666;
-      min-height: 48px;
-      margin-bottom: 15px;
-    }
-
-    .price {
-      font-size: 25px;
-      font-weight: 900;
-      color: #6c2bd9;
-      margin-bottom: 15px;
-    }
-
-    button {
-      width: 100%;
-      border: none;
-      background: #6c2bd9;
-      color: white;
-      padding: 13px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #5017a8;
-    }
-
-    .about {
-      background: #251b35;
-      color: white;
-      text-align: center;
-    }
-
-    .about p {
-      max-width: 750px;
-      margin: auto;
-      font-size: 18px;
-      line-height: 1.7;
-    }
-
-    .reviews {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .review {
-      background: white;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,.1);
-    }
-
-    .review strong {
-      display: block;
-      margin-top: 15px;
+    .leader {
+        grid-template-columns: 45px 1fr 100px;
+        padding: 20px;
     }
 
     footer {
-      background: #140d1f;
-      color: #aaa;
-      text-align: center;
-      padding: 30px;
-      font-size: 14px;
+        flex-direction: column;
+        gap: 10px;
     }
 
-    #cart {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      background: #ffca28;
-      color: #241900;
-      padding: 17px 23px;
-      border-radius: 50px;
-      font-weight: bold;
-      box-shadow: 0 5px 20px rgba(0,0,0,.25);
-      z-index: 20;
+    .final h2 {
+        letter-spacing: -5px;
     }
+}
 
-    @media (max-width: 600px) {
-      .hero h1 {
-        font-size: 43px;
-      }
-
-      nav {
-        display: none;
-      }
-    }
-  </style>
+</style>
 </head>
+
 
 <body>
 
-<header>
-  <div class="logo">🟣 SLOP ACADEMY™</div>
 
-  <nav>
-    <a href="#home">Home</a>
-    <a href="#shop">Slop Shop</a>
-    <a href="#about">About</a>
-  </nav>
-</header>
+<!-- =====================================================
+     LOADING SCREEN
+===================================================== -->
+
+<div class="loader" id="loader">
+
+    <div class="loader-content">
+
+        <div class="loader-logo">
+            KACPER
+        </div>
+
+        <div class="loader-text">
+            CALIBRATING AURA...
+        </div>
+
+        <div class="loader-bar">
+            <div class="loader-progress"></div>
+        </div>
+
+    </div>
+
+</div>
 
 
-<!-- HERO -->
+<!-- BACKGROUND -->
 
-<section class="hero" id="home">
-  <h1>WELCOME TO SLOP.</h1>
+<canvas id="particles"></canvas>
 
-  <p>
-    The world's leading educational institution for learning
-    absolutely nothing while purchasing things you absolutely do not need.
-  </p>
+<div class="aurora">
+    <div class="blob one"></div>
+    <div class="blob two"></div>
+    <div class="blob three"></div>
+</div>
 
-  <div class="warning">
-    ⚠️ 100% Educationally Questionable ⚠️
-  </div>
+<div class="grid"></div>
+
+
+<!-- CURSOR -->
+
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
+
+<nav>
+
+    <div class="logo">
+        KACPER<span>™</span>
+    </div>
+
+    <ul>
+        <li><a href="#legend">Legend</a></li>
+        <li><a href="#achievements">Achievements</a></li>
+        <li><a href="#ranking">Ranking</a></li>
+        <li><a href="#ai">Kacper AI</a></li>
+    </ul>
+
+    <button class="nav-cta magnetic" onclick="glaze()">
+        GLAZE
+    </button>
+
+</nav>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero">
+
+    <div class="hero-inner">
+
+        <div class="status">
+            <span class="status-dot"></span>
+            SYSTEM STATUS: KACPER IS COOKING
+        </div>
+
+        <h1>
+            KACPER
+            <small>THE STANDARD BY WHICH GREATNESS IS MEASURED</small>
+        </h1>
+
+        <p class="hero-description">
+            This isn't a website.
+            This is a monument.
+            A digital shrine dedicated to the undeniable,
+            statistically suspicious and completely unnecessary
+            greatness of Kacper.
+        </p>
+
+        <div class="hero-buttons">
+
+            <button class="btn btn-primary magnetic"
+                    onclick="glaze()">
+                ✦ GLaze KACPER
+            </button>
+
+            <button class="btn btn-secondary magnetic"
+                    onclick="scrollToLegend()">
+                Explore the Evidence ↓
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="scroll">
+        SCROLL
+    </div>
+
 </section>
 
 
-<!-- SHOP -->
+<!-- =====================================================
+     MARQUEE
+===================================================== -->
 
-<section id="shop">
+<div class="marquee">
 
-  <h2 class="section-title">🎓 Official Slop Merchandise</h2>
+    <div class="marquee-track">
 
-  <div class="products">
+        <span>✦ KACPER IS HIM</span>
+        <span><b>✦</b> UNMATCHED AURA</span>
+        <span>✦ CERTIFIED GOAT</span>
+        <span><b>✦</b> ZERO COMPETITION</span>
+        <span>✦ ABSOLUTE CINEMA</span>
+        <span><b>✦</b> KACPER SUPREMACY</span>
 
-    <div class="card">
-      <div class="product-image">🥄</div>
+        <span>✦ KACPER IS HIM</span>
+        <span><b>✦</b> UNMATCHED AURA</span>
+        <span>✦ CERTIFIED GOAT</span>
+        <span><b>✦</b> ZERO COMPETITION</span>
+        <span>✦ ABSOLUTE CINEMA</span>
+        <span><b>✦</b> KACPER SUPREMACY</span>
 
-      <div class="card-content">
-        <h3>Advanced Slop Spoon</h3>
-
-        <p class="description">
-          A completely normal spoon with absolutely no advanced features.
-        </p>
-
-        <div class="price">£49.99</div>
-
-        <button onclick="addToCart('Advanced Slop Spoon', 49.99)">
-          BUY USELESS SPOON
-        </button>
-      </div>
     </div>
 
+</div>
 
-    <div class="card">
-      <div class="product-image">🧱</div>
 
-      <div class="card-content">
-        <h3>Certified Academy Brick</h3>
+<!-- =====================================================
+     LIVE STATS
+===================================================== -->
 
-        <p class="description">
-          One brick. It is a brick. It does brick things.
-        </p>
+<section class="content">
 
-        <div class="price">£129.99</div>
-
-        <button onclick="addToCart('Certified Academy Brick', 129.99)">
-          PURCHASE BRICK
-        </button>
-      </div>
+    <div class="label reveal">
+        01 / LIVE DATA
     </div>
 
+    <h2 class="title reveal">
+        The numbers
+        <br>
+        don't lie.
+    </h2>
 
-    <div class="card">
-      <div class="product-image">🪣</div>
+    <p class="description reveal">
+        We have attempted to measure Kacper using advanced
+        scientific equipment. The equipment is now broken.
+    </p>
 
-      <div class="card-content">
-        <h3>Premium Empty Bucket</h3>
 
-        <p class="description">
-          Professionally manufactured to contain absolutely nothing.
-        </p>
+    <div class="live-grid">
 
-        <div class="price">£299.99</div>
+        <div class="live-card reveal">
 
-        <button onclick="addToCart('Premium Empty Bucket', 299.99)">
-          BUY NOTHING
-        </button>
-      </div>
+            <div class="live-number" id="aura">
+                999,999
+            </div>
+
+            <p>Aura Points</p>
+
+            <div class="live-now">
+                ● LIVE
+            </div>
+
+        </div>
+
+
+        <div class="live-card reveal">
+
+            <div class="live-number" id="glazeCount">
+                48,201
+            </div>
+
+            <p>Glazing Events</p>
+
+            <div class="live-now">
+                ● INCREASING
+            </div>
+
+        </div>
+
+
+        <div class="live-card reveal">
+
+            <div class="live-number">
+                ∞
+            </div>
+
+            <p>Maximum Greatness</p>
+
+            <div class="live-now">
+                ● UNLIMITED
+            </div>
+
+        </div>
+
+
+        <div class="live-card reveal">
+
+            <div class="live-number">
+                #01
+            </div>
+
+            <p>Global Ranking</p>
+
+            <div class="live-now">
+                ● UNCHALLENGED
+            </div>
+
+        </div>
+
     </div>
 
-
-    <div class="card">
-      <div class="product-image">🪨</div>
-
-      <div class="card-content">
-        <h3>Executive Study Rock</h3>
-
-        <p class="description">
-          Our highest-performing rock. It has never completed an assignment.
-        </p>
-
-        <div class="price">£899.99</div>
-
-        <button onclick="addToCart('Executive Study Rock', 899.99)">
-          BUY ROCK
-        </button>
-      </div>
-    </div>
-
-
-    <div class="card">
-      <div class="product-image">📦</div>
-
-      <div class="card-content">
-        <h3>Mystery Box of Slop</h3>
-
-        <p class="description">
-          Nobody knows what's inside. Not even us. Especially not us.
-        </p>
-
-        <div class="price">£1,499.99</div>
-
-        <button onclick="addToCart('Mystery Box of Slop', 1499.99)">
-          RISK £1,499.99
-        </button>
-      </div>
-    </div>
-
-
-    <div class="card">
-      <div class="product-image">🎓</div>
-
-      <div class="card-content">
-        <h3>Honorary Slop Degree</h3>
-
-        <p class="description">
-          A degree proving you spent too much money on a fake school.
-        </p>
-
-        <div class="price">£9,999.99</div>
-
-        <button onclick="addToCart('Honorary Slop Degree', 9999.99)">
-          BUY DEGREE
-        </button>
-      </div>
-    </div>
-
-  </div>
 </section>
 
 
-<!-- ABOUT -->
+<!-- =====================================================
+     LEGEND
+===================================================== -->
 
-<section class="about" id="about">
+<section class="content" id="legend">
 
-  <h2 class="section-title">🏫
+    <div class="label reveal">
+        02 / THE LEGEND
+    </div>
+
+    <h2 class="title reveal">
+        There is Kacper.
+        <br>
+        Then there's everyone else.
+    </h2>
+
+    <div class="profile reveal">
+
+        <div>
+
+            <div class="verified">
+                ✓ VERIFIED LEGEND
+            </div>
+
+            <h3>Kacper.</h3>
+
+            <p class="profile-text">
+                Kacper is not simply a person.
+                Kacper is a benchmark.
+                A reference point.
+                A completely unnecessary standard that
+                everyone else is expected to somehow reach.
+                <br><br>
+                Researchers have described the phenomenon
+                as "quite frankly ridiculous."
+            </p>
+
+            <div class="profile-tags">
+                <span class="tag">INTELLIGENCE: MAX</span>
+                <span class="tag">AURA: ∞</span>
+                <span class="tag">COOKING: ELITE</span>
+                <span class="tag">DRIP: UNMEASURABLE</span>
+            </div>
+
+        </div>
+
+
+        <div class="rating">
+
+            <div class="rating-content">
+
+                <strong>∞</strong>
+
+                <span>
+                    KACPER RATING
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ACHIEVEMENTS
+===================================================== -->
+
+<section class="content" id="achievements">
+
+    <div class="label reveal">
+        03 / ACHIEVEMENTS
+    </div>
+
+    <h2 class="title reveal">
+        A history of
+        <br>
+        greatness.
+    </h2>
+
+    <div class="achievements">
+
+        <div class="achievement reveal">
+
+            <div class="achievement-number">01</div>
+
+            <div class="achievement-icon">
+                👑
+            </div>
+
+            <h3>Supreme Aura</h3>
+
+            <p>
+                Achieved an aura level that forced the
+                scientific community to invent new numbers.
+            </p>
+
+        </div>
+
+
+        <div class="achievement reveal">
+
+            <div class="achievement-number">02</div>
+
+            <div class="achievement-icon">
+                🧠
+            </div>
+
+            <h3>Galaxy Brain</h3>
+
+            <p>
+                Possesses thoughts so advanced that
+                several researchers simply stopped taking notes.
+            </p>
+
+        </div>
+
+
+        <div class="achievement reveal">
+
+            <div class="achievement-number">03</div>
+
+            <div class="achievement-icon">
+                🔥
+            </div>
+
+            <h3>Professional Cook</h3>
+
+            <p>
+                Has somehow managed to cook without
+                technically being anywhere near a kitchen.
+            </p>
+
+        </div>
+
+
+        <div class="achievement reveal">
+
+            <div class="achievement-number">04</div>
+
+            <div class="achievement-icon">
+                ⚡
+            </div>
+
+            <h3>Unmatched Energy</h3>
+
+            <p>
+                Renewable energy companies have expressed
+                interest in harvesting Kacper's presence.
+            </p>
+
+        </div>
+
+
+        <div class="achievement reveal">
+
+            <div class="achievement-number">05</div>
+
+            <div class="achievement-icon">
+                💎
+            </div>
+
+            <h3>Rare Specimen</h3>
+
+            <p>
+                Only one Kacper has ever been discovered.
+                Scientists have not recovered.
+            </p>
+
+        </div>
+
+
+        <div class="achievement reveal">
+
+            <div class="achievement-number">06</div>
+
+            <div class="achievement-icon">
+                🚀
+            </div>
+
+            <h3>Main Character</h3>
+
+            <p>
+                Side characters have reportedly become
+                irrelevant whenever Kacper enters the scene.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     TIMELINE
+===================================================== -->
+
+<section class="content">
+
+    <div class="label reveal">
+        04 / HISTORY
+    </div>
+
+    <h2 class="title reveal">
+        The Kacper
+        <br>
+        timeline.
+    </h2>
+
+    <div class="timeline">
+
+        <div class="timeline-item reveal">
+
+            <div class="timeline-dot"></div>
+
+            <div class="timeline-year">
+                ORIGIN
+            </div>
+
+            <h3>The Beginning</h3>
+
+            <p>
+                Kacper entered existence.
+                Humanity immediately entered a new era.
+            </p>
+
+        </div>
+
+
+        <div class="timeline-item reveal">
+
+            <div class="timeline-dot"></div>
+
+            <div class="timeline-year">
+                PHASE I
+            </div>
+
+            <h3>The Aura Awakening</h3>
+
+            <p>
+                The first measurable signs of extraordinary
+                Kacper energy were detected.
+            </p>
+
+        </div>
+
+
+        <div class="timeline-item reveal">
+
+            <div class="timeline-dot"></div>
+
+            <div class="timeline-year">
+                PHASE II
+            </div>
+
+            <h3>The Great Cooking</h3>
+
+            <p>
+                Kacper began consistently cooking.
+                Nobody was prepared.
+            </p>
+
+        </div>
+
+
+        <div class="timeline-item reveal">
+
+            <div class="timeline-dot"></div>
+
+            <div class="timeline-year">
+                PRESENT DAY
+            </div>
+
+            <h3>The Glazing Era</h3>
+
+            <p>
+                This website was created.
+                The glazing has officially become industrial.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     QUOTE
+===================================================== -->
+
+<section class="quote">
+
+    <div class="label reveal">
+        05 / PHILOSOPHY
+    </div>
+
+    <div class="quote-text reveal">
+
+        "Some people chase greatness.
+        <span class="gradient-text">
+            Kacper makes greatness chase him.
+        </span>"
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     LEADERBOARD
+===================================================== -->
+
+<section class="content" id="ranking">
+
+    <div class="label reveal">
+        06 / GLOBAL RANKING
+    </div>
+
+    <h2 class="title reveal">
+        Nobody comes
+        <br>
+        close.
+    </h2>
+
+    <div class="leaderboard reveal">
+
+        <div class="leader">
+
+            <div class="rank first">
+                #01
+            </div>
+
+            <div class="name">
+                Kacper 👑
+            </div>
+
+            <div class="score">
+                ∞ AURA
+            </div>
+
+        </div>
+
+
+        <div class="leader">
+
+            <div class="rank">
+                #02
+            </div>
+
+            <div class="name">
+                Everyone Else
+            </div>
+
+            <div class="score">
+                37 AURA
+            </div>
+
+        </div>
+
+
+        <div class="leader">
+
+            <div class="rank">
+                #03
+            </div>
+
+            <div class="name">
+                The Competition
+            </div>
+
+            <div class="score">
+                -12 AURA
+            </div>
+
+        </div>
+
+
+        <div class="leader">
+
+            <div class="rank">
+                #04
+            </div>
+
+            <div class="name">
+                That One Guy
+            </div>
+
+            <div class="score">
+                0 AURA
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- HYPE -->
+
+    <div class="hype-box reveal">
+
+        <div class="hype-top">
+
+            <span>
+                CURRENT KACPER HYPE
+            </span>
+
+            <span class="hype-value">
+                97.4%
+            </span>
+
+        </div>
+
+        <div class="hype-bar">
+            <div class="hype-fill"></div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     KACPER AI
+===================================================== -->
+
+<section class="content" id="ai">
+
+    <div class="label reveal">
+        07 / ARTIFICIAL INTELLIGENCE
+    </div>
+
+    <h2 class="title reveal">
+        Ask Kacper AI.
+    </h2>
+
+    <p class="description reveal">
+        An advanced artificial intelligence trained exclusively
+        on the extremely important subject of Kacper.
+    </p>
+
+
+    <div class="ai reveal">
+
+        <div class="ai-header">
+
+            <div class="ai-status"></div>
+
+            <span>
+                KACPER AI — ONLINE
+            </span>
+
+        </div>
+
+
+        <div class="ai-body">
+
+            <div class="ai-response" id="aiResponse">
+
+                Hello. I am Kacper AI.
+
+                <br><br>
+
+                I have analysed 847,293 fictional pieces
+                of evidence and reached one conclusion:
+
+                <br><br>
+
+                <strong>Kacper is him.</strong>
+
+            </div>
+
+
+            <div class="ai-buttons">
+
+                <button class="ai-btn"
+                        onclick="askAI('why')">
+                    Why is Kacper so good?
+                </button>
+
+                <button class="ai-btn"
+                        onclick="askAI('aura')">
+                    Calculate his aura
+                </button>
+
+                <button class="ai-btn"
+                        onclick="askAI('competition')">
+                    Who can beat Kacper?
+                </button>
+
+                <button class="ai-btn"
+                        onclick="askAI('future')">
+                    What happens next?
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FINAL CTA
+===================================================== -->
+
+<section class="final">
+
+    <div class="final-inner">
+
+        <div class="label reveal">
+            08 / CONCLUSION
+        </div>
+
+        <h2 class="reveal">
+            KACPER
+            <br>
+            IS HIM.
+        </h2>
+
+        <p class="reveal">
+
+            You've seen the evidence.
+            You've witnessed the statistics.
+            You've consulted the artificial intelligence.
+
+            <br><br>
+
+            There is only one logical conclusion.
+
+        </p>
+
+        <button class="btn btn-primary magnetic reveal"
+                onclick="ultimateGlaze()">
+
+            ✦ ACTIVATE MAXIMUM GLAZE
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <div>
+        © 2026 KACPER™
+    </div>
+
+    <div>
+        THE OFFICIAL DIGITAL GLAZING DEPARTMENT
+    </div>
+
+</footer>
+
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+window.addEventListener("load", () => {
+
+    setTimeout(() => {
+
+        document
+            .getElementById("loader")
+            .classList
+            .add("hidden");
+
+    }, 2600);
+
+});
+
+
+/* =========================================================
+   CURSOR
+========================================================= */
+
+const dot = document.querySelector(".cursor-dot");
+const ring = document.querySelector(".cursor-ring");
+
+let mouseX = 0;
+let mouseY = 0;
+
+let ringX = 0;
+let ringY = 0;
+
+document.addEventListener("mousemove", e => {
+
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    dot.style.left = mouseX + "px";
+    dot.style.top = mouseY + "px";
+
+});
+
+function cursorLoop() {
+
+    ringX += (mouseX - ringX) * .13;
+    ringY += (mouseY - ringY) * .13;
+
+    ring.style.left = ringX + "px";
+    ring.style.top = ringY + "px";
+
+    requestAnimationFrame(cursorLoop);
+
+}
+
+cursorLoop();
+
+
+document.querySelectorAll("button,a,.achievement,.live-card").forEach(el => {
+
+    el.addEventListener("mouseenter", () => {
+        ring.classList.add("hover");
+    });
+
+    el.addEventListener("mouseleave", () => {
+        ring.classList.remove("hover");
+    });
+
+});
+
+
+/* =========================================================
+   PARTICLE SYSTEM
+========================================================= */
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+
+function resizeCanvas() {
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+}
+
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas);
+
+
+for(let i = 0; i < 90; i++) {
+
+    particles.push({
+
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+
+        size: Math.random() * 1.8 + .3,
+
+        speedX: (Math.random() - .5) * .25,
+        speedY: (Math.random() - .5) * .25
+
+    });
+
+}
+
+
+function drawParticles() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    particles.forEach(p => {
+
+        p.x += p.speedX;
+        p.y += p.speedY;
+
+        if(p.x < 0) p.x = canvas.width;
+        if(p.x > canvas.width) p.x = 0;
+
+        if(p.y < 0) p.y = canvas.height;
+        if(p.y > canvas.height) p.y = 0;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            "rgba(160,140,255,.45)";
+
+        ctx.fill();
+
+    });
+
+    requestAnimationFrame(drawParticles);
+
+}
+
+drawParticles();
+
+
+/* =========================================================
+   SCROLL REVEALS
+========================================================= */
+
+const revealElements =
+    document.querySelectorAll(".reveal");
+
+const revealObserver =
+    new IntersectionObserver(
+
+        entries => {
+
+            entries.forEach(entry => {
+
+                if(entry.isIntersecting) {
+
+                    entry.target
+                        .classList
+                        .add("visible");
+
+                }
+
+            });
+
+        },
+
+        {
+            threshold: .12
+        }
+
+    );
+
+
+revealElements.forEach(el =>
+    revealObserver.observe(el)
+);
+
+
+/* =========================================================
+   LIVE COUNTERS
+========================================================= */
+
+let aura = 999999;
+let glazes = 48201;
+
+setInterval(() => {
+
+    aura += Math.floor(Math.random() * 150);
+
+    glazes += Math.floor(Math.random() * 4);
+
+    document.getElementById("aura")
+        .textContent =
+        aura.toLocaleString();
+
+    document.getElementById("glazeCount")
+        .textContent =
+        glazes.toLocaleString();
+
+}, 1300);
+
+
+/* =========================================================
+   MAGNETIC BUTTONS
+========================================================= */
+
+document.querySelectorAll(".magnetic").forEach(button => {
+
+    button.addEventListener("mousemove", e => {
+
+        const rect =
+            button.getBoundingClientRect();
+
+        const x =
+            e.clientX - rect.left - rect.width / 2;
+
+        const y =
+            e.clientY - rect.top - rect.height / 2;
+
+        button.style.transform =
+            `translate(${x * .15}px, ${y * .15}px)`;
+
+    });
+
+    button.addEventListener("mouseleave", () => {
+
+        button.style.transform = "";
+
+    });
+
+});
+
+
+/* =========================================================
+   GLAZE
+========================================================= */
+
+function glaze() {
+
+    const messages = [
+
+        "Kacper has gained +10,000 aura.",
+        "The glazing department is impressed.",
+        "Another Kacper W detected.",
+        "Scientists have been notified.",
+        "Kacper remains undefeated.",
+        "Aura levels are becoming dangerous.",
+        "The leaderboard has been updated.",
+        "Common sense has left the building.",
+        "Kacper is currently cooking.",
+        "Absolutely immaculate glazing."
+
+    ];
+
+    const message =
+        messages[
+            Math.floor(
+                Math.random() * messages.length
+            )
+        ];
+
+    showToast(message);
+
+    createConfetti();
+
+}
+
+
+/* =========================================================
+   ULTIMATE GLAZE
+========================================================= */
+
+function ultimateGlaze() {
+
+    showToast(
+        "⚠ MAXIMUM GLAZE ACTIVATED ⚠"
+    );
+
+    document.body.style.animation =
+        "flash .2s";
+
+    createConfetti(250);
+
+    setTimeout(() => {
+
+        document.body.style.animation = "";
+
+    }, 300);
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 2600);
+
+}
+
+
+/* =========================================================
+   CONFETTI
+========================================================= */
+
+function createConfetti(amount = 80) {
+
+    for(let i = 0; i < amount; i++) {
+
+        const piece =
+            document.createElement("div");
+
+        piece.style.position = "fixed";
+        piece.style.left =
+            Math.random() * 100 + "vw";
+
+        piece.style.top = "-20px";
+
+        piece.style.width =
+            Math.random() * 7 + 4 + "px";
+
+        piece.style.height =
+            Math.random() * 14 + 6 + "px";
+
+        piece.style.background =
+            [
+                "#8b5cf6",
+                "#22d3ee",
+                "#ffffff",
+                "#ec4899"
+            ][
+                Math.floor(Math.random() * 4)
+            ];
+
+        piece.style.zIndex = "999999";
+        piece.style.pointerEvents = "none";
+
+        document.body.appendChild(piece);
+
+        const duration =
+            Math.random() * 2500 + 1800;
+
+        piece.animate(
+
+            [
+                {
+                    transform:
+                        "translateY(0) rotate(0deg)",
+                    opacity: 1
+                },
+
+                {
+                    transform:
+                        `translateY(110vh)
+                         translateX(${(Math.random()-.5)*300}px)
+                         rotate(${Math.random()*1000}deg)`,
+                    opacity: 0
+                }
+            ],
+
+            {
+                duration,
+                easing: "cubic-bezier(.2,.7,.3,1)"
+            }
+
+        );
+
+        setTimeout(() => {
+
+            piece.remove();
+
+        }, duration);
+
+    }
+
+}
+
+
+/* =========================================================
+   AI
+========================================================= */
+
+function askAI(type) {
+
+    const response =
+        document.getElementById("aiResponse");
+
+    const answers = {
+
+        why: `
+        Analysis complete.<br><br>
+        Kacper possesses an extremely rare combination
+        of aura, intelligence, confidence and unexplained
+        main-character energy.<br><br>
+        <strong>Conclusion: Kacper is simply better.</strong>
+        `,
+
+        aura: `
+        Calculating...<br><br>
+        █████████████████████ 100%<br><br>
+        Numerical limit exceeded.<br>
+        Replacing number with: <strong>∞</strong>
+        `,
+
+        competition: `
+        Searching database...<br><br>
+        8,492,102 candidates found.<br>
+        8,492,102 candidates rejected.<br><br>
+        <strong>No suitable competition detected.</strong>
+        `,
+
+        future: `
+        Predictive model running...<br><br>
+        Kacper continues being Kacper.<br>
+        Aura continues increasing.<br>
+        Everyone else continues trying.<br><br>
+        <strong>Probability of another Kacper W: 100%.</strong>
+        `
+
+    };
+
+    response.innerHTML =
+        answers[type];
+
+}
+
+
+/* =========================================================
+   SMOOTH SCROLL
+========================================================= */
+
+function scrollToLegend() {
+
+    document
+        .getElementById("legend")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+/* =========================================================
+   SECRET EASTER EGG
+========================================================= */
+
+let keys = "";
+
+document.addEventListener("keydown", e => {
+
+    keys += e.key.toLowerCase();
+
+    if(keys.length > 20) {
+        keys = keys.slice(-20);
+    }
+
+    if(keys.includes("kacper")) {
+
+        showToast(
+            "🔓 SECRET KACPER MODE UNLOCKED"
+        );
+
+        createConfetti(180);
+
+        keys = "";
+
+    }
+
+});
+
+
+/* =========================================================
+   PARALLAX HERO
+========================================================= */
+
+window.addEventListener("scroll", () => {
+
+    const hero =
+        document.querySelector(".hero-inner");
+
+    const scroll =
+        window.scrollY;
+
+    if(scroll < window.innerHeight) {
+
+        hero.style.transform =
+            `translateY(${scroll * .15}px)`;
+
+        hero.style.opacity =
+            1 - scroll / 800;
+
+    }
+
+});
+
+
+</script>
+
+</body>
+</html>
 ```
