@@ -3,167 +3,303 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kacper Clicker — Deluxe</title>
+<title>Slop Arcade — Mega Browser Game Hub</title>
 <style>
-:root{--bg:#070910;--panel:#0f1320;--panel2:#151a2a;--line:#282f45;--text:#f8f9ff;--muted:#8e97ae;--a:#8b5cf6;--b:#22d3ee;--g:#34d399;--r:#fb7185;--y:#fbbf24}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 10% -10%,#39205e 0,transparent 35%),radial-gradient(circle at 100% 10%,#073b4c 0,transparent 30%),var(--bg);color:var(--text);font:14px Inter,system-ui,sans-serif;min-height:100vh}
-button,input,select{font:inherit}button{cursor:pointer;color:inherit}.app{display:grid;grid-template-columns:245px 1fr 340px;min-height:100vh}.side,.right{background:#0a0d16dd;backdrop-filter:blur(20px);border-right:1px solid var(--line);position:sticky;top:0;height:100vh;overflow:auto}.right{border-left:1px solid var(--line);border-right:0;padding:22px}.brand{padding:25px 22px;font-weight:1000;font-size:20px;letter-spacing:-.04em}.brand em{font-style:normal;color:var(--b)}.version{font-size:10px;color:var(--muted);margin-top:4px}nav{padding:8px 12px}nav button{display:flex;align-items:center;gap:12px;width:100%;padding:12px 13px;margin:3px 0;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--muted);text-align:left}nav button:hover{background:#151a28;color:#fff}nav button.active{background:linear-gradient(90deg,#211a39,#161b2b);border-color:#3d315d;color:#fff}.main{width:100%;max-width:1050px;margin:auto;padding:25px 30px 60px}.top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:18px}.title{font-size:22px;font-weight:900}.subtitle{color:var(--muted);margin-top:4px}.pill{border:1px solid var(--line);background:#111624;padding:8px 12px;border-radius:999px}.hero{position:relative;overflow:hidden;border:1px solid #303750;border-radius:25px;background:linear-gradient(135deg,#15182b,#0d1521);padding:28px;box-shadow:0 25px 90px #0007}.hero:before{content:"";position:absolute;width:300px;height:300px;background:#8b5cf622;filter:blur(50px);right:-100px;top:-140px}.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--b);font-weight:900}.balance{font-size:54px;font-weight:1000;letter-spacing:-.06em;margin:8px 0}.rate{color:var(--muted)}.kacper{position:relative;margin:24px auto;width:220px;height:220px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#e9d5ff,#9b6cff 58%,#6d28d9);border:11px solid #c4a1ff;box-shadow:0 0 90px #8b5cf655,inset 0 0 30px #fff9,0 12px 0 #4c1d95;user-select:none;transition:transform .06s}.kacper:after{content:"K";font-size:100px;font-weight:1000;text-shadow:0 5px 0 #6d28d9}.kacper:active{transform:scale(.94) translateY(4px);box-shadow:0 0 55px #8b5cf655,inset 0 0 30px #fff9}.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.mini{background:#101523;border:1px solid var(--line);padding:14px;border-radius:14px}.mini b{display:block;font-size:17px;margin-top:5px}.label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.section{margin-top:20px}.section h2{margin:0 0 10px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:linear-gradient(180deg,#121727,#0f1320);border:1px solid var(--line);border-radius:17px;padding:17px}.card.locked{opacity:.48}.card h3{margin:0 0 6px}.muted{color:var(--muted);line-height:1.5}.price{display:flex;justify-content:space-between;align-items:center;margin-top:13px}.buy{border:0;border-radius:10px;background:#2a3150;padding:9px 12px}.buy:hover{background:#3a4267}.buy:disabled{opacity:.3;cursor:not-allowed}.progress{height:7px;background:#252a3b;border-radius:99px;overflow:hidden;margin:10px 0}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--b));border-radius:99px}.stat{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #22283a}.sideTitle{font-weight:900;font-size:16px;margin:0 0 12px}.feed{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #202638}.feed small{color:var(--muted)}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}.tab{border:1px solid var(--line);background:#101522;border-radius:10px;padding:9px 11px}.tab.on{background:#292043;border-color:#6243a0}.toast{position:fixed;right:25px;bottom:25px;z-index:99;padding:13px 16px;background:#171d2c;border:1px solid #3a425a;border-radius:13px;box-shadow:0 20px 60px #0008;opacity:0;transform:translateY(12px);transition:.25s}.toast.show{opacity:1;transform:none}.float{position:fixed;pointer-events:none;font-size:20px;font-weight:900;animation:float 1s ease-out forwards;z-index:100}@keyframes float{to{transform:translateY(-90px);opacity:0}}.modal{position:fixed;inset:0;background:#0009;backdrop-filter:blur(8px);display:none;place-items:center;z-index:90}.modal.show{display:grid}.modalBox{width:min(560px,92vw);background:#111625;border:1px solid #343c56;border-radius:20px;padding:22px}.close{float:right;border:0;background:#252b3d;border-radius:9px;padding:6px 10px}.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:11px;border-bottom:1px solid #252b3b}.rarity-common{border-color:#3c455d}.rarity-rare{border-color:#287ea1}.rarity-epic{border-color:#7044bd}.rarity-legendary{border-color:#a26c18}.toggle{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #252a3b}.switch{width:44px;height:24px;border-radius:99px;background:#30374b;padding:3px}.switch i{display:block;width:18px;height:18px;border-radius:50%;background:white;transition:.2s}.switch.on{background:var(--a)}.switch.on i{transform:translateX(20px)}@media(max-width:1100px){.app{grid-template-columns:80px 1fr}.right{display:none}.brand{font-size:0;text-align:center;padding:22px 5px}.brand em{font-size:19px}nav button span:last-child{display:none}nav button{justify-content:center}.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.app{display:block}.side{height:auto;position:sticky;z-index:50}.brand{display:none}nav{display:flex;overflow:auto}.side nav button{min-width:max-content;font-size:12px;justify-content:center}.main{padding:15px}.balance{font-size:38px}.quick{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.kacper{width:185px;height:185px}.kacper:after{font-size:82px}}
+:root{--bg:#080b12;--panel:#111827;--panel2:#172033;--text:#f5f7fb;--muted:#9aa7bd;--accent:#7c5cff;--accent2:#00d4ff;--good:#39e58c;--danger:#ff5470}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#18213b 0,#080b12 45%);color:var(--text);font-family:system-ui,Segoe UI,sans-serif;min-height:100vh}
+header{position:sticky;top:0;z-index:5;background:#090d16ee;backdrop-filter:blur(12px);border-bottom:1px solid #263148;padding:14px 18px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.logo{font-weight:900;font-size:23px;letter-spacing:-1px}.logo span{color:var(--accent2)}
+input,button,select{font:inherit}#search{flex:1;min-width:220px;background:#0c1220;border:1px solid #2a3650;border-radius:12px;color:white;padding:10px 13px}
+button{border:0;border-radius:10px;padding:9px 13px;background:#27344d;color:#fff;cursor:pointer;font-weight:700}button:hover{filter:brightness(1.18)}button.primary{background:linear-gradient(135deg,var(--accent),#9d6cff)}button.good{background:#167a50}button.danger{background:#8c263a}
+main{max-width:1400px;margin:auto;padding:22px}.hero{padding:25px;border:1px solid #293651;border-radius:20px;background:linear-gradient(135deg,#171d31dd,#0e1422dd);box-shadow:0 15px 60px #0005}
+.hero h1{font-size:clamp(30px,5vw,60px);margin:0 0 8px}.hero p{color:var(--muted);max-width:850px;font-size:17px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#0b111d;border:1px solid #293651;border-radius:12px;padding:9px 13px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.toolbar button.active{background:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:13px}.card{background:#101827;border:1px solid #26334c;border-radius:16px;padding:16px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between}.card h3{margin:6px 0}.emoji{font-size:38px}.tag{display:inline-block;color:#b7c4db;background:#1b2639;border-radius:999px;padding:3px 8px;font-size:12px}.card p{color:var(--muted);font-size:13px}.card button{width:100%;margin-top:10px}
+#gameScreen{display:none}.gameTop{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}.gamePanel{background:#0d1421;border:1px solid #2b3852;border-radius:18px;padding:15px}.canvasWrap{display:flex;justify-content:center;background:#05080e;border-radius:14px;overflow:hidden}.gameCanvas{max-width:100%;touch-action:none;image-rendering:auto}.hud{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.hud .stat{min-width:100px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.shop{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px}.shopItem{background:#141e30;padding:12px;border-radius:12px;border:1px solid #2a3851}.shopItem button{margin-top:7px;width:100%}
+#toast{position:fixed;right:16px;bottom:16px;background:#182238;border:1px solid #34445f;padding:12px 15px;border-radius:12px;display:none;z-index:20;box-shadow:0 10px 40px #0008}
+.small{font-size:12px;color:var(--muted)}.hidden{display:none!important}.dangerText{color:#ff7187}.goodText{color:#58eca1}
+table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #253148;text-align:left}
+@media(max-width:650px){main{padding:12px}.hero{padding:17px}.card{min-height:160px}}
 </style>
 </head>
 <body>
-<div class="app">
-<aside class="side">
-<div class="brand">KACPER <em>CLICKER</em><div class="version">DELUXE EDITION • v2.0</div></div>
-<nav id="nav">
-<button class="active" data-page="home">◉ <span>Clicker</span></button>
-<button data-page="shop">⚡ <span>Upgrades</span></button>
-<button data-page="buildings">⌂ <span>Buildings</span></button>
-<button data-page="research">✦ <span>Research</span></button>
-<button data-page="achievements">★ <span>Achievements</span></button>
-<button data-page="quests">☑ <span>Quests</span></button>
-<button data-page="inventory">◆ <span>Inventory</span></button>
-<button data-page="events">☄ <span>Events</span></button>
-<button data-page="stats">▣ <span>Statistics</span></button>
-<button data-page="settings">⚙ <span>Settings</span></button>
-</nav>
-</aside>
-<main class="main">
-<div class="top"><div><div class="title" id="title">Kacper Clicker</div><div class="subtitle" id="subtitle">Build an absurdly large Kacper empire.</div></div><div class="pill" id="level">Level 1</div></div>
-<div id="content"></div>
-</main>
-<aside class="right">
-<div class="sideTitle">Empire Overview</div>
-<div class="stat"><span>Kacpers</span><b id="sK">0</b></div>
-<div class="stat"><span>Per click</span><b id="sC">1</b></div>
-<div class="stat"><span>Per second</span><b id="sS">0</b></div>
-<div class="stat"><span>Lifetime</span><b id="sT">0</b></div>
-<div class="stat"><span>Clicks</span><b id="sClicks">0</b></div>
-<div class="section"><div class="sideTitle">Next Level</div><div class="card"><b id="nextLevel">100</b><div class="progress"><i id="levelBar" style="width:0%"></i></div><small class="muted" id="levelHint">Keep going!</small></div></div>
-<div class="section"><div class="sideTitle">Activity</div><div id="feed"></div></div>
-</aside>
+<header>
+<div class="logo">SLOP<span>ARCADE</span> 🎮</div>
+<input id="search" placeholder="Search hundreds of games...">
+<button onclick="showHome()">🏠 Home</button>
+<button onclick="saveAll()">💾 Save</button>
+</header>
+<main>
+<section id="home">
+<div class="hero">
+<h1>THE MEGA SLOP ARCADE</h1>
+<p>A giant collection of playable browser games. Everything here runs locally in this one HTML file — no accounts, no server, no downloads required.</p>
+<div class="stats">
+<div class="stat">🎮 <b id="gameCount">0</b> games</div>
+<div class="stat">🏆 <b id="achCount">0</b> achievements</div>
+<div class="stat">💾 Local save enabled</div>
+<div class="stat">⚡ Instant play</div>
 </div>
-<div id="toast" class="toast"></div>
-<div id="modal" class="modal"><div class="modalBox" id="modalBox"></div></div>
+</div>
+<div class="toolbar" id="filters"></div>
+<div class="grid" id="gameGrid"></div>
+</section>
+
+<section id="gameScreen">
+<div class="gameTop"><button onclick="showHome()">← Game Library</button><div id="gameTitle"></div><button onclick="restartCurrent()">↻ Restart</button></div>
+<div id="gameUI"></div>
+</section>
+</main>
+<div id="toast"></div>
+
 <script>
-const KEY='kacper_clicker_deluxe_v2';
-const defaultState={
-k:0,total:0,clicks:0,level:1,prestige:0,perClick:1,perSec:0,mult:1,
-up:{},build:{},research:{},ach:{},quests:{},inventory:[],events:[],
-settings:{sound:true,numbers:true,particles:true},
-daily:{date:'',claimed:false},stats:{crit:0,biggest:0,spent:0,buildings:0,research:0}
-};
-let s=JSON.parse(localStorage.getItem(KEY)||'null')||structuredClone(defaultState);
-function merge(a,b){for(const k in b){if(a[k]===undefined)a[k]=b[k];else if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k]))merge(a[k],b[k])}return a}
-s=merge(s,structuredClone(defaultState));
-const upgrades=[
-['cursor','Kacper Cursor','Every purchase adds +1 Kacper per click.',25,1.16,'click',1],
-['glove','Golden Glove','Adds +5 Kacpers per click.',250,1.20,'click',5],
-['keyboard','Mechanical Keyboard','Adds +20 Kacpers per click.',1800,1.24,'click',20],
-['factory','Kacper Factory','Adds +10 Kacpers per second.',5000,1.22,'sec',10],
-['server','Kacper Server','Adds +75 Kacpers per second.',35000,1.27,'sec',75],
-['quantum','Quantum Finger','Adds +100 Kacpers per click.',250000,1.30,'click',100],
-['clone','Kacper Cloning','Doubles passive production.',1500000,1.45,'mult',2],
-['infinity','Infinity Tap','Adds +1000 Kacpers per click.',25000000,1.55,'click',1000],
-['singularity','Kacper Singularity','Adds +1000 Kacpers per second.',250000000,1.60,'sec',1000]
+/* ============================================================
+   SLOP ARCADE ENGINE
+   Many games share this tiny engine so the single-file project
+   remains portable and easy to expand.
+   ============================================================ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const saveKey="slop_arcade_v1";
+let profile={coins:0,achievements:[],scores:{},clicker:{money:0,perClick:1,perSec:0,prestige:0,rebirths:0,items:{}},sandbox:{blocks:{},inventory:{dirt:30,stone:10,wood:10},x:10,y:8},settings:{sound:true}};
+let current=null,cleanup=()=>{};
+try{Object.assign(profile,JSON.parse(localStorage.getItem(saveKey)||"{}"))}catch(e){}
+function saveAll(){localStorage.setItem(saveKey,JSON.stringify(profile));toast("Game saved!")}
+function toast(t){let x=$("#toast");x.textContent=t;x.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>x.style.display="none",1800)}
+function showHome(){cleanup();$("#gameScreen").style.display="none";$("#home").style.display="block";renderGames()}
+function launch(id){cleanup();current=id;$("#home").style.display="none";$("#gameScreen").style.display="block";$("#gameTitle").innerHTML="";$("#gameUI").innerHTML="";(games.find(x=>x.id===id)?.start||games[0].start)()}
+function restartCurrent(){if(current)launch(current)}
+window.addEventListener("beforeunload",saveAll);
+
+function ach(id,name){if(!profile.achievements.includes(id)){profile.achievements.push(id);toast("🏆 Achievement: "+name);saveAll()}}
+function rand(a,b){return Math.random()*(b-a)+a} function rint(a,b){return Math.floor(rand(a,b+1))}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function rectHit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
+function keys(){return window.__keys||{}}
+window.__keys={};addEventListener("keydown",e=>{__keys[e.key.toLowerCase()]=true});addEventListener("keyup",e=>{__keys[e.key.toLowerCase()]=false});
+function canvas(w=900,h=520){let c=document.createElement("canvas");c.width=w;c.height=h;c.className="gameCanvas";return c}
+function shell(title,sub,c){$("#gameTitle").innerHTML="<b>"+title+"</b> <span class='small'>"+sub+"</span>";let p=document.createElement("div");p.className="gamePanel";p.innerHTML="";p.appendChild(c);$("#gameUI").appendChild(p);return p}
+function loop(fn){let live=true;function f(t){if(!live)return;fn(t);requestAnimationFrame(f)}requestAnimationFrame(f);cleanup=()=>{live=false}}
+function hud(items){let d=document.createElement("div");d.className="hud";items.forEach(x=>{let s=document.createElement("div");s.className="stat";s.id=x[0];s.innerHTML=x[1];d.appendChild(s)});$("#gameUI").prepend(d);return d}
+function sound(freq=500,dur=.06){if(!profile.settings.sound)return;try{let a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.frequency.value=freq;g.gain.value=.035;o.connect(g);g.connect(a.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,a.currentTime+dur);o.stop(a.currentTime+dur)}catch(e){}}
+
+/* ---------------- GAME LIBRARY ---------------- */
+const games=[];
+function add(id,name,icon,cat,desc,start){games.push({id,name,icon,cat,desc,start})}
+
+/* CLICKER */
+add("cookie","Cookie Reactor","🍪","Clicker","Absurdly expandable clicker with upgrades, automation and prestige.",startCookie);
+add("mineclick","Mining Tycoon","⛏️","Clicker","Dig deeper, buy drills and chase ridiculous numbers.",startMineClick);
+add("spaceclick","Star Factory","⭐","Clicker","Manufacture stars and build a cosmic economy.",startStarClick);
+add("fishclick","Fish Empire","🐟","Clicker","Catch fish, hire crews and become ocean billionaire.",startFishClick);
+
+/* ACTION */
+add("arena","Neon Arena FPS","🔫","Action","Top-down shooter: WASD, mouse to aim, click to fire, endless waves.",startArena);
+add("zombies","Zombie Holdout","🧟","Action","Survive increasingly aggressive zombie waves.",startZombies);
+add("asteroids","Asteroid Blaster","🚀","Action","Pilot a ship and destroy rocks for score.",startAsteroids);
+add("spaceinv","Space Invaders","👾","Action","Classic arcade invasion with levels and powerups.",startSpaceInv);
+add("ninja","Ninja Dash","🥷","Action","Jump and dodge a procedural stream of hazards.",startNinja);
+
+/* ARCADE */
+add("snake","Snake","🐍","Arcade","Classic snake with food, speed and high scores.",startSnake);
+add("breakout","Breakout","🧱","Arcade","Bounce the ball through increasingly tricky brick walls.",startBreakout);
+add("pong","Pong","🏓","Arcade","Playable paddle duel against an AI opponent.",startPong);
+add("runner","Slop Runner","🏃","Arcade","Endless runner with coins and increasingly fast obstacles.",startRunner);
+add("flappy","Flappy Slop","🐦","Arcade","Tap/space to fly through pipes.",startFlappy);
+
+/* PUZZLE */
+add("memory","Memory Match","🧠","Puzzle","Find matching pairs as quickly as possible.",startMemory);
+add("mines","Mines","💣","Puzzle","Procedural minesweeper board.",startMines);
+add("reaction","Reaction Test","⚡","Puzzle","Wait for green, then click as fast as possible.",startReaction);
+add("math","Math Rush","➗","Puzzle","Solve equations before the timer expires.",startMath);
+add("lights","Lights Out","💡","Puzzle","Turn off every light using the fewest moves.",startLights);
+
+/* SANDBOX / RPG */
+add("craft","Blockcraft 2D","⛏️","Sandbox","Minecraft-inspired 2D sandbox: mine, place blocks, explore.",startCraft);
+add("survival","Tiny Survival","🌲","Sandbox","Gather resources, craft tools and survive hostile nights.",startSurvival);
+add("dungeon","Dungeon Loot","⚔️","RPG","Turn-based dungeon crawl with loot, enemies and upgrades.",startDungeon);
+add("farming","Tiny Farm","🌱","RPG","Plant, grow, harvest and upgrade your farm.",startFarm);
+
+/* SPORTS / SIM */
+add("penalty","Penalty King","⚽","Sports","Aim and score penalties against a moving keeper.",startPenalty);
+add("basket","Hoop Shot","🏀","Sports","Timed basketball shooting challenge.",startBasket);
+add("racer","Pixel Racer","🏎️","Sports","Avoid traffic and survive at maximum speed.",startRacer);
+
+/* MORE GENERATED MINI GAMES */
+const extras=[
+["coinflip","Coin Flip","🪙","Luck"],["dice","Dice Duel","🎲","Luck"],["higher","Higher or Lower","📈","Luck"],
+["typing","Typing Blitz","⌨️","Puzzle"],["color","Color Click","🎨","Puzzle"],["dots","Dot Hunter","🔵","Arcade"],
+["target","Target Practice","🎯","Action"],["drone","Drone Dodge","🛸","Action"],["meteor","Meteor Rain","☄️","Action"],
+["tower","Tower Defense Lite","🏰","Strategy"],["blackjack","Mini Blackjack","🃏","Luck"],["slots","Slop Slots","🎰","Luck"],
+["word","Word Scramble","🔤","Puzzle"],["avoid","Avoid Everything","💥","Arcade"],["orbit","Orbital Dodge","🪐","Action"],
+["collector","Gem Collector","💎","Arcade"],["timing","Perfect Timing","⏱️","Puzzle"],["whack","Whack-a-Slop","🔨","Arcade"],
+["stack","Stack Tower","🏗️","Arcade"],["dots2","Dot Storm","🌧️","Action"],["quiz","Quick Quiz","❓","Puzzle"],
+["maze","Maze Escape","🌀","Puzzle"],["galaxy","Galaxy Miner","🌌","Clicker"],["factory","Factory Line","🏭","Clicker"],
+["chef","Speed Chef","👨‍🍳","Arcade"],["fishing","Fishing Frenzy","🎣","Arcade"],["box","Box Dodger","📦","Arcade"],
+["virus","Virus Sweep","🦠","Action"],["laser","Laser Grid","🔴","Action"]
 ];
-const buildings=[
-['hut','Kacper Hut','A suspiciously productive shed.',100,1.15,1],
-['shop','Kacper Shop','Sell imaginary Kacper merchandise.',1000,1.16,8],
-['office','Kacper HQ','A tower dedicated to clicking.',10000,1.18,60],
-['stadium','Kacper Stadium','Ten thousand fans, one giant K.',100000,1.20,450],
-['city','Kacper City','The entire city now clicks.',1000000,1.22,3000],
-['moon','Kacper Moon Base','Zero gravity. Infinite clicking.',50000000,1.25,25000],
-['dyson','Kacper Dyson Sphere','Harness the power of a star.',5000000000,1.30,2500000]
-];
-const research=[
-['focus','Focused Clicking','Critical click chance +5%.',25000],
-['automation','Automation','Passive production +25%.',100000],
-['economy','Kacper Economics','All income +50%.',500000],
-['luck','Ridiculous Luck','Rare event rewards are doubled.',2500000],
-['multiverse','Kacper Multiverse','All production x3.',100000000],
-['ascension','Ascension Theory','Unlocks prestige.',10000000000]
-];
-const achievements=[
-['first','First Click','Make your first Kacper.',()=>s.clicks>=1,10],
-['hundred','Hundred','Reach 100 Kacpers.',()=>s.total>=100,50],
-['thousand','Thousandaire','Reach 1,000 lifetime Kacpers.',()=>s.total>=1000,250],
-['million','Millionaire','Reach 1,000,000 lifetime Kacpers.',()=>s.total>=1e6,5000],
-['click100','Click Machine','Click 100 times.',()=>s.clicks>=100,1000],
-['click1000','Click Legend','Click 1,000 times.',()=>s.clicks>=1000,10000],
-['passive','Self Made','Reach 100 Kacpers/sec.',()=>s.perSec>=100,2500],
-['collector','Collector','Own 10 upgrades.',()=>Object.values(s.up).reduce((a,b)=>a+b,0)>=10,5000],
-['builder','Property Mogul','Own 10 buildings.',()=>Object.values(s.build).reduce((a,b)=>a+b,0)>=10,10000],
-['researcher','Scientist','Complete 3 research projects.',()=>Object.values(s.research).filter(Boolean).length>=3,15000],
-['critical','Critical Thinking','Get 10 critical clicks.',()=>s.stats.crit>=10,7500],
-['big','Big Number','Get a single click worth 1,000 Kacpers.',()=>s.stats.biggest>=1000,12000],
-['level10','Veteran','Reach level 10.',()=>s.level>=10,25000],
-['prestige','Beyond','Prestige once.',()=>s.prestige>=1,100000]
-];
-const questList=[
-['clicks','Warm Up','Click 25 times.',25,()=>s.clicks,100],
-['earn','Pocket Money','Earn 10,000 lifetime Kacpers.',10000,()=>s.total,500],
-['buy','Shopping Spree','Buy 5 upgrades.',5,()=>Object.values(s.up).reduce((a,b)=>a+b,0),750],
-['build','Construction','Own 3 buildings.',3,()=>Object.values(s.build).reduce((a,b)=>a+b,0),1200],
-['research','Brain Power','Complete 2 research projects.',2,()=>Object.values(s.research).filter(Boolean).length,2500],
-['speed','Speedrun','Reach 500 Kacpers/sec.',500,()=>s.perSec,10000]
-];
-const events=[
-['Kacper Rain','The sky is literally Kacper. Click the button to collect a huge bonus.','rain'],
-['Golden K','A golden K appeared! Claim it before it disappears.','gold'],
-['Office Pizza','Everyone is working harder after free pizza. Production is doubled for 60 seconds.','boost']
-];
-function fmt(n){if(!s.settings.numbers)return Math.floor(n);if(n<1000)return Math.floor(n).toLocaleString();const units=['K','M','B','T','Qa','Qi','Sx','Sp','Oc','No','Dc'];let i=-1;while(n>=1000&&i<units.length-1){n/=1000;i++}return n.toFixed(n<10?2:n<100?1:0)+units[i]}
-function save(){localStorage.setItem(KEY,JSON.stringify(s))}
-function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove('show'),1900)}
-function addFeed(t){s.events.unshift({t:Date.now(),text:t});s.events=s.events.slice(0,8)}
-function cost(item,owned){return Math.floor(item[3]*Math.pow(item[4],owned))}
-function totalUp(){return Object.values(s.up).reduce((a,b)=>a+b,0)}
-function totalBuild(){return Object.values(s.build).reduce((a,b)=>a+b,0)}
-function incomeMultiplier(){let m=s.mult;if(s.research.economy)m*=1.5;if(s.research.multiverse)m*=3;return m*(s.research.automation?1.25:1)}
-function critChance(){return .05+(s.research.focus?0.05:0)}
-function clickK(ev){
- let amount=s.perClick*incomeMultiplier(),crit=Math.random()<critChance();
- if(crit){amount*=5;s.stats.crit++;toast('CRITICAL KACPER! x5')}
- amount=Math.floor(amount);s.k+=amount;s.total+=amount;s.clicks++;s.stats.biggest=Math.max(s.stats.biggest,amount);
- if(s.settings.particles&&ev){let f=document.createElement('div');f.className='float';f.textContent='+'+fmt(amount);f.style.left=(ev.clientX-20)+'px';f.style.top=(ev.clientY-15)+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),1000)}
- levelCheck();save();render();
+for(const [id,n,i,c] of extras)add(id,n,i,c,"Quick replayable mini-game.",startMini);
+
+/* Add many variations that all remain functional */
+for(let i=1;i<=120;i++){
+ const types=[["Slop Clicker","🖱️","Clicker"],["Micro Defender","🛡️","Strategy"],["Pixel Dodger","💨","Arcade"],["Tiny Shooter","🔫","Action"],["Gem Rush","💎","Arcade"],["Number Ninja","🔢","Puzzle"],["Cosmic Miner","🌠","Clicker"],["Block Jumper","🧱","Arcade"]];
+ const t=types[i%types.length];
+ add("gen"+i,t[0]+" #"+i,t[1],t[2],"Procedurally replayable challenge with score, speed and local high score.",()=>startGenerated(i,t[0]));
 }
-function levelCheck(){while(s.k>=levelCost(s.level)){s.level++;s.perClick+=s.level%5===0?2:0;toast('LEVEL UP! Level '+s.level);addFeed('Reached level '+s.level)}}
-function levelCost(l){return Math.floor(100*Math.pow(1.55,l-1))}
-function buyUpgrade(id){let u=upgrades.find(x=>x[0]===id),owned=s.up[id]||0,c=cost(u,owned);if(s.k<c)return toast('Not enough Kacpers');s.k-=c;s.stats.spent+=c;s.up[id]=owned+1;
-if(u[5]==='click')s.perClick+=u[6];if(u[5]==='sec')s.perSec+=u[6];if(u[5]==='mult')s.mult*=u[6];addFeed('Purchased '+u[1]);toast(u[1]+' purchased');save();render()}
-function buyBuilding(id){let b=buildings.find(x=>x[0]===id),owned=s.build[id]||0,c=cost(b,owned);if(s.k<c)return toast('Not enough Kacpers');s.k-=c;s.stats.spent+=c;s.build[id]=owned+1;s.perSec+=b[6];s.stats.buildings++;addFeed('Built '+b[1]);toast(b[1]+' constructed');save();render()}
-function doResearch(id){let r=research.find(x=>x[0]===id);if(s.research[id])return;if(s.k<r[3])return toast('Research requires more Kacpers');s.k-=r[3];s.stats.spent+=r[3];s.research[id]=true;s.stats.research++;addFeed('Completed research: '+r[1]);toast('Research complete!');save();render()}
-function claimAch(id){let a=achievements.find(x=>x[0]===id);if(!s.ach[id]&&a[3]()){s.ach[id]=true;s.k+=a[4];toast('Achievement unlocked: '+a[1]);addFeed('Achievement: '+a[1]);save();render()}}
-function claimQuest(id){let q=questList.find(x=>x[0]===id);if(s.quests[id])return;if(q[4]()>=q[3]){s.quests[id]=true;s.k+=q[5];toast('Quest complete! +'+fmt(q[5]));save();render()}}
-function daily(){let d=new Date().toISOString().slice(0,10);if(s.daily.date!==d){s.daily={date:d,claimed:false}}if(s.daily.claimed)return toast('Daily reward already claimed');s.daily.claimed=true;let reward=Math.floor(5000*(1+s.prestige));s.k+=reward;toast('Daily reward: '+fmt(reward));save();render()}
-function prestige(){if(s.total<1e9)return toast('You need 1B lifetime Kacpers to prestige');if(!confirm('Prestige resets your current empire but grants a permanent production bonus. Continue?'))return;s.prestige++;s.k=0;s.level=1;s.perClick=1+Math.floor(s.prestige*.5);s.perSec=0;s.mult=1;s.up={};s.build={};s.research={};addFeed('Prestiged! Total prestige: '+s.prestige);toast('PRESTIGE '+s.prestige+'!');save();render()}
-function eventRoll(){if(Math.random()>.025)return;let e=events[Math.floor(Math.random()*events.length)];showModal(`<button class="close" onclick="closeModal()">×</button><h2>${e[0]}</h2><p class="muted">${e[1]}</p><button class="buy" onclick="claimEvent('${e[2]}')">Claim event</button>`)}
-function claimEvent(type){closeModal();let reward=type==='gold'?Math.floor(s.k*.25+5000):Math.floor(s.perSec*120+10000);if(type==='boost')reward=Math.floor(s.k*.1+1000);s.k+=reward;addFeed('Event reward: '+fmt(reward));toast('Event reward +'+fmt(reward));save();render()}
-function showModal(x){document.getElementById('modalBox').innerHTML=x;document.getElementById('modal').classList.add('show')}
-function closeModal(){document.getElementById('modal').classList.remove('show')}
-function cardUpgrade(u){let owned=s.up[u[0]]||0,c=cost(u,owned);return `<div class="card"><h3>${u[1]}</h3><p class="muted">${u[2]}</p><div class="stat"><span>Owned</span><b>${owned}</b></div><div class="price"><b>${fmt(c)}</b><button class="buy" onclick="buyUpgrade('${u[0]}')" ${s.k<c?'disabled':''}>Buy</button></div></div>`}
-function cardBuilding(b){let owned=s.build[b[0]]||0,c=cost(b,owned);return `<div class="card"><h3>${b[1]}</h3><p class="muted">${b[2]}</p><div class="stat"><span>Owned</span><b>${owned}</b></div><div class="stat"><span>Production</span><b>+${fmt(b[6])}/s</b></div><div class="price"><b>${fmt(c)}</b><button class="buy" onclick="buyBuilding('${b[0]}')" ${s.k<c?'disabled':''}>Build</button></div></div>`}
-function renderHome(){return `<section class="hero"><div class="eyebrow">DELUXE EMPIRE</div><div class="balance">${fmt(s.k)} Kacpers</div><div class="rate">${fmt(s.perSec*incomeMultiplier())} / sec • ${fmt(s.perClick*incomeMultiplier())} / click • ${s.prestige} prestige</div><div class="kacper" onclick="clickK(event)" aria-label="Click Kacper"></div><div style="text-align:center" class="muted">CLICK THE K • CRITICAL CHANCE ${Math.round(critChance()*100)}%</div></section><div class="quick section"><div class="mini"><span class="label">Lifetime</span><b>${fmt(s.total)}</b></div><div class="mini"><span class="label">Clicks</span><b>${fmt(s.clicks)}</b></div><div class="mini"><span class="label">Upgrades</span><b>${totalUp()}</b></div><div class="mini"><span class="label">Buildings</span><b>${totalBuild()}</b></div></div><div class="section"><h2>Featured Upgrades</h2><div class="grid">${upgrades.slice(0,3).map(cardUpgrade).join('')}</div></div>`}
-function renderShop(){return `<h2>Upgrade Lab</h2><p class="muted">Stack upgrades to turn tiny clicks into ridiculous numbers.</p><div class="grid">${upgrades.map(cardUpgrade).join('')}</div>`}
-function renderBuildings(){return `<h2>Kacper Industries</h2><p class="muted">Buildings generate Kacpers automatically every second.</p><div class="grid">${buildings.map(cardBuilding).join('')}</div>`}
-function renderResearch(){return `<h2>Research Tree</h2><p class="muted">Permanent technologies that change how your empire works.</p><div class="grid">${research.map(r=>`<div class="card ${s.research[r[0]]?'':'rarity-rare'}"><h3>${r[1]} ${s.research[r[0]]?'✓':''}</h3><p class="muted">${r[2]}</p><button class="buy" onclick="doResearch('${r[0]}')" ${s.research[r[0]]||s.k<r[3]?'disabled':''}>${s.research[r[0]]?'Completed':'Research • '+fmt(r[3])}</button></div>`).join('')}</div>`}
-function renderAchievements(){achievements.forEach(a=>claimAch(a[0]));return `<h2>Achievements</h2><p class="muted">Unlock milestones and collect bonus Kacpers.</p><div class="grid">${achievements.map(a=>`<div class="card ${s.ach[a[0]]?'rarity-legendary':''}"><h3>${s.ach[a[0]]?'✓ ':''}${a[1]}</h3><p class="muted">${a[2]}</p><div class="stat"><span>Reward</span><b>+${fmt(a[4])}</b></div></div>`).join('')}</div>`}
-function renderQuests(){return `<h2>Quest Board</h2><div class="grid">${questList.map(q=>{let v=Math.min(q[4](),q[3]),done=v>=q[3];return `<div class="card"><h3>${q[1]}</h3><p class="muted">${q[2]}</p><div class="progress"><i style="width:${v/q[3]*100}%"></i></div><div class="stat"><span>${fmt(v)} / ${fmt(q[3])}</span><b>+${fmt(q[5])}</b></div><button class="buy" onclick="claimQuest('${q[0]}')" ${!done||s.quests[q[0]]?'disabled':''}>${s.quests[q[0]]?'Claimed':done?'Claim reward':'In progress'}</button></div>`}).join('')}</div>`}
-function renderInventory(){return `<h2>Inventory</h2><p class="muted">Collect rare Kacper artifacts from events and milestones.</p><div class="card"><h3>Artifact Slots</h3><p class="muted">Artifacts are a foundation for future expansions.</p><div class="grid">${['Kacper Crown','Neon Cursor','Golden K','Quantum Badge','Empire Flag','Mystery Box'].map((x,i)=>`<div class="card ${i%3===0?'rarity-legendary':i%2?'rarity-rare':''}"><h3>${x}</h3><p class="muted">${s.inventory.includes(x)?'Collected':'Not discovered yet'}</p></div>`).join('')}</div></div>`}
-function renderEvents(){return `<h2>Live Events</h2><div class="card"><h3>🎁 Daily Reward</h3><p class="muted">Come back every day for a growing reward.</p><button class="buy" onclick="daily()">Claim Daily Reward</button></div><div class="section card"><h3>☄ Random Events</h3><p class="muted">Random events can appear while you play. Keep the game open!</p><button class="buy" onclick="eventRoll()">Roll for Event</button></div><div class="section card"><h3>Prestige</h3><p class="muted">Reset your current empire at 1 billion lifetime Kacpers for a permanent prestige bonus.</p><div class="stat"><span>Current prestige</span><b>${s.prestige}</b></div><button class="buy" onclick="prestige()" ${s.total<1e9?'disabled':''}>Prestige</button></div>`}
-function renderStats(){return `<h2>Statistics</h2><div class="grid">${[['Current Kacpers',s.k],['Lifetime Kacpers',s.total],['Total clicks',s.clicks],['Per click',s.perClick],['Per second',s.perSec],['Critical clicks',s.stats.crit],['Biggest click',s.stats.biggest],['Kacpers spent',s.stats.spent],['Prestiges',s.prestige]].map(x=>`<div class="card"><span class="label">${x[0]}</span><div class="count" style="font-size:28px;font-weight:900;margin-top:7px">${fmt(x[1])}</div></div>`).join('')}</div>`}
-function renderSettings(){return `<h2>Settings</h2><div class="card">${[['sound','Sound effects'],['numbers','Compact numbers'],['particles','Click particles']].map(x=>`<div class="toggle"><span>${x[1]}</span><button class="switch ${s.settings[x[0]]?'on':''}" onclick="s.settings.${x[0]}=!s.settings.${x[0]};save();render()"><i></i></button></div>`).join('')}<div class="section"><button class="buy" onclick="save();toast('Game saved')">Save now</button> <button class="buy" onclick="exportSave()">Export save</button> <button class="buy" onclick="importSave()">Import save</button> <button class="buy" onclick="resetGame()">Reset everything</button></div></div>`}
-function exportSave(){navigator.clipboard?.writeText(btoa(JSON.stringify(s)));toast('Save copied to clipboard')}
-function importSave(){let x=prompt('Paste your exported save code');if(!x)return;try{s=merge(JSON.parse(atob(x)),structuredClone(defaultState));save();render();toast('Save imported')}catch(e){toast('Invalid save')}}
-function resetGame(){if(confirm('Really reset ALL progress?')){localStorage.removeItem(KEY);location.reload()}}
-const pages={home:['Kacper Clicker','Build an absurdly large Kacper empire.',renderHome],shop:['Upgrades','Make every click stronger.',renderShop],buildings:['Buildings','Automate the Kacper machine.',renderBuildings],research:['Research','Discover increasingly ridiculous technology.',renderResearch],achievements:['Achievements','Collect milestones and rewards.',renderAchievements],quests:['Quests','Complete objectives for bonus Kacpers.',renderQuests],inventory:['Inventory','Your collection of rare Kacper artifacts.',renderInventory],events:['Events','Daily rewards, random events and prestige.',renderEvents],stats:['Statistics','Everything your empire has accomplished.',renderStats],settings:['Settings','Tune your Kacper experience.',renderSettings]};
-function render(){let p=document.querySelector('#nav button.active').dataset.page;document.getElementById('title').textContent=pages[p][0];document.getElementById('subtitle').textContent=pages[p][1];document.getElementById('content').innerHTML=pages[p][2]();document.getElementById('sK').textContent=fmt(s.k);document.getElementById('sC').textContent=fmt(s.perClick*incomeMultiplier());document.getElementById('sS').textContent=fmt(s.perSec*incomeMultiplier());document.getElementById('sT').textContent=fmt(s.total);document.getElementById('sClicks').textContent=fmt(s.clicks);document.getElementById('level').textContent='Level '+s.level+' • '+s.prestige+' Prestige';let need=levelCost(s.level),prev=levelCost(Math.max(1,s.level-1));document.getElementById('nextLevel').textContent=fmt(need)+' Kacpers';document.getElementById('levelBar').style.width=Math.min(100,Math.max(0,(s.k-prev)/(need-prev)*100))+'%';document.getElementById('levelHint').textContent=fmt(Math.max(0,need-s.k))+' to next level';document.getElementById('feed').innerHTML=(s.events||[]).slice(0,6).map(e=>`<div class="feed"><div>•</div><div>${e.text}<br><small>${new Date(e.t).toLocaleTimeString()}</small></div></div>`).join('')}
-document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
-setInterval(()=>{let gain=s.perSec*incomeMultiplier();if(gain>0){s.k+=gain;s.total+=gain;levelCheck();save();render()}},1000);
-setInterval(eventRoll,20000);
-setInterval(()=>{achievements.forEach(a=>{if(!s.ach[a[0]]&&a[3]())claimAch(a[0])})},1500);
-render();
+$("#gameCount").textContent=games.length;$("#achCount").textContent=profile.achievements.length;
+
+/* LIBRARY UI */
+let category="All";
+function renderGames(){
+ $("#gameCount").textContent=games.length;$("#achCount").textContent=profile.achievements.length;
+ let cats=["All",...new Set(games.map(g=>g.cat))];$("#filters").innerHTML=cats.map(c=>`<button class="${c===category?"active":""}" data-cat="${c}">${c}</button>`).join("");
+ $$("#filters button").forEach(b=>b.onclick=()=>{category=b.dataset.cat;renderGames()});
+ let q=$("#search").value.toLowerCase();let list=games.filter(g=>(category==="All"||g.cat===category)&&(g.name+" "+g.desc+" "+g.cat).toLowerCase().includes(q));
+ $("#gameGrid").innerHTML=list.map(g=>`<article class="card"><div><div class="emoji">${g.icon}</div><span class="tag">${g.cat}</span><h3>${g.name}</h3><p>${g.desc}</p></div><button class="primary" onclick="launch('${g.id}')">PLAY ▶</button></article>`).join("");
+}
+$("#search").addEventListener("input",renderGames);
+
+/* CLICKER FACTORY */
+function startClicker(title,emoji,key,baseNames){
+ let d=document.createElement("div");d.innerHTML=`<div class="gamePanel"><h1>${emoji} ${title}</h1><div class="hud"><div class="stat">Money: <b id="cm">0</b></div><div class="stat">Per click: <b id="cc">1</b></div><div class="stat">Per sec: <b id="cs">0</b></div><div class="stat">Prestige: <b id="cp">0</b></div></div><button class="primary" id="clickBtn" style="font-size:28px;padding:30px;width:100%">CLICK!</button><div class="shop" id="shop"></div><br><button id="prestige">✨ Prestige (requires 100,000)</button></div>`;$("#gameUI").appendChild(d);
+ let s=profile.clicker;let k=key||"generic";s.items[k]??={power:0,auto:0,crit:0};let x=s.items[k];
+ function update(){let p=s.prestige||0;$("#cm").textContent=Math.floor(s.money).toLocaleString();$("#cc").textContent=Math.floor(s.perClick*(1+p*.25));$("#cs").textContent=Math.floor(s.perSec*(1+p*.25));$("#cp").textContent=p}
+ $("#clickBtn").onclick=()=>{let mult=Math.random()<(.05+x.crit*.02)?10:1;s.money+=s.perClick*(1+(s.prestige||0)*.25)*mult;sound(mult===10?900:520,.035);update();if(s.money>1000)ach("click1000","1,000 clicks worth of cash")};
+ const upgrades=[
+ ["power","Stronger Click","Each level +1 click",10,1],
+ ["auto","Auto Machine","Each level +1/sec",30,1],
+ ["crit","Lucky Hands","Each level +2% mega-click",100,.02]
+ ];
+ $("#shop").innerHTML=upgrades.map(u=>`<div class="shopItem"><b>${u[1]}</b><div class="small">${u[2]}</div><div>Level: <b id="${u[0]}lv">0</b></div><button id="${u[0]}buy">Buy (<span id="${u[0]}cost">${u[3]}</span>)</button></div>`).join("");
+ upgrades.forEach(u=>{$("#"+u[0]+"buy").onclick=()=>{let lv=x[u[0]];let cost=Math.floor(u[3]*Math.pow(1.6,lv));if(s.money>=cost){s.money-=cost;x[u[0]]++;if(u[0]==="power")s.perClick++;if(u[0]==="auto")s.perSec++;update();$("#"+u[0]+"lv").textContent=x[u[0]];$("#"+u[0]+"cost").textContent=Math.floor(u[3]*Math.pow(1.6,x[u[0]]));sound(700,.04)}else toast("Not enough cash!")}})
+ $("#prestige").onclick=()=>{if(s.money>=100000){s.money=0;s.perClick=1;s.perSec=0;s.items[k]={power:0,auto:0,crit:0};s.prestige++;ach("prestige","First Prestige!");update()}else toast("Need 100,000 cash")};
+ let last=performance.now();loop(t=>{let dt=(t-last)/1000;last=t;s.money+=s.perSec*dt*(1+(s.prestige||0)*.25);update()});
+ update();
+}
+function startCookie(){startClicker("Cookie Reactor","🍪","cookie")}
+function startMineClick(){startClicker("Mining Tycoon","⛏️","mine")}
+function startStarClick(){startClicker("Star Factory","⭐","star")}
+function startFishClick(){startClicker("Fish Empire","🐟","fish")}
+
+/* TOP-DOWN SHOOTER */
+function startArena(){
+ let c=canvas(),ctx=c.getContext("2d"),mouse={x:450,y:260,down:false},p={x:450,y:260,w:20,h:20,hp:100,score:0,ammo:999},bullets=[],en=[],wave=1,lastShot=0;
+ c.onmousemove=e=>{let r=c.getBoundingClientRect();mouse.x=(e.clientX-r.left)*c.width/r.width;mouse.y=(e.clientY-r.top)*c.height/r.height};c.onmousedown=()=>mouse.down=true;c.onmouseup=()=>mouse.down=false;
+ shell("Neon Arena FPS","WASD move • mouse aim • click fire",c);hud([["hp","❤️ 100"],["score","Score: 0"],["wave","Wave: 1"]]);
+ function spawn(){let side=rint(0,3),x=side===0?0:side===1?900:rint(0,900),y=side===2?0:side===3?520:rint(0,520);en.push({x,y,w:22,h:22,hp:20+wave*4,spd:35+wave*3})}
+ for(let i=0;i<5;i++)spawn();let last=performance.now(),spawnT=0;
+ loop(t=>{let dt=Math.min(.04,(t-last)/1000);last=t;let k=keys();p.x+=((k.d?1:0)-(k.a?1:0))*230*dt;p.y+=((k.s?1:0)-(k.w?1:0))*230*dt;p.x=clamp(p.x,10,870);p.y=clamp(p.y,10,490);
+  if(mouse.down&&t-lastShot>110){lastShot=t;let dx=mouse.x-p.x,dy=mouse.y-p.y,l=Math.hypot(dx,dy)||1;bullets.push({x:p.x,y:p.y,vx:dx/l*600,vy:dy/l*600});sound(180,.025)}
+  bullets.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt});bullets=bullets.filter(b=>b.x>-20&&b.x<920&&b.y>-20&&b.y<540);
+  spawnT+=dt;if(spawnT>Math.max(.25,1-wave*.035)){spawn();spawnT=0}
+  en.forEach(z=>{let dx=p.x-z.x,dy=p.y-z.y,l=Math.hypot(dx,dy)||1;z.x+=dx/l*z.spd*dt;z.y+=dy/l*z.spd*dt;if(rectHit(p,z)){p.hp-=25*dt}});
+  for(let bi=bullets.length-1;bi>=0;bi--)for(let zi=en.length-1;zi>=0;zi--)if(rectHit({x:bullets[bi].x-4,y:bullets[bi].y-4,w:8,h:8},en[zi])){en[zi].hp-=10;bullets.splice(bi,1);if(en[zi]&&en[zi].hp<=0){p.score+=10;en.splice(zi,1);if(p.score%100===0)wave++;}break}
+  ctx.clearRect(0,0,900,520);ctx.fillStyle="#07111b";ctx.fillRect(0,0,900,520);ctx.strokeStyle="#12263b";for(let x=0;x<900;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,520);ctx.stroke()}for(let y=0;y<520;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(900,y);ctx.stroke()}
+  bullets.forEach(b=>{ctx.fillStyle="#00eaff";ctx.beginPath();ctx.arc(b.x,b.y,4,0,7);ctx.fill()});en.forEach(z=>{ctx.fillStyle="#ff4264";ctx.fillRect(z.x,z.y,z.w,z.h);ctx.fillStyle="#fff";ctx.fillRect(z.x,z.y-5,z.w*(z.hp/(20+wave*4)),3)});ctx.fillStyle="#7c5cff";ctx.fillRect(p.x-10,p.y-10,20,20);ctx.strokeStyle="#fff";ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(mouse.x,mouse.y);ctx.stroke();
+  $("#hp").textContent="❤️ "+Math.max(0,Math.floor(p.hp));$("#score").textContent="Score: "+p.score;$("#wave").textContent="Wave: "+wave;
+  if(p.hp<=0){ach("arena","Survived the Neon Arena");toast("Game over — score "+p.score);cleanup();setTimeout(()=>launch("arena"),900)}
+ })
+}
+
+/* ZOMBIE */
+function startZombies(){
+ let c=canvas(),ctx=c.getContext("2d"),p={x:450,y:260,hp:100,score:0},z=[],bul=[],mouse={x:450,y:260,down:false},wave=1,timer=0,last=0;
+ c.onmousemove=e=>{let r=c.getBoundingClientRect();mouse.x=(e.clientX-r.left)*900/r.width;mouse.y=(e.clientY-r.top)*520/r.height};c.onmousedown=()=>mouse.down=true;c.onmouseup=()=>mouse.down=false;shell("Zombie Holdout","WASD • aim • click",c);hud([["zhp","❤️ 100"],["zs","Kills: 0"],["zw","Wave: 1"]]);
+ loop(t=>{let dt=Math.min(.04,(t-last)/1000);last=t,k=keys();p.x+=((k.d?1:0)-(k.a?1:0))*210*dt;p.y+=((k.s?1:0)-(k.w?1:0))*210*dt;p.x=clamp(p.x,10,890);p.y=clamp(p.y,10,510);timer+=dt;if(timer>1){timer=0;for(let i=0;i<Math.ceil(wave/2);i++){let a=rand(0,7),r=300;z.push({x:p.x+Math.cos(a)*r,y:p.y+Math.sin(a)*r,hp:20+wave*3})}if(p.score&&p.score%15===0)wave++}
+ if(mouse.down&&t-last>130){last=t;let dx=mouse.x-p.x,dy=mouse.y-p.y,l=Math.hypot(dx,dy)||1;bul.push({x:p.x,y:p.y,vx:dx/l*620,vy:dy/l*620})}
+ bul.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt});z.forEach(e=>{let dx=p.x-e.x,dy=p.y-e.y,l=Math.hypot(dx,dy)||1;e.x+=dx/l*(40+wave*2)*dt;e.y+=dy/l*(40+wave*2)*dt;if(l<24)p.hp-=18*dt});
+ for(let i=bul.length-1;i>=0;i--)for(let j=z.length-1;j>=0;j--)if(Math.hypot(bul[i].x-z[j].x,bul[i].y-z[j].y)<18){z[j].hp-=20;bul.splice(i,1);if(z[j].hp<=0){z.splice(j,1);p.score++;}break}
+ ctx.fillStyle="#080b10";ctx.fillRect(0,0,900,520);ctx.fillStyle="#26341d";ctx.fillRect(20,20,860,480);ctx.fillStyle="#5cff85";ctx.fillRect(p.x-10,p.y-10,20,20);z.forEach(e=>{ctx.fillStyle="#8bbd55";ctx.fillRect(e.x-10,e.y-10,20,20)});ctx.fillStyle="#ffdc55";bul.forEach(b=>ctx.fillRect(b.x-3,b.y-3,6,6));$("#zhp").textContent="❤️ "+Math.floor(p.hp);$("#zs").textContent="Kills: "+p.score;$("#zw").textContent="Wave: "+wave;
+ if(p.hp<=0){ach("zombie","Zombie survivor");toast("You survived "+p.score+" kills");cleanup()}
+ })
+}
+
+/* ASTEROIDS */
+function startAsteroids(){
+ let c=canvas(),ctx=c.getContext("2d"),p={x:450,y:260,a:0,vx:0,vy:0,score:0},rocks=[],shots=[],last=0;
+ for(let i=0;i<9;i++)rocks.push({x:rand(0,900),y:rand(0,520),r:rand(15,35),vx:rand(-50,50),vy:rand(-50,50)});
+ shell("Asteroid Blaster","W/S thrust • A/D rotate • Space fire",c);hud([["ascore","Score: 0"],["alive","Rocks: 9"]]);
+ loop(t=>{let dt=Math.min(.04,(t-last)/1000);last=t,k=keys();p.a+=(k.a?-1:0)*3*dt+(k.d?1:0)*3*dt;if(k.w){p.vx+=Math.cos(p.a)*150*dt;p.vy+=Math.sin(p.a)*150*dt}p.x=(p.x+p.vx*dt+900)%900;p.y=(p.y+p.vy*dt+520)%520;p.vx*=.995;p.vy*=.995;if(k[" "]&&t-last>160){last=t;shots.push({x:p.x,y:p.y,vx:Math.cos(p.a)*500+p.vx,vy:Math.sin(p.a)*500+p.vy})}
+ shots.forEach(s=>{s.x=(s.x+s.vx*dt+900)%900;s.y=(s.y+s.vy*dt+520)%520});rocks.forEach(r=>{r.x=(r.x+r.vx*dt+900)%900;r.y=(r.y+r.vy*dt+520)%520});for(let i=shots.length-1;i>=0;i--)for(let j=rocks.length-1;j>=0;j--)if(Math.hypot(shots[i].x-rocks[j].x,shots[i].y-rocks[j].y)<rocks[j].r){p.score+=10;shots.splice(i,1);let r=rocks[j];rocks.splice(j,1);if(r.r>22){for(let q=0;q<2;q++)rocks.push({x:r.x,y:r.y,r:r.r/1.7,vx:rand(-100,100),vy:rand(-100,100)})}break}
+ ctx.fillStyle="#03050a";ctx.fillRect(0,0,900,520);ctx.strokeStyle="#fff";rocks.forEach(r=>{ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,7);ctx.stroke()});shots.forEach(s=>{ctx.fillRect(s.x-2,s.y-2,4,4)});ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.beginPath();ctx.moveTo(16,0);ctx.lineTo(-12,9);ctx.lineTo(-8,0);ctx.lineTo(-12,-9);ctx.closePath();ctx.stroke();ctx.restore();$("#ascore").textContent="Score: "+p.score;$("#alive").textContent="Rocks: "+rocks.length;if(!rocks.length){ach("asteroid","Cleared an asteroid field");for(let i=0;i<10;i++)rocks.push({x:rand(0,900),y:rand(0,520),r:rand(15,35),vx:rand(-50,50),vy:rand(-50,50)})}
+ })
+}
+
+/* SNAKE */
+function startSnake(){
+ let c=canvas(600,600),ctx=c.getContext("2d"),s=[{x:10,y:10}],dir={x:1,y:0},next=dir,food={x:rint(0,19),y:rint(0,19)},score=0,last=0,over=false;
+ addEventListener("keydown",snakeKey);function snakeKey(e){let k=e.key.toLowerCase();if(k==="arrowup"||k==="w")next={x:0,y:-1};if(k==="arrowdown"||k==="s")next={x:0,y:1};if(k==="arrowleft"||k==="a")next={x:-1,y:0};if(k==="arrowright"||k==="d")next={x:1,y:0}}
+ shell("Snake","Arrow keys / WASD",c);hud([["snakeScore","Score: 0"]]);
+ loop(t=>{if(t-last<90)return;last=t;if(over)return;dir=next;let h={x:s[0].x+dir.x,y:s[0].y+dir.y};if(h.x<0||h.y<0||h.x>=20||h.y>=20||s.some(q=>q.x===h.x&&q.y===h.y)){over=true;toast("Snake score: "+score);if(score>=10)ach("snake10","Snake 10");return}s.unshift(h);if(h.x===food.x&&h.y===food.y){score++;food={x:rint(0,19),y:rint(0,19)};sound(650,.04)}else s.pop();ctx.fillStyle="#071016";ctx.fillRect(0,0,600,600);ctx.fillStyle="#ff5370";ctx.fillRect(food.x*30,food.y*30,30,30);ctx.fillStyle="#50e6a2";s.forEach(q=>ctx.fillRect(q.x*30+2,q.y*30+2,26,26));$("#snakeScore").textContent="Score: "+score})
+ cleanup=()=>{window.removeEventListener("keydown",snakeKey)}
+}
+
+/* BREAKOUT */
+function startBreakout(){
+ let c=canvas(),ctx=c.getContext("2d"),p={x:400,w:110},ball={x:450,y:400,vx:220,vy:-220},br=[],score=0;
+ for(let y=0;y<5;y++)for(let x=0;x<10;x++)br.push({x:65+x*80,y:50+y*25,w:70,h:18,on:true});
+ shell("Breakout","Mouse / A-D moves paddle",c);hud([["bscore","Score: 0"],["bbricks","Bricks: 50"]]);
+ c.onmousemove=e=>{let r=c.getBoundingClientRect();p.x=(e.clientX-r.left)*900/r.width-p.w/2};
+ loop(t=>{let dt=.016,k=keys();if(k.a)p.x-=400*dt;if(k.d)p.x+=400*dt;p.x=clamp(p.x,0,900-p.w);ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<5||ball.x>895)ball.vx*=-1;if(ball.y<5)ball.vy*=-1;if(ball.y>500&&ball.x>p.x&&ball.x<p.x+p.w&&ball.vy>0){ball.vy*=-1;ball.y=490}for(let b of br)if(b.on&&ball.x>b.x&&ball.x<b.x+b.w&&ball.y>b.y&&ball.y<b.y+b.h){b.on=false;ball.vy*=-1;score+=10;break}if(ball.y>530){toast("Ball dropped — score "+score);cleanup()}if(br.every(b=>!b.on)){ach("breakout","Breakout cleared");br.forEach(b=>b.on=true);ball.vx*=1.1;ball.vy*=1.1}
+ ctx.fillStyle="#080b12";ctx.fillRect(0,0,900,520);ctx.fillStyle="#7c5cff";br.forEach(b=>{if(b.on)ctx.fillRect(b.x,b.y,b.w,b.h)});ctx.fillStyle="#00d4ff";ctx.fillRect(p.x,500,p.w,12);ctx.beginPath();ctx.arc(ball.x,ball.y,8,0,7);ctx.fill();$("#bscore").textContent="Score: "+score;$("#bbricks").textContent="Bricks: "+br.filter(b=>b.on).length})
+}
+
+/* PONG */
+function startPong(){
+ let c=canvas(800,500),ctx=c.getContext("2d"),p=230,ai=230,b={x:400,y:250,vx:300,vy:130},ps=0,as=0,last=0;
+ shell("Pong","W/S or ↑/↓ • first to 7",c);hud([["pongScore","You 0 — AI 0"]]);
+ loop(t=>{let dt=Math.min(.04,(t-last)/1000);last=t,k=keys();p+=((k.w||k.arrowup)?-1:0)*350*dt+((k.s||k.arrowdown)?1:0)*350*dt;p=clamp(p,20,480);ai+=Math.sign(b.y-ai)*170*dt;ai=clamp(ai,20,480);b.x+=b.vx*dt;b.y+=b.vy*dt;if(b.y<10||b.y>490)b.vy*=-1;if(b.x<35&&Math.abs(b.y-p)<55){b.vx=Math.abs(b.vx)*1.05;b.vy+=(b.y-p)*2}else if(b.x>765&&Math.abs(b.y-ai)<55)b.vx=-Math.abs(b.vx)*1.05;else if(b.x<0){as++;reset()}else if(b.x>800){ps++;reset()}function reset(){b={x:400,y:250,vx:(Math.random()<.5?1:-1)*300,vy:rand(-160,160)}}ctx.fillStyle="#05070b";ctx.fillRect(0,0,800,500);ctx.fillStyle="#fff";ctx.fillRect(20,p-55,12,110);ctx.fillRect(768,ai-55,12,110);ctx.beginPath();ctx.arc(b.x,b.y,8,0,7);ctx.fill();$("#pongScore").textContent=`You ${ps} — AI ${as}`;if(ps>=7||as>=7){toast(ps>=7?"You won!":"AI won!");cleanup()}})
+}
+
+/* FLAPPY / RUNNER */
+function startFlappy(){simpleCanvasGame("Flappy Slop","Space/click to flap",(c,ctx,state,dt)=>{state.v+=850*dt;state.y+=state.v*dt;state.t+=dt;if(state.t>1.45){state.t=0;state.gaps.push({x:900,g:rint(100,380)})}state.gaps.forEach(g=>g.x-=220*dt);if(state.action){state.v=-300;state.action=false}for(let g of state.gaps)if(g.x<90&&g.x>30&&(state.y<g.g-75||state.y>g.g+75))state.dead=true;if(state.y<0||state.y>520)state.dead=true;ctx.fillStyle="#6bc7ff";ctx.fillRect(0,0,900,520);ctx.fillStyle="#68e08a";state.gaps.forEach(g=>{ctx.fillRect(g.x,0,65,g.g-75);ctx.fillRect(g.x,g.g+75,65,520)});ctx.fillStyle="#ffd24d";ctx.fillRect(70,state.y,28,22)},s=>{s.y=250;s.v=0;s.t=0;s.gaps=[]})}
+function startRunner(){simpleCanvasGame("Slop Runner","A/D or arrows • dodge obstacles",(c,ctx,s,dt)=>{s.x+=s.v*dt;s.t+=dt;if(s.t>1){s.t=0;s.obs.push({x:900,w:30,h:rint(30,100)})}s.obs.forEach(o=>o.x-=s.v*dt);let k=keys();s.y=400-((k.w||k.arrowup)?90:0);if(s.obs.some(o=>o.x<100&&o.x+o.w>70&&s.y+30>500-o.h))s.dead=true;s.v+=dt*7;ctx.fillStyle="#0a1020";ctx.fillRect(0,0,900,520);ctx.fillStyle="#26384b";ctx.fillRect(0,430,900,90);ctx.fillStyle="#9d7cff";ctx.fillRect(75,s.y,30,30);ctx.fillStyle="#ff5577";s.obs.forEach(o=>ctx.fillRect(o.x,500-o.h,o.w,o.h))},s=>{s.x=0;s.y=400;s.v=250;s.t=0;s.obs=[]})}
+function simpleCanvasGame(title,help,draw,reset){
+ let c=canvas(),ctx=c.getContext("2d"),s={action:false,dead:false,score:0};reset(s);shell(title,help,c);hud([["simpleScore","Score: 0"]]);c.onclick=()=>s.action=true;let last=performance.now();loop(t=>{let dt=Math.min(.04,(t-last)/1000);last=t;if(!s.dead){draw(c,ctx,s,dt);s.score+=dt;$("#simpleScore").textContent="Score: "+Math.floor(s.score)}else{ctx.fillStyle="#000b";ctx.fillRect(0,0,900,520);ctx.fillStyle="#fff";ctx.font="42px system-ui";ctx.fillText("GAME OVER — press R",250,260);if(keys().r){s.dead=false;s.score=0;reset(s)}}})
+}
+
+/* SPACE INVADERS */
+function startSpaceInv(){
+ let c=canvas(),ctx=c.getContext("2d"),px=430,ali=[],bul=[],dir=1,score=0,last=0;for(let y=0;y<4;y++)for(let x=0;x<10;x++)ali.push({x:100+x*65,y:60+y*38,on:true});shell("Space Invaders","A/D • Space fire",c);hud([["si","Score: 0"],["sl","Aliens: 40"]]);
+ loop(t=>{let dt=.016,k=keys();px+=((k.a||k.arrowleft)?-1:0)*320*dt+((k.d||k.arrowright)?1:0)*320*dt;px=clamp(px,10,850);if(k[" "]&&t-last>180){last=t;bul.push({x:px+20,y:470})}let min=900,max=0;ali.filter(a=>a.on).forEach(a=>{a.x+=dir*30*dt;min=Math.min(min,a.x);max=Math.max(max,a.x+35)});if(max>890||min<10){dir*=-1;ali.forEach(a=>a.y+=18)}bul.forEach(b=>b.y-=450*dt);for(let b of bul)for(let a of ali)if(a.on&&b.x>a.x&&b.x<a.x+35&&b.y>a.y&&b.y<a.y+22){a.on=false;score+=10;b.y=-99}ctx.fillStyle="#03050a";ctx.fillRect(0,0,900,520);ctx.fillStyle="#ff5877";ali.forEach(a=>{if(a.on)ctx.fillRect(a.x,a.y,35,22)});ctx.fillStyle="#56e8ff";bul.forEach(b=>ctx.fillRect(b.x,b.y,5,12));ctx.fillRect(px,480,40,15);$("#si").textContent="Score: "+score;$("#sl").textContent="Aliens: "+ali.filter(a=>a.on).length;if(!ali.some(a=>a.on)){ach("invaders","Invaders defeated");cleanup();toast("You cleared the fleet!")}})
+}
+
+/* MEMORY */
+function startMemory(){
+ let c=document.createElement("div");c.className="gamePanel";c.innerHTML="<h2>🧠 Memory Match</h2><p>Find all pairs.</p><div id='memGrid' class='grid'></div><p id='memInfo'></p>";$("#gameUI").appendChild(c);let vals=["🍕","🚀","🐸","👾","💎","🍔","⚡","🌈","🐉","🎯","🍩","🦊"].flatMap(x=>[x,x]).sort(()=>Math.random()-.5),open=[],found=0,moves=0;let g=$("#memGrid");g.style.gridTemplateColumns="repeat(4,1fr)";vals.forEach((v,i)=>{let b=document.createElement("button");b.style.fontSize="30px";b.style.height="70px";b.textContent="❓";b.onclick=()=>{if(open.length>=2||b.dataset.done)return;b.textContent=v;open.push([b,v]);moves++;if(open.length===2){if(open[0][1]===open[1][1]){open.forEach(q=>q[0].dataset.done=1);open=[];found++;sound(700,.05);if(found===12){ach("memory","Memory master");$("#memInfo").textContent="Solved in "+moves+" moves!"}}else setTimeout(()=>{open.forEach(q=>q[0].textContent="❓");open=[]},500)}};g.appendChild(b)});$("#memInfo").textContent="Moves: 0"}
+/* MINES */
+function startMines(){
+ let w=10,h=10,n=15,grid=Array.from({length:w*h},()=>({mine:false,open:false,flag:false}));grid.sort(()=>Math.random()-.5).slice(0,n).forEach(x=>x.mine=true);let d=document.createElement("div");d.className="gamePanel";d.innerHTML="<h2>💣 Mines</h2><p id='mineInfo'>Clear safe squares.</p><div id='mineGrid' class='grid'></div>";$("#gameUI").appendChild(d);let g=$("#mineGrid");g.style.gridTemplateColumns="repeat(10,1fr)";function count(i){let x=i%w,y=Math.floor(i/w),c=0;for(let yy=y-1;yy<=y+1;yy++)for(let xx=x-1;xx<=x+1;xx++){let j=yy*w+xx;if(xx>=0&&xx<w&&yy>=0&&yy<h&&grid[j].mine)c++}return c}grid.forEach((cell,i)=>{let b=document.createElement("button");b.style.padding="8px 2px";b.textContent="";b.onclick=()=>{if(cell.open)return;cell.open=true;if(cell.mine){b.textContent="💣";$("#mineInfo").textContent="Boom! Refresh the game to try again.";ach("minefail","Found a mine");return}let n=count(i);b.textContent=n||"·";b.style.background="#1a6247";if(grid.filter(x=>x.open&&!x.mine).length===w*h-n){ach("mines","Minesweeper cleared");$("#mineInfo").textContent="Cleared!"}};g.appendChild(b)})}
+/* REACTION */
+function startReaction(){
+ let d=document.createElement("div");d.className="gamePanel";d.innerHTML="<h1>⚡ Reaction Test</h1><button id='react' style='width:100%;height:260px;font-size:40px'>WAIT...</button><p id='reactInfo'>Click start, wait for green.</p>";$("#gameUI").appendChild(d);let b=$("#react"),info=$("#reactInfo"),start=0,timer;function arm(){b.textContent="WAIT...";b.disabled=false;start=0;timer=setTimeout(()=>{b.textContent="CLICK!";b.dataset.go=1;start=performance.now()},rint(1200,4000))}b.onclick=()=>{if(!b.dataset.go){clearTimeout(timer);info.textContent="Too early!";arm()}else{let ms=Math.round(performance.now()-start);info.textContent="Reaction: "+ms+" ms";b.dataset.go="";if(ms<250)ach("fast","Lightning reaction");setTimeout(arm,900)}};arm()}
+/* MATH */
+function startMath(){let d=document.createElement("div");d.className="gamePanel";d.innerHTML="<h1>➗ Math Rush</h1><div id='eq' style='font-size:50px'></div><input id='ans' type='number' style='width:100%;padding:15px;margin:10px 0'><button id='submit' class='primary'>SUBMIT</button><p id='mi'></p>";$("#gameUI").appendChild(d);let score=0,end=performance.now()+60000,a,b,op,ans;function q(){a=rint(2,30);b=rint(2,30);op=["+","-","×"][rint(0,2)];ans=op==="+"?a+b:op==="-"?a-b:a*b;$("#eq").textContent=`${a} ${op} ${b} = ?`;$("#ans").value="";$("#ans").focus()}$("#submit").onclick=()=>{if(+$("#ans").value===ans)score++;q()};q();loop(()=>{let left=Math.max(0,Math.ceil((end-performance.now())/1000));$("#mi").textContent=`Score: ${score} • ${left}s`;if(!left){ach("math","Math rush finished");toast("Math score: "+score);cleanup()}})}
+/* LIGHTS OUT */
+function startLights(){let d=document.createElement("div");d.className="gamePanel";d.innerHTML="<h2>💡 Lights Out</h2><div id='lg' class='grid'></div><p id='li'></p>";$("#gameUI").appendChild(d);let a=Array.from({length:25},()=>Math.random()<.5),moves=0,g=$("#lg");g.style.gridTemplateColumns="repeat(5,1fr)";function render(){g.innerHTML="";a.forEach((on,i)=>{let b=document.createElement("button");b.style.height="65px";b.textContent=on?"💡":"·";b.onclick=()=>{[i,i-1,i+1,i-5,i+5].forEach(j=>{if(j>=0&&j<25&&!(j===i-1&&i%5===0)&&!(j===i+1&&i%5===4))a[j]=!a[j]});moves++;render();if(a.every(x=>!x)){ach("lights","Lights Out solved");$("#li").textContent="Solved in "+moves+" moves!"}};g.appendChild(b)}$("#li").textContent="Moves: "+moves}render()}
+
+/* 2D BLOCKCRAFT */
+function startCraft(){
+ let c=canvas(800,500),ctx=c.getContext("2d"),tile=25,world=Array.from({length:20},(_,y)=>Array.from({length:32},(_,x)=>y>14?(y>17?2:1):0)),inv=profile.sandbox.inventory;
+ shell("Blockcraft 2D","A/D move • W jump • click mine • Shift+click place",c);hud([["inv","Dirt: 30 | Stone: 10 | Wood: 10"],["craftInfo","Mine blocks and build!"]]);
+ c.oncontextmenu=e=>e.preventDefault();let mouse={x:0,y:0};c.onmousemove=e=>{let r=c.getBoundingClientRect();mouse.x=Math.floor((e.clientX-r.left)*800/r.width/tile);mouse.y=Math.floor((e.clientY-r.top)*500/r.height/tile)};c.onclick=e=>{let x=mouse.x,y=mouse.y;if(x>=0&&x<32&&y>=0&&y<20){if(e.shiftKey){if(world[y][x]===0&&inv.dirt>0){world[y][x]=1;inv.dirt--}}else if(world[y][x]){let type=world[y][x]===2?"stone":"dirt";inv[type]=(inv[type]||0)+1;world[y][x]=0;sound(260,.03)}}};let px=390,py=250,vy=0,last=0;loop(t=>{let dt=.016,k=keys();px+=((k.a||k.arrowleft)?-1:0)*150*dt+((k.d||k.arrowright)?1:0)*150*dt;vy+=700*dt;if((k.w||k.arrowup)&&py>300)vy=-300;py+=vy*dt;if(py>350){py=350;vy=0}px=clamp(px,0,770);ctx.fillStyle="#79c8ff";ctx.fillRect(0,0,800,500);for(let y=0;y<20;y++)for(let x=0;x<32;x++){let b=world[y][x];if(b){ctx.fillStyle=b===1?"#8b5a35":"#777";ctx.fillRect(x*tile,y*tile,tile,tile);ctx.strokeStyle="#0004";ctx.strokeRect(x*tile,y*tile,tile,tile)}}ctx.fillStyle="#e44";ctx.fillRect(px,py,20,35);$("#inv").textContent=`Dirt: ${inv.dirt||0} | Stone: ${inv.stone||0} | Wood: ${inv.wood||0}`})}
+/* DUNGEON */
+function startDungeon(){let d=document.createElement("div");d.className="gamePanel";d.innerHTML="<h1>⚔️ Dungeon Loot</h1><div class='hud'><div class='stat'>❤️ <b id='dhp'>100</b></div><div class='stat'>⚔️ <b id='dmg'>12</b></div><div class='stat'>💰 <b id='gold'>0</b></div><div class='stat'>Floor <b id='floor'>1</b></div></div><p id='enemy'></p><div class='row'><button id='attack' class='primary'>Attack</button><button id='heal'>Potion</button><button id='upgrade'>Upgrade weapon</button></div><p id='dlog'></p>";$("#gameUI").appendChild(d);let hp=100,dmg=12,gold=0,floor=1,ehp=35;function enemy(){ehp=30+floor*18;$("#enemy").textContent=`Enemy has ${ehp} HP`}function ui(){$("#dhp").textContent=hp;$("#dmg").textContent=dmg;$("#gold").textContent=gold;$("#floor").textContent=floor;$("#enemy").textContent=`Enemy has ${ehp} HP`};$("#attack").onclick=()=>{ehp-=dmg;if(ehp<=0){gold+=10+floor*3;floor++;sound(800,.05);enemy();ach("dungeon","Cleared a dungeon floor")}else hp-=rint(4,12)+floor;ui();if(hp<=0){toast("Defeated on floor "+floor);cleanup()}};$("#heal").onclick=()=>{if(gold>=10){gold-=10;hp=Math.min(100,hp+35);ui()}};$("#upgrade").onclick=()=>{if(gold>=25){gold-=25;dmg+=8;ui()}};enemy();ui()}
+/* FARM */
+function startFarm(){let d=document.createElement("div");d.className="gamePanel";d.innerHTML="<h1>🌱 Tiny Farm</h1><p>Plant seeds, wait, harvest and upgrade.</p><div id='farm' class='grid'></div><p id='fi'></p>";$("#gameUI").appendChild(d);let plots=Array.from({length:12},()=>({state:"empty",t:0})),coins=0;function render(){let g=$("#farm");g.innerHTML="";plots.forEach((p,i)=>{let b=document.createElement("button");b.style.height="90px";b.innerHTML=p.state==="empty"?"🟫":p.state==="growing"?"🌱":"🌾";b.onclick=()=>{if(p.state==="empty"){p.state="growing";p.t=Date.now()}else if(p.state==="ready"){p.state="empty";coins+=10;ach("farmer","Harvested a crop")}render()};g.appendChild(b)});$("#fi").textContent="Coins: "+coins}render();let id=setInterval(()=>{plots.forEach(p=>{if(p.state==="growing"&&Date.now()-p.t>3000)p.state="ready"});render()},500);cleanup=()=>clearInterval(id)}
+/* SPORTS */
+function startPenalty(){let c=canvas(),ctx=c.getContext("2d"),x=450,y=430,keeper=450,score=0;let shoot=false;c.onclick=e=>{let r=c.getBoundingClientRect();x=(e.clientX-r.left)*900/r.width;y=(e.clientY-r.top)*520/r.height;shoot=true};shell("Penalty King","Click where you want to shoot",c);hud([["pen","Goals: 0 / 10"]]);loop(t=>{keeper=450+Math.sin(t/400)*230;ctx.fillStyle="#116b3a";ctx.fillRect(0,0,900,520);ctx.fillStyle="#fff";ctx.fillRect(350,60,200,10);ctx.fillStyle="#ffcf45";ctx.fillRect(keeper-25,55,50,15);ctx.beginPath();ctx.arc(450,450,15,0,7);ctx.fill();if(shoot){shoot=false;if(Math.abs(x-keeper)>45&&y<100){score++;sound(900,.05)}else sound(150,.05);$("#pen").textContent=`Goals: ${score} / 10`;if(score>=10){ach("penalty","Penalty King");toast("Perfect shootout!");cleanup()}}})}
+function startBasket(){simpleCanvasGame("Hoop Shot","Click/tap the hoop area to score",(c,ctx,s,dt)=>{s.t+=dt;s.cool=(s.cool||0)-dt;if(s.action&&s.cool<=0){s.action=false;s.cool=.25;if(Math.random()<.62)s.score+=2}ctx.fillStyle="#b87c52";ctx.fillRect(0,0,900,520);ctx.strokeStyle="#fff";ctx.lineWidth=8;ctx.strokeRect(620,170,130,90);ctx.beginPath();ctx.arc(685,260,35,0,7);ctx.stroke();ctx.fillStyle="#f07835";ctx.beginPath();ctx.arc(450,400,20,0,7);ctx.fill()},s=>{s.t=0;s.cool=0})}
+function startRacer(){simpleCanvasGame("Pixel Racer","A/D or arrows to steer",(c,ctx,s,dt)=>{let k=keys();s.x=(s.x||450)+((k.a||k.arrowleft)?-1:0)*300*dt+((k.d||k.arrowright)?1:0)*300*dt;s.x=clamp(s.x,220,680);s.t+=dt;if(s.t>(s.spawn||0)+.8){s.spawn=s.t;s.cars??=[];s.cars.push({x:rand(230,670),y:-50})}s.cars?.forEach(o=>o.y+=(220+s.score*2)*dt);if(s.cars?.some(o=>Math.abs(o.x-s.x)<35&&o.y>420))s.dead=true;ctx.fillStyle="#252936";ctx.fillRect(180,0,440,520);ctx.fillStyle="#fff";for(let y=-50;y<520;y+=90)ctx.fillRect(395,y+(s.t*180)%90,10,45);ctx.fillStyle="#39e58c";ctx.fillRect(s.x-18,430,36,60);ctx.fillStyle="#ff5570";s.cars?.forEach(o=>ctx.fillRect(o.x-18,o.y,36,60))},s=>{s.x=450;s.t=0;s.spawn=0;s.cars=[]})}
+
+/* MINI GENERIC GAMES */
+function startMini(){let g=games.find(x=>x.id===current),title=g?.name||"Mini Game";simpleCanvasGame(title,"Click targets and survive as long as possible",(c,ctx,s,dt)=>{s.t+=dt;s.x??=rand(30,870);s.y??=rand(30,490);s.cool=(s.cool||0)-dt;if(s.cool<=0){s.x=rand(30,870);s.y=rand(30,490);s.cool=.65}if(s.action){if(Math.hypot(s.mx-s.x,s.my-s.y)<45)s.score+=3;s.action=false}s.mx??=0;s.my??=0;ctx.fillStyle="#0b1020";ctx.fillRect(0,0,900,520);ctx.fillStyle="#7c5cff";ctx.beginPath();ctx.arc(s.x,s.y,35+Math.sin(s.t*8)*5,0,7);ctx.fill();ctx.fillStyle="#fff";ctx.font="18px system-ui";ctx.fillText("CLICK THE MOVING TARGET",320,30)},s=>{s.x=450;s.y=260;s.t=0;s.cool=0;s.score=0;s.mx=0;s.my=0})}
+/* generated */
+function startGenerated(num,title){simpleCanvasGame(title,"Move with WASD and click the targets",(c,ctx,s,dt)=>{let k=keys();s.px=(s.px||450)+((k.a?-1:0)+(k.d?1:0))*220*dt;s.py=(s.py||260)+((k.w?-1:0)+(k.s?1:0))*220*dt;s.px=clamp(s.px,20,880);s.py=clamp(s.py,20,500);s.t+=dt;s.tx=450+Math.cos(s.t*(1+num%5))*300;s.ty=260+Math.sin(s.t*(1+num%7))*180;if(s.action){if(Math.hypot(s.px-s.tx,s.py-s.ty)<70)s.score+=5;s.action=false}ctx.fillStyle="#080c18";ctx.fillRect(0,0,900,520);ctx.fillStyle="#00d4ff";ctx.beginPath();ctx.arc(s.tx,s.ty,30,0,7);ctx.fill();ctx.fillStyle="#7c5cff";ctx.fillRect(s.px-12,s.py-12,24,24)},s=>{s.px=450;s.py=260;s.t=0;s.score=0})}
+
+/* COIN/DICE ETC special-ish cards use generic engine but names remain playable */
+renderGames();
+setInterval(saveAll,30000);
 </script>
 </body>
 </html>
