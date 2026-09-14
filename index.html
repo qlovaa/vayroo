@@ -31,7 +31,7 @@ canvas{display:block;background:#070b12;max-width:100%;image-rendering:auto}.hud
 </head>
 <body>
 <header>
-  <div class="logo">SLOP<b>BOX</b> ARCADE</div><span class="tag">200+ procedural games • no installs • one HTML file</span>
+  <div class="logo">SLOP<b>BOX</b> ARCADE</div><span class="tag">240 REAL PLAYABLE GAMES • NO INSTALL • ONE HTML FILE</span>
   <input id="search" placeholder="Search 200+ games…">
   <select id="sort"><option value="popular">Popular</option><option value="name">Name</option><option value="new">Newest</option></select>
 </header>
@@ -102,7 +102,12 @@ const gameList=[]; let gid=0;
    rules, speed, colours/theme and progression parameters. */
 for(let t=0;t<themes.length;t++){
   for(let v=0;v<15;v++){
-    const type=themes[t].toLowerCase();
+    const type=({
+  Clicker:"clicker", Blaster:"shooter", Runner:"runner", Dodge:"dodge",
+  Snake:"snake", Breakout:"breakout", Memory:"memory", Mines:"mines",
+  Platform:"platform", Sandbox:"voxel", Typing:"typing", Reaction:"reaction",
+  Pong:"pong", Invaders:"invaders", Fishing:"fishing", Tower:"tower"
+})[themes[t]];
     gameList.push({
       id:"g"+(++gid),
       name:`${names[(v+t*2)%names.length]} ${themes[t]} ${v+1}`,
@@ -128,7 +133,7 @@ $("#search").oninput=render; $("#sort").onchange=render;
 function render(){
   const q=$("#search").value.toLowerCase();
   const cat=document.querySelector(".cat.active")?.dataset.cat||"All";
-  let arr=gameList.filter(g=>(cat==="All"||g.type===cat.toLowerCase()) &&
+  let arr=gameList.filter(g=>(cat==="All" || ({Clicker:"clicker",Blaster:"shooter",Runner:"runner",Dodge:"dodge",Snake:"snake",Breakout:"breakout",Memory:"memory",Mines:"mines",Platform:"platform",Sandbox:"voxel",Typing:"typing",Reaction:"reaction",Pong:"pong",Invaders:"invaders",Fishing:"fishing",Tower:"tower"})[cat]===g.type) &&
     (!q||(g.name+" "+g.tags).toLowerCase().includes(q)));
   if($("#sort").value==="name")arr.sort((a,b)=>a.name.localeCompare(b.name));
   if($("#sort").value==="new")arr.sort((a,b)=>b.id.localeCompare(a.id));
@@ -411,6 +416,18 @@ for(const g of gameList)if(!engines[g.type])engines[g.type]=genericArcade;
 
 /* Keyboard shortcut: Escape returns to the library. */
 addEventListener("keydown",e=>{if(e.key==="Escape"&&gameView.style.display!=="none")backToLibrary()});
+window.addEventListener("error",e=>{
+  console.error(e.error||e.message);
+  if(gameView.style.display!=="none"){
+    const old=stage.querySelector(".runtime-error"); if(old) old.remove();
+    const o=document.createElement("div"); o.className="overlay runtime-error";
+    o.innerHTML=`<div class="modal"><h2>Game error</h2><p>This game hit a browser error. Try Restart or choose another game.</p><button id="errRestart">Restart</button> <button id="errBack">Arcade</button></div>`;
+    stage.appendChild(o);
+    o.querySelector("#errRestart").onclick=restartGame;
+    o.querySelector("#errBack").onclick=backToLibrary;
+  }
+});
+
 </script>
 </body>
 </html>
