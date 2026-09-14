@@ -1,2588 +1,3420 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>KACPER™ — The Official Glazing Department</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#050508">
+<meta name="description" content="KACPER // THE DIGITAL EMPIRE">
+<title>KACPER // DIGITAL EMPIRE</title>
 
 <style>
+/* ============================================================
+   KACPER // DIGITAL EMPIRE
+   Single-file cinematic website
+   No frameworks. No build step. Just HTML, CSS and JavaScript.
+   ============================================================ */
 
-/* =========================================================
-   RESET
-========================================================= */
-
-* {
+/* -------------------- RESET -------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+}
+
+:root {
+    --bg: #040406;
+    --bg-soft: #09090e;
+    --panel: rgba(255,255,255,.045);
+    --panel-strong: rgba(255,255,255,.075);
+    --line: rgba(255,255,255,.09);
+    --text: #f7f7fb;
+    --muted: #777785;
+    --muted-2: #4b4b57;
+    --purple: #8b5cf6;
+    --cyan: #22d3ee;
+    --pink: #ec4899;
+    --green: #4ade80;
+    --yellow: #facc15;
+    --radius: 22px;
+    --max: 1400px;
 }
 
 html {
     scroll-behavior: smooth;
+    background: var(--bg);
 }
 
 body {
-    background: #030305;
-    color: #fff;
-    font-family: "Inter", sans-serif;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 15% 15%, rgba(139,92,246,.09), transparent 28%),
+        radial-gradient(circle at 85% 30%, rgba(34,211,238,.06), transparent 25%),
+        var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
     overflow-x: hidden;
-    cursor: none;
+}
+
+body.no-scroll {
+    overflow: hidden;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
 }
 
 button,
-a {
-    cursor: none;
+input {
+    font: inherit;
+}
+
+button {
+    border: 0;
+}
+
+img {
+    max-width: 100%;
+    display: block;
 }
 
 ::selection {
-    background: #8b5cf6;
-    color: white;
+    background: #a78bfa;
+    color: #fff;
 }
 
+/* -------------------- GLOBAL EFFECTS -------------------- */
+.noise {
+    position: fixed;
+    inset: -50%;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: .035;
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    transform: rotate(7deg);
+}
 
-/* =========================================================
-   LOADING SCREEN
-========================================================= */
+.vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    background: radial-gradient(circle, transparent 35%, rgba(0,0,0,.65) 100%);
+}
 
+#stars {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    pointer-events: none;
+}
+
+#energyCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: -9;
+    pointer-events: none;
+    opacity: .6;
+}
+
+.ambient {
+    position: fixed;
+    inset: 0;
+    z-index: -8;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.orb {
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: .1;
+    mix-blend-mode: screen;
+}
+
+.orb-a {
+    left: -240px;
+    top: 10%;
+    background: var(--purple);
+    animation: driftA 18s ease-in-out infinite alternate;
+}
+
+.orb-b {
+    right: -240px;
+    top: 35%;
+    background: var(--cyan);
+    animation: driftB 22s ease-in-out infinite alternate;
+}
+
+.orb-c {
+    left: 35%;
+    bottom: -350px;
+    background: var(--pink);
+    animation: driftC 25s ease-in-out infinite alternate;
+}
+
+.scanlines {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    opacity: .025;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 3px,
+        #fff 4px
+    );
+}
+
+/* -------------------- LOADER -------------------- */
 .loader {
     position: fixed;
     inset: 0;
     z-index: 999999;
-    background: #030305;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 1s ease, visibility 1s ease;
+    display: grid;
+    place-items: center;
+    background: #020204;
+    transition: opacity .9s ease, visibility .9s ease;
 }
 
-.loader.hidden {
+.loader.hide {
     opacity: 0;
     visibility: hidden;
 }
 
-.loader-content {
-    text-align: center;
+.loader-inner {
+    width: min(650px, 86vw);
 }
 
-.loader-logo {
-    font-size: clamp(50px, 12vw, 120px);
+.loader-brand {
+    font-size: clamp(60px, 12vw, 150px);
+    line-height: .8;
+    letter-spacing: -.09em;
     font-weight: 900;
-    letter-spacing: -8px;
-    background: linear-gradient(
-        90deg,
-        #fff,
-        #8b5cf6,
-        #22d3ee,
-        #fff
-    );
-    background-size: 300%;
+    background: linear-gradient(90deg, #fff, #8b5cf6, #22d3ee, #fff);
+    background-size: 300% 100%;
     -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
-    animation: gradient 2s linear infinite;
+    animation: gradientMove 2.2s linear infinite;
 }
 
-.loader-text {
-    color: #666;
-    font-size: 12px;
+.loader-sub {
+    margin-top: 28px;
+    color: #5f5f69;
+    font-size: 10px;
     letter-spacing: 4px;
-    margin-top: 15px;
+    text-transform: uppercase;
 }
 
-.loader-bar {
-    width: 280px;
-    height: 3px;
-    background: #15151b;
-    border-radius: 10px;
-    margin: 25px auto 0;
-    overflow: hidden;
+.loader-terminal {
+    margin-top: 26px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(255,255,255,.025);
+    color: #8f8f9b;
+    font: 12px/1.8 monospace;
+    min-height: 92px;
 }
+
+.loader-line {
+    opacity: 0;
+    animation: terminalIn .4s forwards;
+}
+
+.loader-line:nth-child(1) { animation-delay: .2s; }
+.loader-line:nth-child(2) { animation-delay: .55s; }
+.loader-line:nth-child(3) { animation-delay: .9s; }
+.loader-line:nth-child(4) { animation-delay: 1.25s; }
 
 .loader-progress {
-    height: 100%;
-    width: 0;
-    background: linear-gradient(90deg,#8b5cf6,#22d3ee);
-    animation: loading 2.5s forwards;
-}
-
-
-/* =========================================================
-   CANVAS
-========================================================= */
-
-#particles {
-    position: fixed;
-    inset: 0;
-    z-index: -5;
-    pointer-events: none;
-}
-
-
-/* =========================================================
-   BACKGROUND
-========================================================= */
-
-.aurora {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: -4;
+    height: 3px;
+    margin-top: 18px;
+    background: #16161d;
+    border-radius: 99px;
     overflow: hidden;
 }
 
-.blob {
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: .12;
+.loader-progress span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple), var(--cyan));
+    animation: loadBar 2.35s cubic-bezier(.7,0,.2,1) forwards;
 }
 
-.blob.one {
-    background: #8b5cf6;
-    left: -200px;
-    top: 10%;
-    animation: blobOne 15s ease-in-out infinite alternate;
-}
-
-.blob.two {
-    background: #06b6d4;
-    right: -200px;
-    top: 35%;
-    animation: blobTwo 18s ease-in-out infinite alternate;
-}
-
-.blob.three {
-    background: #ec4899;
-    left: 30%;
-    bottom: -300px;
-    animation: blobThree 20s ease-in-out infinite alternate;
-}
-
-.grid {
+/* -------------------- CUSTOM CURSOR -------------------- */
+.cursor {
     position: fixed;
-    inset: 0;
-    z-index: -3;
+    left: 0;
+    top: 0;
     pointer-events: none;
-    background-image:
-        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-    background-size: 70px 70px;
-    mask-image: linear-gradient(to bottom, black, transparent 80%);
+    z-index: 999999;
+    mix-blend-mode: difference;
 }
-
-
-/* =========================================================
-   CURSOR
-========================================================= */
 
 .cursor-dot {
-    position: fixed;
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background: white;
-    pointer-events: none;
-    z-index: 99999;
-    transform: translate(-50%,-50%);
-    box-shadow:
-        0 0 10px white,
-        0 0 25px #8b5cf6;
+    transform: translate(-50%, -50%);
 }
 
 .cursor-ring {
     position: fixed;
     width: 38px;
     height: 38px;
-    border: 1px solid rgba(255,255,255,.5);
+    border: 1px solid rgba(255,255,255,.65);
     border-radius: 50%;
-    pointer-events: none;
-    z-index: 99998;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     transition:
-        width .2s,
-        height .2s,
-        background .2s,
-        border .2s;
+        width .25s ease,
+        height .25s ease,
+        background .25s ease,
+        border-color .25s ease;
 }
 
-.cursor-ring.hover {
-    width: 65px;
-    height: 65px;
-    background: rgba(139,92,246,.08);
-    border-color: #8b5cf6;
+.cursor-ring.active {
+    width: 70px;
+    height: 70px;
+    background: rgba(255,255,255,.08);
+    border-color: white;
 }
 
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-nav {
+/* -------------------- NAVIGATION -------------------- */
+.nav-wrap {
     position: fixed;
-    top: 15px;
+    top: 16px;
     left: 50%;
+    z-index: 9000;
+    width: min(1280px, 94vw);
     transform: translateX(-50%);
-    width: min(1150px, 92%);
-    height: 65px;
-    z-index: 5000;
+}
 
+.nav {
+    height: 68px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    padding: 0 20px;
-
-    border: 1px solid rgba(255,255,255,.09);
-    border-radius: 18px;
-
-    background: rgba(8,8,12,.65);
+    padding: 0 18px 0 22px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: rgba(5,5,8,.68);
     backdrop-filter: blur(25px);
-
     box-shadow:
-        0 20px 60px rgba(0,0,0,.3),
+        0 25px 80px rgba(0,0,0,.35),
         inset 0 1px rgba(255,255,255,.04);
 }
 
-.logo {
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: -1px;
-}
-
-.logo span {
-    color: #8b5cf6;
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 30px;
-}
-
-nav a {
-    color: #777;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 700;
-    transition: .3s;
-}
-
-nav a:hover {
-    color: white;
-}
-
-.nav-cta {
-    border: 0;
-    padding: 11px 16px;
-    border-radius: 10px;
-    color: white;
-    font-weight: 800;
-    background: linear-gradient(135deg,#8b5cf6,#06b6d4);
-}
-
-
-/* =========================================================
-   HERO
-========================================================= */
-
-.hero {
-    min-height: 100vh;
+.brand {
     display: flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
+    gap: 11px;
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: -.03em;
+}
+
+.brand-mark {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    box-shadow: 0 0 30px rgba(139,92,246,.28);
+}
+
+.brand small {
+    color: #686874;
+    font-size: 8px;
+    letter-spacing: 2px;
+    margin-left: 2px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    list-style: none;
+}
+
+.nav-links a {
+    color: #777783;
+    font-size: 11px;
+    font-weight: 800;
+    transition: color .25s ease;
+}
+
+.nav-links a:hover {
+    color: #fff;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.nav-button {
+    padding: 11px 15px;
+    border-radius: 11px;
+    color: #fff;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.08);
+    font-size: 11px;
+    font-weight: 900;
+    transition: transform .25s ease, background .25s ease;
+}
+
+.nav-button:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,.09);
+}
+
+.nav-button.primary {
+    background: linear-gradient(135deg, #7c3aed, #0891b2);
+    border-color: transparent;
+}
+
+/* -------------------- HERO -------------------- */
+.hero {
     position: relative;
-    padding: 150px 20px 100px;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 170px 6vw 100px;
+    text-align: center;
+    overflow: hidden;
 }
 
 .hero-inner {
-    width: 100%;
-    max-width: 1200px;
+    width: min(1300px, 100%);
+    position: relative;
 }
 
-.status {
+.eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    padding: 9px 15px;
-    border-radius: 50px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.1);
-    color: #999;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1px;
+    padding: 9px 13px;
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    color: #7d7d89;
+    background: rgba(255,255,255,.025);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
     animation: float 4s ease-in-out infinite;
 }
 
-.status-dot {
+.live-dot {
     width: 7px;
     height: 7px;
-    background: #4ade80;
     border-radius: 50%;
-    box-shadow: 0 0 15px #4ade80;
+    background: var(--green);
+    box-shadow: 0 0 16px var(--green);
 }
 
-.hero h1 {
-    font-size: clamp(75px, 14vw, 190px);
-    line-height: .8;
-    letter-spacing: -12px;
-    font-weight: 900;
-    margin-top: 35px;
-
+.hero-title {
+    margin-top: 38px;
+    font-size: clamp(78px, 14.5vw, 210px);
+    line-height: .78;
+    letter-spacing: -.105em;
+    font-weight: 950;
     background:
         linear-gradient(
-            110deg,
-            #fff 5%,
-            #c4b5fd 30%,
-            #22d3ee 55%,
-            #fff 75%,
-            #8b5cf6 100%
+            105deg,
+            #fff 0%,
+            #c4b5fd 22%,
+            #fff 40%,
+            #67e8f9 60%,
+            #fff 78%,
+            #a78bfa 100%
         );
-
-    background-size: 300%;
+    background-size: 400% 100%;
     -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
-
-    animation: gradient 6s linear infinite;
+    animation: gradientMove 8s linear infinite;
 }
 
-.hero h1 small {
-    display: block;
-    font-size: .14em;
-    letter-spacing: 5px;
-    line-height: 1;
+.hero-kicker {
     margin-top: 30px;
-    color: #777;
-    -webkit-text-fill-color: #777;
+    color: #676773;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    text-transform: uppercase;
 }
 
-.hero-description {
-    max-width: 650px;
-    margin: 45px auto 0;
-    color: #888;
-    font-size: 17px;
-    line-height: 1.8;
+.hero-copy {
+    width: min(720px, 100%);
+    margin: 32px auto 0;
+    color: #81818d;
+    font-size: 16px;
+    line-height: 1.9;
 }
 
-.hero-buttons {
+.hero-actions {
+    margin-top: 34px;
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin-top: 35px;
 }
 
-.btn {
-    padding: 16px 24px;
-    border-radius: 12px;
-    font-weight: 800;
-    border: 1px solid rgba(255,255,255,.1);
-    transition: .3s;
-}
-
-.btn-primary {
-    color: white;
-    background: linear-gradient(135deg,#7c3aed,#06b6d4);
-    box-shadow: 0 0 40px rgba(124,58,237,.2);
-}
-
-.btn-secondary {
-    color: white;
+.button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 48px;
+    padding: 0 19px;
+    border-radius: 13px;
+    color: #fff;
     background: rgba(255,255,255,.04);
+    border: 1px solid var(--line);
+    font-size: 11px;
+    font-weight: 900;
+    overflow: hidden;
+    transition: transform .25s ease, border-color .25s ease;
 }
 
-.btn:hover {
-    transform: translateY(-5px);
-}
-
-
-/* =========================================================
-   SCROLL INDICATOR
-========================================================= */
-
-.scroll {
+.button::before {
+    content: "";
     position: absolute;
-    bottom: 30px;
+    inset: 0;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.12), transparent);
+    transform: translateX(-120%);
+    transition: transform .65s ease;
+}
+
+.button:hover::before {
+    transform: translateX(120%);
+}
+
+.button:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,.22);
+}
+
+.button.primary {
+    background: linear-gradient(135deg, #7c3aed, #0891b2);
+    border-color: transparent;
+    box-shadow: 0 15px 50px rgba(124,58,237,.18);
+}
+
+.scroll-cue {
+    position: absolute;
+    bottom: 27px;
     left: 50%;
     transform: translateX(-50%);
-    color: #555;
-    font-size: 10px;
-    letter-spacing: 3px;
+    color: #45454f;
+    font-size: 8px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
 }
 
-.scroll::after {
+.scroll-cue::after {
     content: "";
     display: block;
     width: 1px;
-    height: 40px;
-    margin: 10px auto;
-    background: linear-gradient(#555,transparent);
+    height: 43px;
+    margin: 11px auto 0;
+    background: linear-gradient(#777, transparent);
 }
 
-
-/* =========================================================
-   MARQUEE
-========================================================= */
-
+/* -------------------- MARQUEE -------------------- */
 .marquee {
     overflow: hidden;
-    border-top: 1px solid rgba(255,255,255,.06);
-    border-bottom: 1px solid rgba(255,255,255,.06);
-    padding: 18px 0;
-    background: rgba(255,255,255,.015);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: rgba(255,255,255,.018);
 }
 
 .marquee-track {
     display: flex;
     width: max-content;
-    animation: marquee 25s linear infinite;
+    padding: 18px 0;
+    animation: marquee 30s linear infinite;
 }
 
-.marquee span {
-    font-size: 13px;
-    font-weight: 800;
-    color: #555;
-    margin: 0 30px;
-    white-space: nowrap;
-}
-
-.marquee b {
-    color: #8b5cf6;
-}
-
-
-/* =========================================================
-   SECTIONS
-========================================================= */
-
-section.content {
-    padding: 130px 7%;
-}
-
-.label {
-    color: #8b5cf6;
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 4px;
-    margin-bottom: 18px;
-}
-
-.title {
-    font-size: clamp(45px,7vw,85px);
-    letter-spacing: -5px;
-    line-height: .95;
-    font-weight: 900;
-}
-
-.description {
-    color: #777;
-    max-width: 650px;
-    line-height: 1.8;
-    margin-top: 20px;
-}
-
-
-/* =========================================================
-   LIVE STATS
-========================================================= */
-
-.live-grid {
-    margin-top: 60px;
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 15px;
-}
-
-.live-card {
-    position: relative;
-    padding: 30px;
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,.07);
-    background: rgba(255,255,255,.025);
-    overflow: hidden;
-    transition: .4s;
-}
-
-.live-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255,255,255,.04),
-        transparent
-    );
-    transform: translateX(-100%);
-    transition: .6s;
-}
-
-.live-card:hover::after {
-    transform: translateX(100%);
-}
-
-.live-card:hover {
-    transform: translateY(-8px);
-    border-color: rgba(139,92,246,.4);
-}
-
-.live-number {
-    font-size: 42px;
-    font-weight: 900;
-    background: linear-gradient(90deg,#fff,#8b5cf6);
-    -webkit-background-clip: text;
-    color: transparent;
-}
-
-.live-card p {
-    color: #666;
-    margin-top: 7px;
-    font-size: 13px;
-}
-
-.live-now {
-    color: #4ade80;
-    font-size: 10px;
-    margin-top: 15px;
-}
-
-
-/* =========================================================
-   KACPER PROFILE
-========================================================= */
-
-.profile {
-    margin-top: 60px;
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 30px;
-    padding: 70px;
-    min-height: 550px;
-
-    display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 70px;
+.marquee-item {
+    display: flex;
     align-items: center;
-
-    position: relative;
-    overflow: hidden;
-
-    background:
-        radial-gradient(
-            circle at 80% 40%,
-            rgba(139,92,246,.16),
-            transparent 35%
-        ),
-        rgba(255,255,255,.025);
-}
-
-.profile::before {
-    content: "K";
-    position: absolute;
-    right: -80px;
-    bottom: -200px;
-    font-size: 650px;
-    line-height: .8;
-    font-weight: 900;
-    color: rgba(255,255,255,.018);
-}
-
-.profile h3 {
-    font-size: 75px;
-    letter-spacing: -5px;
-    margin: 15px 0 20px;
-}
-
-.verified {
-    color: #4ade80;
+    gap: 28px;
+    margin-right: 50px;
+    white-space: nowrap;
+    color: #555560;
     font-size: 11px;
     font-weight: 900;
     letter-spacing: 2px;
 }
 
-.profile-text {
-    color: #777;
-    line-height: 1.8;
-    max-width: 550px;
+.marquee-item b {
+    color: var(--purple);
 }
 
-.profile-tags {
+/* -------------------- LAYOUT -------------------- */
+.section {
+    width: min(var(--max), 90vw);
+    margin: 0 auto;
+    padding: 140px 0;
+}
+
+.section-head {
+    max-width: 850px;
+}
+
+.section-label {
+    margin-bottom: 17px;
+    color: var(--purple);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.section-title {
+    font-size: clamp(48px, 7vw, 92px);
+    line-height: .9;
+    letter-spacing: -.07em;
+    font-weight: 900;
+}
+
+.section-copy {
+    max-width: 670px;
+    margin-top: 22px;
+    color: #70707b;
+    font-size: 14px;
+    line-height: 1.9;
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(38px);
+    transition:
+        opacity 1s cubic-bezier(.2,.8,.2,1),
+        transform 1s cubic-bezier(.2,.8,.2,1);
+}
+
+.reveal.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* -------------------- STATS -------------------- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 55px;
+}
+
+.stat-card {
+    position: relative;
+    min-height: 190px;
+    padding: 27px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    transform-style: preserve-3d;
+    transition:
+        transform .45s ease,
+        border-color .45s ease,
+        background .45s ease;
+}
+
+.stat-card:hover {
+    border-color: rgba(139,92,246,.4);
+    background: rgba(255,255,255,.06);
+}
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    right: -80px;
+    bottom: -80px;
+    border-radius: 50%;
+    background: var(--purple);
+    filter: blur(50px);
+    opacity: .13;
+}
+
+.stat-top {
+    display: flex;
+    justify-content: space-between;
+    color: #555560;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.stat-icon {
+    font-size: 20px;
+}
+
+.stat-number {
+    margin-top: 38px;
+    font-size: 42px;
+    font-weight: 950;
+    letter-spacing: -.06em;
+    background: linear-gradient(90deg, #fff, #a78bfa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.stat-name {
+    margin-top: 5px;
+    color: #6c6c77;
+    font-size: 10px;
+}
+
+/* -------------------- FEATURE GRID -------------------- */
+.feature-grid {
+    display: grid;
+    grid-template-columns: 1.4fr .8fr .8fr;
+    gap: 13px;
+    margin-top: 55px;
+}
+
+.feature {
+    min-height: 410px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 25px;
+    background: var(--panel);
+    padding: 31px;
+    transition: transform .45s ease, border-color .45s ease;
+}
+
+.feature:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255,255,255,.17);
+}
+
+.feature-large {
+    grid-row: span 2;
+    min-height: 835px;
+    background:
+        radial-gradient(circle at 70% 25%, rgba(139,92,246,.18), transparent 30%),
+        rgba(255,255,255,.025);
+}
+
+.feature-number {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    color: rgba(255,255,255,.08);
+    font-size: 58px;
+    font-weight: 900;
+}
+
+.feature-icon {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    background: rgba(255,255,255,.035);
+    font-size: 23px;
+}
+
+.feature h3 {
+    margin-top: 25px;
+    font-size: 25px;
+    letter-spacing: -.04em;
+}
+
+.feature p {
+    max-width: 450px;
+    margin-top: 12px;
+    color: #686873;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.feature-visual {
+    position: absolute;
+    left: 31px;
+    right: 31px;
+    bottom: 31px;
+    height: 380px;
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 20px;
+    overflow: hidden;
+    background: #06060a;
+}
+
+.feature-large .feature-visual {
+    height: 430px;
+}
+
+.ring {
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    left: 50%;
+    top: 50%;
+    border: 1px solid rgba(139,92,246,.45);
+    border-radius: 50%;
+    transform: translate(-50%,-50%);
+    box-shadow:
+        0 0 70px rgba(139,92,246,.16),
+        inset 0 0 70px rgba(34,211,238,.06);
+    animation: rotate 16s linear infinite;
+}
+
+.ring::before,
+.ring::after {
+    content: "";
+    position: absolute;
+    inset: 30px;
+    border: 1px dashed rgba(34,211,238,.4);
+    border-radius: 50%;
+}
+
+.ring::after {
+    inset: 75px;
+    border-color: rgba(236,72,153,.4);
+}
+
+.core {
+    position: absolute;
+    width: 76px;
+    height: 76px;
+    left: 50%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    box-shadow:
+        0 0 40px rgba(139,92,246,.6),
+        0 0 100px rgba(34,211,238,.25);
+    font-size: 24px;
+    font-weight: 900;
+    animation: corePulse 3s ease-in-out infinite;
+}
+
+.orbit-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 15px;
+    left: 50%;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 20px #fff;
+    transform: translateX(-50%);
+}
+
+/* -------------------- TERMINAL -------------------- */
+.terminal {
+    margin-top: 55px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    overflow: hidden;
+    background: #07070b;
+    box-shadow: 0 35px 100px rgba(0,0,0,.3);
+}
+
+.terminal-head {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 17px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255,255,255,.025);
+}
+
+.window-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #44444e;
+}
+
+.terminal-title {
+    margin-left: 8px;
+    color: #555560;
+    font: 9px monospace;
+    letter-spacing: 2px;
+}
+
+.terminal-body {
+    min-height: 420px;
+    padding: 28px;
+    color: #81818c;
+    font: 12px/2 monospace;
+}
+
+.terminal-line {
+    display: block;
+}
+
+.terminal-green {
+    color: #67e8a5;
+}
+
+.terminal-purple {
+    color: #b9a3ff;
+}
+
+.terminal-cyan {
+    color: #67e8f9;
+}
+
+.terminal-muted {
+    color: #4d4d58;
+}
+
+/* -------------------- PROFILE -------------------- */
+.profile-shell {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: 15px;
+    margin-top: 55px;
+}
+
+.profile-card {
+    position: relative;
+    min-height: 610px;
+    padding: 50px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    background:
+        radial-gradient(circle at 80% 25%, rgba(139,92,246,.18), transparent 35%),
+        rgba(255,255,255,.025);
+}
+
+.profile-card::after {
+    content: "K";
+    position: absolute;
+    right: -75px;
+    bottom: -150px;
+    color: rgba(255,255,255,.018);
+    font-size: 600px;
+    font-weight: 950;
+    line-height: .8;
+}
+
+.profile-status {
+    color: var(--green);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.profile-name {
+    margin-top: 20px;
+    font-size: clamp(65px, 9vw, 125px);
+    line-height: .8;
+    letter-spacing: -.09em;
+    font-weight: 950;
+}
+
+.profile-description {
+    max-width: 590px;
+    margin-top: 28px;
+    color: #6f6f7a;
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+.tag-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 7px;
     margin-top: 25px;
 }
 
 .tag {
-    padding: 8px 12px;
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 8px;
-    color: #888;
-    font-size: 11px;
-}
-
-
-/* =========================================================
-   RATING CIRCLE
-========================================================= */
-
-.rating {
-    width: 350px;
-    height: 350px;
-    margin: auto;
-    border-radius: 50%;
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background:
-        conic-gradient(
-            #8b5cf6,
-            #22d3ee,
-            #8b5cf6,
-            #22d3ee,
-            #8b5cf6
-        );
-
-    animation: spinSlow 12s linear infinite;
-}
-
-.rating::before {
-    content: "";
-    position: absolute;
-    inset: 8px;
-    background: #07070b;
-    border-radius: 50%;
-}
-
-.rating-content {
-    position: relative;
-    text-align: center;
-}
-
-.rating-content strong {
-    display: block;
-    font-size: 80px;
+    padding: 9px 11px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    color: #71717c;
+    background: rgba(255,255,255,.025);
+    font-size: 9px;
     font-weight: 900;
-    background: linear-gradient(90deg,#fff,#8b5cf6);
-    -webkit-background-clip: text;
-    color: transparent;
 }
 
-.rating-content span {
-    color: #555;
-    font-size: 10px;
+.profile-side {
+    display: grid;
+    gap: 15px;
+}
+
+.score-card {
+    min-height: 292px;
+    padding: 30px;
+    border: 1px solid var(--line);
+    border-radius: 25px;
+    background: var(--panel);
+}
+
+.score-label {
+    color: #555560;
+    font-size: 9px;
+    font-weight: 900;
     letter-spacing: 3px;
 }
 
+.score {
+    margin-top: 30px;
+    font-size: 100px;
+    line-height: .8;
+    letter-spacing: -.1em;
+    font-weight: 950;
+    background: linear-gradient(90deg,#fff,#8b5cf6,#22d3ee);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
 
-/* =========================================================
-   ACHIEVEMENTS
-========================================================= */
+.score-caption {
+    margin-top: 20px;
+    color: #666671;
+    font-size: 10px;
+}
 
-.achievements {
+.meter-card {
+    min-height: 303px;
+    padding: 30px;
+    border: 1px solid var(--line);
+    border-radius: 25px;
+    background: var(--panel);
+}
+
+.meter-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    color: #777783;
+    font-size: 10px;
+}
+
+.meter {
+    height: 9px;
+    margin-top: 8px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: #15151b;
+}
+
+.meter span {
+    display: block;
+    height: 100%;
+    width: 98%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--purple), var(--cyan));
+    background-size: 200%;
+    animation: gradientMove 4s linear infinite;
+}
+
+/* -------------------- AWARDS -------------------- */
+.awards {
     display: grid;
     grid-template-columns: repeat(3,1fr);
-    gap: 15px;
-    margin-top: 60px;
+    gap: 13px;
+    margin-top: 55px;
 }
 
-.achievement {
-    min-height: 260px;
-    padding: 30px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,.07);
-    background: rgba(255,255,255,.025);
+.award {
+    min-height: 270px;
     position: relative;
+    padding: 29px;
     overflow: hidden;
-    transition: .4s;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: var(--panel);
+    transition: transform .4s ease, border-color .4s ease;
 }
 
-.achievement:hover {
-    transform: translateY(-10px) perspective(700px) rotateX(3deg);
+.award:hover {
+    transform: translateY(-9px) rotateX(2deg);
     border-color: rgba(139,92,246,.35);
 }
 
-.achievement-number {
+.award-index {
     position: absolute;
-    right: 20px;
+    right: 22px;
     top: 20px;
-    color: #222;
-    font-size: 50px;
+    color: #25252c;
+    font-size: 44px;
     font-weight: 900;
 }
 
-.achievement-icon {
-    font-size: 35px;
-    margin-bottom: 30px;
+.award-icon {
+    font-size: 30px;
 }
 
-.achievement h3 {
-    margin-bottom: 12px;
+.award h3 {
+    margin-top: 35px;
+    font-size: 19px;
 }
 
-.achievement p {
-    color: #666;
-    font-size: 13px;
-    line-height: 1.7;
+.award p {
+    margin-top: 10px;
+    color: #64646f;
+    font-size: 11px;
+    line-height: 1.8;
 }
 
-
-/* =========================================================
-   TIMELINE
-========================================================= */
-
+/* -------------------- TIMELINE -------------------- */
 .timeline {
-    max-width: 850px;
-    margin: 70px auto 0;
     position: relative;
+    max-width: 950px;
+    margin: 65px auto 0;
 }
 
 .timeline::before {
     content: "";
     position: absolute;
-    left: 18px;
     top: 0;
     bottom: 0;
+    left: 18px;
     width: 1px;
     background: linear-gradient(
         transparent,
-        #8b5cf6,
-        #22d3ee,
+        var(--purple),
+        var(--cyan),
         transparent
     );
 }
 
 .timeline-item {
     position: relative;
-    padding-left: 65px;
-    padding-bottom: 55px;
+    padding: 0 0 65px 68px;
 }
 
 .timeline-dot {
     position: absolute;
-    left: 11px;
     top: 4px;
+    left: 11px;
     width: 15px;
     height: 15px;
     border-radius: 50%;
-    background: #8b5cf6;
-    box-shadow: 0 0 25px #8b5cf6;
+    background: var(--purple);
+    box-shadow: 0 0 24px rgba(139,92,246,.8);
 }
 
-.timeline-year {
-    color: #8b5cf6;
-    font-size: 11px;
+.timeline-date {
+    color: var(--purple);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.timeline-title {
+    margin-top: 9px;
+    font-size: 25px;
+    letter-spacing: -.04em;
+}
+
+.timeline-copy {
+    max-width: 650px;
+    margin-top: 10px;
+    color: #676772;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+/* -------------------- QUOTE -------------------- */
+.quote-section {
+    position: relative;
+    padding: 180px 5vw;
+    text-align: center;
+    overflow: hidden;
+}
+
+.quote-section::before {
+    content: "";
+    position: absolute;
+    width: 650px;
+    height: 650px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,92,246,.12), transparent 65%);
+    pointer-events: none;
+}
+
+.quote {
+    position: relative;
+    max-width: 1200px;
+    margin: auto;
+    font-size: clamp(39px, 6.2vw, 86px);
+    line-height: 1.02;
+    letter-spacing: -.065em;
+    font-weight: 950;
+}
+
+.gradient {
+    background: linear-gradient(90deg, #a78bfa, #67e8f9, #f9a8d4);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientMove 5s linear infinite;
+}
+
+/* -------------------- LEADERBOARD -------------------- */
+.leaderboard {
+    margin-top: 55px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    overflow: hidden;
+    background: rgba(255,255,255,.018);
+}
+
+.leader-head,
+.leader-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 160px 130px;
+    align-items: center;
+}
+
+.leader-head {
+    padding: 16px 25px;
+    color: #484852;
+    background: rgba(255,255,255,.025);
+    border-bottom: 1px solid var(--line);
+    font-size: 8px;
     font-weight: 900;
     letter-spacing: 2px;
 }
 
-.timeline h3 {
-    font-size: 24px;
-    margin: 10px 0;
-}
-
-.timeline p {
-    color: #666;
-    line-height: 1.7;
-}
-
-
-/* =========================================================
-   QUOTE
-========================================================= */
-
-.quote {
-    padding: 160px 7%;
-    text-align: center;
-    background:
-        radial-gradient(
-            circle at center,
-            rgba(124,58,237,.14),
-            transparent 45%
-        );
-}
-
-.quote-text {
-    max-width: 1050px;
-    margin: auto;
-    font-size: clamp(35px,6vw,75px);
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -4px;
-}
-
-.gradient-text {
-    background: linear-gradient(90deg,#8b5cf6,#22d3ee);
-    -webkit-background-clip: text;
-    color: transparent;
-}
-
-
-/* =========================================================
-   LEADERBOARD
-========================================================= */
-
-.leaderboard {
-    max-width: 950px;
-    margin: 60px auto 0;
-    border: 1px solid rgba(255,255,255,.07);
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.leader {
-    display: grid;
-    grid-template-columns: 70px 1fr 150px;
-    padding: 23px 30px;
-    align-items: center;
+.leader-row {
+    min-height: 75px;
+    padding: 0 25px;
     border-bottom: 1px solid rgba(255,255,255,.05);
-    transition: .3s;
+    transition: background .25s ease;
 }
 
-.leader:last-child {
+.leader-row:last-child {
     border-bottom: 0;
 }
 
-.leader:hover {
+.leader-row:hover {
     background: rgba(255,255,255,.035);
 }
 
 .rank {
-    color: #555;
+    color: #45454f;
     font-weight: 900;
 }
 
-.rank.first {
-    color: #facc15;
+.rank.gold {
+    color: var(--yellow);
 }
 
-.name {
+.person {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-size: 12px;
     font-weight: 800;
 }
 
-.score {
-    text-align: right;
-    color: #8b5cf6;
+.avatar {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: rgba(255,255,255,.06);
+    color: #aaaab5;
+    font-size: 11px;
     font-weight: 900;
 }
 
-
-/* =========================================================
-   HYPE METER
-========================================================= */
-
-.hype-box {
-    max-width: 900px;
-    margin: 60px auto 0;
-    padding: 35px;
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 20px;
-    background: rgba(255,255,255,.025);
+.leader-score {
+    color: #a78bfa;
+    font-size: 11px;
+    font-weight: 900;
 }
 
-.hype-top {
+.leader-status {
+    color: #555560;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+/* -------------------- CONTROL CENTER -------------------- */
+.control-grid {
+    display: grid;
+    grid-template-columns: .85fr 1.15fr;
+    gap: 14px;
+    margin-top: 55px;
+}
+
+.control-card {
+    border: 1px solid var(--line);
+    border-radius: 23px;
+    background: var(--panel);
+    overflow: hidden;
+}
+
+.control-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 15px;
+    align-items: center;
+    padding: 19px 22px;
+    border-bottom: 1px solid var(--line);
 }
 
-.hype-top span:first-child {
-    color: #777;
-    font-size: 12px;
+.control-title {
+    color: #777783;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 2px;
 }
 
-.hype-value {
-    color: #22d3ee;
+.control-live {
+    color: var(--green);
+    font-size: 8px;
     font-weight: 900;
 }
 
-.hype-bar {
-    height: 13px;
-    border-radius: 20px;
-    background: #15151b;
-    overflow: hidden;
+.control-body {
+    padding: 25px;
 }
 
-.hype-fill {
+.big-meter {
+    height: 240px;
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+
+.big-ring {
+    width: 205px;
+    height: 205px;
+    border-radius: 50%;
+    background:
+        conic-gradient(
+            var(--purple) 0 97%,
+            #17171d 97% 100%
+        );
+    transform: rotate(-45deg);
+    box-shadow: 0 0 70px rgba(139,92,246,.15);
+}
+
+.big-ring::after {
+    content: "";
+    position: absolute;
+    width: 167px;
+    height: 167px;
+    margin: 19px;
+    border-radius: 50%;
+    background: #08080c;
+}
+
+.big-ring-text {
+    position: absolute;
+    z-index: 2;
+    text-align: center;
+}
+
+.big-ring-text strong {
+    display: block;
+    font-size: 50px;
+    letter-spacing: -.08em;
+}
+
+.big-ring-text span {
+    color: #555560;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.signal-list {
+    display: grid;
+    gap: 8px;
+}
+
+.signal {
+    display: grid;
+    grid-template-columns: 1fr 100px 50px;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 11px;
+    background: rgba(255,255,255,.02);
+}
+
+.signal-name {
+    color: #767681;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.signal-bar {
+    height: 5px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: #15151a;
+}
+
+.signal-bar span {
+    display: block;
     height: 100%;
-    width: 97%;
     border-radius: inherit;
-    background: linear-gradient(
-        90deg,
-        #8b5cf6,
-        #22d3ee,
-        #ec4899
-    );
-    background-size: 200%;
-    animation:
-        gradient 3s linear infinite,
-        hypePulse 2s ease-in-out infinite;
+    background: linear-gradient(90deg, var(--purple), var(--cyan));
 }
 
+.signal-value {
+    text-align: right;
+    color: #8e8e9b;
+    font: 9px monospace;
+}
 
-/* =========================================================
-   KACPER AI
-========================================================= */
-
-.ai {
-    max-width: 900px;
-    margin: 60px auto 0;
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 22px;
-    background: #08080d;
+/* -------------------- AI -------------------- */
+.ai-shell {
+    margin-top: 55px;
+    border: 1px solid var(--line);
+    border-radius: 25px;
     overflow: hidden;
+    background: #07070b;
+    box-shadow: 0 40px 120px rgba(0,0,0,.28);
 }
 
-.ai-header {
-    padding: 18px 22px;
-    border-bottom: 1px solid rgba(255,255,255,.07);
+.ai-top {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 11px;
+    padding: 18px 21px;
+    border-bottom: 1px solid var(--line);
 }
 
-.ai-status {
+.ai-light {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #4ade80;
-    box-shadow: 0 0 15px #4ade80;
+    background: var(--green);
+    box-shadow: 0 0 16px var(--green);
 }
 
-.ai-header span {
-    color: #777;
-    font-size: 12px;
-    font-weight: 800;
+.ai-name {
+    color: #777783;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 2px;
 }
 
 .ai-body {
     padding: 30px;
 }
 
-.ai-response {
-    min-height: 100px;
-    color: #aaa;
-    line-height: 1.8;
-    font-size: 14px;
+.ai-output {
+    min-height: 170px;
+    color: #888893;
+    font-size: 13px;
+    line-height: 1.9;
 }
 
-.ai-buttons {
+.ai-output strong {
+    color: #fff;
+}
+
+.ai-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 7px;
     margin-top: 25px;
 }
 
-.ai-btn {
-    padding: 10px 14px;
+.ai-option {
+    padding: 10px 12px;
+    color: #767681;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.07);
     border-radius: 9px;
-    border: 1px solid rgba(255,255,255,.08);
-    background: rgba(255,255,255,.035);
-    color: #aaa;
-    font-size: 11px;
-    font-weight: 700;
-    transition: .2s;
+    font-size: 9px;
+    font-weight: 800;
+    transition: .25s ease;
 }
 
-.ai-btn:hover {
-    color: white;
-    border-color: #8b5cf6;
+.ai-option:hover {
+    color: #fff;
+    border-color: var(--purple);
+    transform: translateY(-2px);
 }
 
-
-/* =========================================================
-   FINAL
-========================================================= */
-
-.final {
+/* -------------------- CTA -------------------- */
+.final-section {
     min-height: 90vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
+    padding: 130px 5vw;
     text-align: center;
-    padding: 100px 20px;
 }
 
 .final-inner {
-    max-width: 1000px;
+    width: min(1100px, 100%);
 }
 
-.final h2 {
-    font-size: clamp(60px,11vw,150px);
-    line-height: .82;
-    letter-spacing: -9px;
-    font-weight: 900;
+.final-title {
+    margin-top: 22px;
+    font-size: clamp(70px, 13vw, 180px);
+    line-height: .78;
+    letter-spacing: -.1em;
+    font-weight: 950;
 }
 
-.final p {
-    max-width: 600px;
-    color: #666;
-    margin: 35px auto;
-    line-height: 1.8;
+.final-copy {
+    max-width: 610px;
+    margin: 30px auto;
+    color: #6d6d78;
+    font-size: 13px;
+    line-height: 1.9;
 }
 
+.final-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 9px;
+}
 
-/* =========================================================
-   FOOTER
-========================================================= */
-
+/* -------------------- FOOTER -------------------- */
 footer {
-    border-top: 1px solid rgba(255,255,255,.07);
-    padding: 35px 7%;
+    width: min(var(--max), 90vw);
+    margin: auto;
+    padding: 35px 0 45px;
+    border-top: 1px solid var(--line);
     display: flex;
     justify-content: space-between;
-    color: #444;
-    font-size: 11px;
+    gap: 20px;
+    color: #44444e;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1px;
 }
 
-
-/* =========================================================
-   TOAST
-========================================================= */
-
+/* -------------------- TOAST -------------------- */
 .toast {
     position: fixed;
     left: 50%;
-    bottom: 35px;
-    transform: translateX(-50%) translateY(100px);
-    padding: 15px 22px;
-    border-radius: 12px;
-    background: rgba(12,12,17,.95);
-    border: 1px solid rgba(139,92,246,.5);
-    box-shadow: 0 0 50px rgba(139,92,246,.2);
-    color: white;
-    font-size: 13px;
-    font-weight: 800;
+    bottom: 30px;
     z-index: 999999;
+    width: max-content;
+    max-width: 88vw;
+    padding: 13px 17px;
+    border: 1px solid rgba(139,92,246,.45);
+    border-radius: 11px;
+    background: rgba(8,8,12,.95);
+    color: #fff;
+    box-shadow: 0 20px 70px rgba(0,0,0,.5);
+    font-size: 10px;
+    font-weight: 900;
+    transform: translate(-50%, 90px);
     opacity: 0;
-    transition: .5s;
+    transition: .45s cubic-bezier(.2,.8,.2,1);
 }
 
 .toast.show {
-    transform: translateX(-50%) translateY(0);
     opacity: 1;
+    transform: translate(-50%, 0);
 }
 
-
-/* =========================================================
-   SCROLL REVEAL
-========================================================= */
-
-.reveal {
-    opacity: 0;
-    transform: translateY(45px);
-    transition:
-        opacity 1s cubic-bezier(.2,.8,.2,1),
-        transform 1s cubic-bezier(.2,.8,.2,1);
+/* -------------------- GLITCH -------------------- */
+.glitch {
+    animation: glitch .25s steps(2, end) 2;
 }
 
-.reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
+/* -------------------- KEYFRAMES -------------------- */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 400% 50%; }
 }
 
-
-/* =========================================================
-   KEYFRAMES
-========================================================= */
-
-@keyframes gradient {
-    0% {
-        background-position: 0%;
-    }
-
-    100% {
-        background-position: 300%;
-    }
+@keyframes loadBar {
+    0% { width: 0; }
+    100% { width: 100%; }
 }
 
-@keyframes loading {
-    to {
-        width: 100%;
-    }
+@keyframes terminalIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes float {
-    0%,100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-8px);
-    }
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
 }
 
 @keyframes marquee {
-    to {
-        transform: translateX(-50%);
+    to { transform: translateX(-50%); }
+}
+
+@keyframes driftA {
+    to { transform: translate(420px, 90px) scale(1.25); }
+}
+
+@keyframes driftB {
+    to { transform: translate(-390px, -160px) scale(.82); }
+}
+
+@keyframes driftC {
+    to { transform: translate(210px, -330px) scale(1.2); }
+}
+
+@keyframes rotate {
+    to { transform: translate(-50%,-50%) rotate(360deg); }
+}
+
+@keyframes corePulse {
+    0%,100% { transform: translate(-50%,-50%) scale(1); }
+    50% { transform: translate(-50%,-50%) scale(1.09); }
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); filter: none; }
+    30% { transform: translate(-5px, 2px); filter: hue-rotate(50deg); }
+    60% { transform: translate(5px, -2px); filter: hue-rotate(-50deg); }
+    100% { transform: translate(0); filter: none; }
+}
+
+/* -------------------- RESPONSIVE -------------------- */
+@media (max-width: 1050px) {
+    .nav-links {
+        display: none;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .feature-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .feature-large {
+        grid-column: span 2;
+        grid-row: auto;
+        min-height: 650px;
+    }
+
+    .profile-shell,
+    .control-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .awards {
+        grid-template-columns: 1fr 1fr;
     }
 }
 
-@keyframes spinSlow {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes hypePulse {
-    0%,100% {
-        filter: brightness(1);
+@media (max-width: 650px) {
+    .nav {
+        height: 60px;
     }
 
-    50% {
-        filter: brightness(1.4);
+    .nav-actions .nav-button:first-child {
+        display: none;
     }
-}
 
-@keyframes blobOne {
-    to {
-        transform: translate(350px,100px) scale(1.3);
+    .hero {
+        padding-top: 145px;
     }
-}
 
-@keyframes blobTwo {
-    to {
-        transform: translate(-300px,-150px) scale(.8);
+    .hero-title {
+        letter-spacing: -.08em;
     }
-}
 
-@keyframes blobThree {
-    to {
-        transform: translate(200px,-300px) scale(1.2);
+    .stats-grid,
+    .feature-grid,
+    .awards {
+        grid-template-columns: 1fr;
     }
-}
 
+    .feature-large {
+        grid-column: auto;
+        min-height: 600px;
+    }
 
-/* =========================================================
-   MOBILE
-========================================================= */
+    .feature {
+        min-height: 330px;
+    }
 
-@media(max-width:900px) {
+    .feature-visual {
+        height: 220px;
+    }
+
+    .profile-card {
+        padding: 32px 25px;
+        min-height: 520px;
+    }
+
+    .leader-head {
+        display: none;
+    }
+
+    .leader-row {
+        grid-template-columns: 45px 1fr 90px;
+        padding: 0 16px;
+    }
+
+    .leader-status {
+        display: none;
+    }
+
+    footer {
+        flex-direction: column;
+    }
+
+    .cursor {
+        display: none;
+    }
 
     body {
         cursor: auto;
     }
 
-    .cursor-dot,
-    .cursor-ring {
-        display: none;
-    }
-
-    nav ul {
-        display: none;
-    }
-
-    .live-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .profile {
-        grid-template-columns: 1fr;
-        padding: 40px 25px;
-        text-align: center;
-    }
-
-    .profile-text {
-        margin: auto;
-    }
-
-    .profile-tags {
-        justify-content: center;
-    }
-
-    .achievements {
-        grid-template-columns: 1fr 1fr;
+    button,
+    a {
+        cursor: pointer;
     }
 }
-
-@media(max-width:600px) {
-
-    section.content {
-        padding: 90px 5%;
-    }
-
-    .hero h1 {
-        letter-spacing: -5px;
-    }
-
-    .live-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .achievements {
-        grid-template-columns: 1fr;
-    }
-
-    .rating {
-        width: 250px;
-        height: 250px;
-    }
-
-    .rating-content strong {
-        font-size: 60px;
-    }
-
-    .leader {
-        grid-template-columns: 45px 1fr 100px;
-        padding: 20px;
-    }
-
-    footer {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .final h2 {
-        letter-spacing: -5px;
-    }
-}
-
 </style>
 </head>
 
-
 <body>
 
+<!-- ============================================================
+     GLOBAL VISUAL LAYERS
+     ============================================================ -->
+<canvas id="stars"></canvas>
+<canvas id="energyCanvas"></canvas>
 
-<!-- =====================================================
-     LOADING SCREEN
-===================================================== -->
+<div class="ambient" aria-hidden="true">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+</div>
 
+<div class="noise" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+
+<!-- ============================================================
+     LOADER
+     ============================================================ -->
 <div class="loader" id="loader">
+    <div class="loader-inner">
+        <div class="loader-brand">KACPER</div>
+        <div class="loader-sub">initialising the digital empire</div>
 
-    <div class="loader-content">
+        <div class="loader-terminal">
+            <div class="loader-line">> establishing aura connection...</div>
+            <div class="loader-line">> calibrating impossible statistics...</div>
+            <div class="loader-line">> loading unnecessary levels of glazing...</div>
+            <div class="loader-line">> system ready.</div>
+        </div>
 
-        <div class="loader-logo">
+        <div class="loader-progress">
+            <span></span>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     CURSOR
+     ============================================================ -->
+<div class="cursor" id="cursorDot">
+    <div class="cursor-dot"></div>
+</div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<div class="nav-wrap">
+    <nav class="nav">
+        <a class="brand" href="#top">
+            <span class="brand-mark">K</span>
             KACPER
+            <small>EMPIRE™</small>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="#systems">Systems</a></li>
+            <li><a href="#profile">Profile</a></li>
+            <li><a href="#history">History</a></li>
+            <li><a href="#ranking">Ranking</a></li>
+            <li><a href="#ai">AI</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <button class="nav-button magnetic" onclick="showToast('ACCESS GRANTED // WELCOME TO THE EMPIRE')">
+                ACCESS
+            </button>
+            <button class="nav-button primary magnetic" onclick="maximumGlaze()">
+                MAX GLAZE
+            </button>
         </div>
-
-        <div class="loader-text">
-            CALIBRATING AURA...
-        </div>
-
-        <div class="loader-bar">
-            <div class="loader-progress"></div>
-        </div>
-
-    </div>
-
+    </nav>
 </div>
 
-
-<!-- BACKGROUND -->
-
-<canvas id="particles"></canvas>
-
-<div class="aurora">
-    <div class="blob one"></div>
-    <div class="blob two"></div>
-    <div class="blob three"></div>
-</div>
-
-<div class="grid"></div>
-
-
-<!-- CURSOR -->
-
-<div class="cursor-dot"></div>
-<div class="cursor-ring"></div>
-
-
-<!-- =====================================================
-     NAVIGATION
-===================================================== -->
-
-<nav>
-
-    <div class="logo">
-        KACPER<span>™</span>
-    </div>
-
-    <ul>
-        <li><a href="#legend">Legend</a></li>
-        <li><a href="#achievements">Achievements</a></li>
-        <li><a href="#ranking">Ranking</a></li>
-        <li><a href="#ai">Kacper AI</a></li>
-    </ul>
-
-    <button class="nav-cta magnetic" onclick="glaze()">
-        GLAZE
-    </button>
-
-</nav>
-
-
-<!-- =====================================================
+<!-- ============================================================
      HERO
-===================================================== -->
+     ============================================================ -->
+<main id="top">
 
 <section class="hero">
+    <div class="hero-inner" id="heroInner">
 
-    <div class="hero-inner">
-
-        <div class="status">
-            <span class="status-dot"></span>
-            SYSTEM STATUS: KACPER IS COOKING
+        <div class="eyebrow">
+            <span class="live-dot"></span>
+            SYSTEM ONLINE // KACPER IS COOKING
         </div>
 
-        <h1>
-            KACPER
-            <small>THE STANDARD BY WHICH GREATNESS IS MEASURED</small>
-        </h1>
+        <h1 class="hero-title" id="heroTitle">KACPER</h1>
 
-        <p class="hero-description">
-            This isn't a website.
-            This is a monument.
-            A digital shrine dedicated to the undeniable,
-            statistically suspicious and completely unnecessary
-            greatness of Kacper.
+        <div class="hero-kicker">
+            The digital empire of completely unnecessary greatness
+        </div>
+
+        <p class="hero-copy">
+            Welcome to a highly advanced, completely fictional command centre
+            dedicated to one thing: documenting Kacper's suspiciously high levels
+            of aura, talent, main-character energy and general ability to cook.
         </p>
 
-        <div class="hero-buttons">
-
-            <button class="btn btn-primary magnetic"
-                    onclick="glaze()">
-                ✦ GLaze KACPER
+        <div class="hero-actions">
+            <button class="button primary magnetic" onclick="maximumGlaze()">
+                ✦ ACTIVATE MAXIMUM GLAZE
             </button>
 
-            <button class="btn btn-secondary magnetic"
-                    onclick="scrollToLegend()">
-                Explore the Evidence ↓
-            </button>
-
+            <a class="button magnetic" href="#systems">
+                EXPLORE THE EMPIRE ↓
+            </a>
         </div>
-
     </div>
 
-    <div class="scroll">
-        SCROLL
-    </div>
-
+    <div class="scroll-cue">scroll to witness greatness</div>
 </section>
 
-
-<!-- =====================================================
+<!-- ============================================================
      MARQUEE
-===================================================== -->
-
+     ============================================================ -->
 <div class="marquee">
-
     <div class="marquee-track">
+        <div class="marquee-item">KACPER <b>✦</b> UNMATCHED AURA</div>
+        <div class="marquee-item">CERTIFIED GOAT <b>✦</b> ABSOLUTE CINEMA</div>
+        <div class="marquee-item">MAIN CHARACTER <b>✦</b> ZERO COMPETITION</div>
+        <div class="marquee-item">KACPER SUPREMACY <b>✦</b> SYSTEM LIMIT EXCEEDED</div>
 
-        <span>✦ KACPER IS HIM</span>
-        <span><b>✦</b> UNMATCHED AURA</span>
-        <span>✦ CERTIFIED GOAT</span>
-        <span><b>✦</b> ZERO COMPETITION</span>
-        <span>✦ ABSOLUTE CINEMA</span>
-        <span><b>✦</b> KACPER SUPREMACY</span>
-
-        <span>✦ KACPER IS HIM</span>
-        <span><b>✦</b> UNMATCHED AURA</span>
-        <span>✦ CERTIFIED GOAT</span>
-        <span><b>✦</b> ZERO COMPETITION</span>
-        <span>✦ ABSOLUTE CINEMA</span>
-        <span><b>✦</b> KACPER SUPREMACY</span>
-
+        <div class="marquee-item">KACPER <b>✦</b> UNMATCHED AURA</div>
+        <div class="marquee-item">CERTIFIED GOAT <b>✦</b> ABSOLUTE CINEMA</div>
+        <div class="marquee-item">MAIN CHARACTER <b>✦</b> ZERO COMPETITION</div>
+        <div class="marquee-item">KACPER SUPREMACY <b>✦</b> SYSTEM LIMIT EXCEEDED</div>
     </div>
-
 </div>
 
+<!-- ============================================================
+     LIVE DATA
+     ============================================================ -->
+<section class="section" id="systems">
 
-<!-- =====================================================
-     LIVE STATS
-===================================================== -->
-
-<section class="content">
-
-    <div class="label reveal">
-        01 / LIVE DATA
+    <div class="section-head reveal">
+        <div class="section-label">01 / LIVE SYSTEMS</div>
+        <h2 class="section-title">
+            The numbers<br>
+            are getting stupid.
+        </h2>
+        <p class="section-copy">
+            A proprietary collection of entirely fictional metrics designed to
+            scientifically quantify the Kacper phenomenon.
+        </p>
     </div>
 
-    <h2 class="title reveal">
-        The numbers
-        <br>
-        don't lie.
-    </h2>
+    <div class="stats-grid">
 
-    <p class="description reveal">
-        We have attempted to measure Kacper using advanced
-        scientific equipment. The equipment is now broken.
-    </p>
-
-
-    <div class="live-grid">
-
-        <div class="live-card reveal">
-
-            <div class="live-number" id="aura">
-                999,999
+        <article class="stat-card tilt reveal">
+            <div class="stat-top">
+                <span>AURA INDEX</span>
+                <span class="stat-icon">◈</span>
             </div>
+            <div class="stat-number" id="auraCounter">999,999</div>
+            <div class="stat-name">and still climbing</div>
+        </article>
 
-            <p>Aura Points</p>
-
-            <div class="live-now">
-                ● LIVE
+        <article class="stat-card tilt reveal">
+            <div class="stat-top">
+                <span>GLAZE EVENTS</span>
+                <span class="stat-icon">✦</span>
             </div>
+            <div class="stat-number" id="glazeCounter">84,201</div>
+            <div class="stat-name">documented incidents</div>
+        </article>
 
-        </div>
-
-
-        <div class="live-card reveal">
-
-            <div class="live-number" id="glazeCount">
-                48,201
+        <article class="stat-card tilt reveal">
+            <div class="stat-top">
+                <span>COOKING LEVEL</span>
+                <span class="stat-icon">🔥</span>
             </div>
+            <div class="stat-number">∞</div>
+            <div class="stat-name">measurement unavailable</div>
+        </article>
 
-            <p>Glazing Events</p>
-
-            <div class="live-now">
-                ● INCREASING
+        <article class="stat-card tilt reveal">
+            <div class="stat-top">
+                <span>GLOBAL RANK</span>
+                <span class="stat-icon">#</span>
             </div>
-
-        </div>
-
-
-        <div class="live-card reveal">
-
-            <div class="live-number">
-                ∞
-            </div>
-
-            <p>Maximum Greatness</p>
-
-            <div class="live-now">
-                ● UNLIMITED
-            </div>
-
-        </div>
-
-
-        <div class="live-card reveal">
-
-            <div class="live-number">
-                #01
-            </div>
-
-            <p>Global Ranking</p>
-
-            <div class="live-now">
-                ● UNCHALLENGED
-            </div>
-
-        </div>
+            <div class="stat-number">01</div>
+            <div class="stat-name">competition not detected</div>
+        </article>
 
     </div>
-
 </section>
 
+<!-- ============================================================
+     SYSTEMS / FEATURE GRID
+     ============================================================ -->
+<section class="section">
 
-<!-- =====================================================
-     LEGEND
-===================================================== -->
-
-<section class="content" id="legend">
-
-    <div class="label reveal">
-        02 / THE LEGEND
+    <div class="section-head reveal">
+        <div class="section-label">02 / CORE ARCHITECTURE</div>
+        <h2 class="section-title">
+            Built around<br>
+            the phenomenon.
+        </h2>
     </div>
 
-    <h2 class="title reveal">
-        There is Kacper.
-        <br>
-        Then there's everyone else.
-    </h2>
+    <div class="feature-grid">
 
-    <div class="profile reveal">
+        <article class="feature feature-large tilt reveal">
+            <div class="feature-number">01</div>
+            <div class="feature-icon">◎</div>
+            <h3>Aura Core</h3>
+            <p>
+                The central processing unit responsible for generating levels
+                of aura that should probably not be physically possible.
+            </p>
 
-        <div>
-
-            <div class="verified">
-                ✓ VERIFIED LEGEND
+            <div class="feature-visual">
+                <div class="ring">
+                    <div class="orbit-dot"></div>
+                </div>
+                <div class="core">K</div>
             </div>
+        </article>
 
-            <h3>Kacper.</h3>
+        <article class="feature tilt reveal">
+            <div class="feature-number">02</div>
+            <div class="feature-icon">⚡</div>
+            <h3>Energy Engine</h3>
+            <p>
+                Converts raw Kacper presence into completely unnecessary
+                amounts of digital energy.
+            </p>
+        </article>
 
-            <p class="profile-text">
-                Kacper is not simply a person.
-                Kacper is a benchmark.
-                A reference point.
-                A completely unnecessary standard that
-                everyone else is expected to somehow reach.
+        <article class="feature tilt reveal">
+            <div class="feature-number">03</div>
+            <div class="feature-icon">◆</div>
+            <h3>Drip Protocol</h3>
+            <p>
+                A highly advanced protocol for maintaining suspiciously high
+                levels of visual confidence.
+            </p>
+        </article>
+
+        <article class="feature tilt reveal">
+            <div class="feature-number">04</div>
+            <div class="feature-icon">⌁</div>
+            <h3>Main Character OS</h3>
+            <p>
+                Automatically promotes Kacper to the centre of any fictional
+                scenario.
+            </p>
+        </article>
+
+        <article class="feature tilt reveal">
+            <div class="feature-number">05</div>
+            <div class="feature-icon">∞</div>
+            <h3>Limitless Mode</h3>
+            <p>
+                Removes arbitrary ceilings from the already excessive
+                greatness index.
+            </p>
+        </article>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     TERMINAL
+     ============================================================ -->
+<section class="section">
+
+    <div class="section-head reveal">
+        <div class="section-label">03 / COMMAND CENTRE</div>
+        <h2 class="section-title">
+            Behind the<br>
+            scenes.
+        </h2>
+    </div>
+
+    <div class="terminal reveal">
+        <div class="terminal-head">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="terminal-title">KACPER_COMMAND_CENTRE // SECURE</span>
+        </div>
+
+        <div class="terminal-body" id="terminalBody">
+            <span class="terminal-line terminal-green">kacper@empire:~$ system-status</span>
+            <span class="terminal-line">loading core systems...</span>
+            <span class="terminal-line terminal-purple">AURA_ENGINE .............. ONLINE</span>
+            <span class="terminal-line terminal-purple">COOKING_ENGINE ........... ONLINE</span>
+            <span class="terminal-line terminal-purple">GLAZE_ENGINE ............. OVERCLOCKED</span>
+            <span class="terminal-line terminal-cyan">MAIN_CHARACTER_PROTOCOL .. ACTIVE</span>
+            <span class="terminal-line terminal-cyan">COMPETITION_DETECTOR ..... NONE FOUND</span>
+            <span class="terminal-line terminal-muted">---------------------------------------------------</span>
+            <span class="terminal-line">current aura: <span id="terminalAura">999999</span></span>
+            <span class="terminal-line">current hype: <span id="terminalHype">97.4%</span></span>
+            <span class="terminal-line">system conclusion: <span class="terminal-green">KACPER IS HIM</span></span>
+            <span class="terminal-line terminal-green">kacper@empire:~$ _</span>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     PROFILE
+     ============================================================ -->
+<section class="section" id="profile">
+
+    <div class="section-head reveal">
+        <div class="section-label">04 / SUBJECT PROFILE</div>
+        <h2 class="section-title">
+            Meet the<br>
+            benchmark.
+        </h2>
+    </div>
+
+    <div class="profile-shell">
+
+        <article class="profile-card tilt reveal">
+            <div class="profile-status">● VERIFIED LEGEND</div>
+            <h3 class="profile-name">Kacper.</h3>
+
+            <p class="profile-description">
+                Kacper is not merely a person in this completely fictional
+                universe. Kacper is the reference point against which the
+                concept of greatness is unnecessarily measured.
                 <br><br>
-                Researchers have described the phenomenon
-                as "quite frankly ridiculous."
+                Every statistic on this page is fictional, every chart is
+                intentionally dramatic, and somehow the conclusion remains
+                exactly the same.
             </p>
 
-            <div class="profile-tags">
-                <span class="tag">INTELLIGENCE: MAX</span>
+            <div class="tag-row">
                 <span class="tag">AURA: ∞</span>
-                <span class="tag">COOKING: ELITE</span>
+                <span class="tag">COOKING: MAX</span>
                 <span class="tag">DRIP: UNMEASURABLE</span>
+                <span class="tag">BRAIN: GALAXY</span>
+                <span class="tag">STATUS: HIM</span>
             </div>
+        </article>
+
+        <div class="profile-side">
+
+            <article class="score-card tilt reveal">
+                <div class="score-label">OVERALL KACPER SCORE</div>
+                <div class="score">∞</div>
+                <div class="score-caption">
+                    Numerical range exceeded. Please contact the mathematics department.
+                </div>
+            </article>
+
+            <article class="meter-card tilt reveal">
+                <div class="score-label">REAL-TIME SYSTEM READINGS</div>
+
+                <div class="meter-row">
+                    <span>AURA</span>
+                    <span>99.9%</span>
+                </div>
+                <div class="meter"><span style="width:99.9%"></span></div>
+
+                <div class="meter-row">
+                    <span>COOKING</span>
+                    <span>100%</span>
+                </div>
+                <div class="meter"><span style="width:100%"></span></div>
+
+                <div class="meter-row">
+                    <span>MAIN CHARACTER</span>
+                    <span>∞%</span>
+                </div>
+                <div class="meter"><span style="width:100%"></span></div>
+            </article>
 
         </div>
-
-
-        <div class="rating">
-
-            <div class="rating-content">
-
-                <strong>∞</strong>
-
-                <span>
-                    KACPER RATING
-                </span>
-
-            </div>
-
-        </div>
-
     </div>
-
 </section>
 
+<!-- ============================================================
+     AWARDS
+     ============================================================ -->
+<section class="section">
 
-<!-- =====================================================
-     ACHIEVEMENTS
-===================================================== -->
-
-<section class="content" id="achievements">
-
-    <div class="label reveal">
-        03 / ACHIEVEMENTS
+    <div class="section-head reveal">
+        <div class="section-label">05 / AWARDS</div>
+        <h2 class="section-title">
+            Trophies that<br>
+            shouldn't exist.
+        </h2>
+        <p class="section-copy">
+            An entirely fabricated museum of achievements that are nevertheless
+            extremely impressive.
+        </p>
     </div>
 
-    <h2 class="title reveal">
-        A history of
-        <br>
-        greatness.
-    </h2>
+    <div class="awards">
 
-    <div class="achievements">
-
-        <div class="achievement reveal">
-
-            <div class="achievement-number">01</div>
-
-            <div class="achievement-icon">
-                👑
-            </div>
-
-            <h3>Supreme Aura</h3>
-
+        <article class="award tilt reveal">
+            <div class="award-index">01</div>
+            <div class="award-icon">👑</div>
+            <h3>Supreme Aura Award</h3>
             <p>
-                Achieved an aura level that forced the
-                scientific community to invent new numbers.
+                Presented after the aura measurement device displayed the word
+                "bro what" and powered itself off.
             </p>
+        </article>
 
-        </div>
-
-
-        <div class="achievement reveal">
-
-            <div class="achievement-number">02</div>
-
-            <div class="achievement-icon">
-                🧠
-            </div>
-
-            <h3>Galaxy Brain</h3>
-
+        <article class="award tilt reveal">
+            <div class="award-index">02</div>
+            <div class="award-icon">🔥</div>
+            <h3>Certified Cook</h3>
             <p>
-                Possesses thoughts so advanced that
-                several researchers simply stopped taking notes.
+                Awarded for consistently cooking in situations where cooking
+                should not have been possible.
             </p>
+        </article>
 
-        </div>
-
-
-        <div class="achievement reveal">
-
-            <div class="achievement-number">03</div>
-
-            <div class="achievement-icon">
-                🔥
-            </div>
-
-            <h3>Professional Cook</h3>
-
+        <article class="award tilt reveal">
+            <div class="award-index">03</div>
+            <div class="award-icon">🧠</div>
+            <h3>Galaxy Brain Medal</h3>
             <p>
-                Has somehow managed to cook without
-                technically being anywhere near a kitchen.
+                Presented by a fictional scientific committee after several
+                calculations became too advanced.
             </p>
+        </article>
 
-        </div>
-
-
-        <div class="achievement reveal">
-
-            <div class="achievement-number">04</div>
-
-            <div class="achievement-icon">
-                ⚡
-            </div>
-
-            <h3>Unmatched Energy</h3>
-
+        <article class="award tilt reveal">
+            <div class="award-index">04</div>
+            <div class="award-icon">⚡</div>
+            <h3>Energy Champion</h3>
             <p>
-                Renewable energy companies have expressed
-                interest in harvesting Kacper's presence.
+                The national grid briefly considered connecting Kacper directly
+                to the power network.
             </p>
+        </article>
 
-        </div>
-
-
-        <div class="achievement reveal">
-
-            <div class="achievement-number">05</div>
-
-            <div class="achievement-icon">
-                💎
-            </div>
-
+        <article class="award tilt reveal">
+            <div class="award-index">05</div>
+            <div class="award-icon">💎</div>
             <h3>Rare Specimen</h3>
-
             <p>
-                Only one Kacper has ever been discovered.
-                Scientists have not recovered.
+                Only one known instance exists. Attempts to reproduce the
+                phenomenon have failed.
             </p>
+        </article>
 
-        </div>
-
-
-        <div class="achievement reveal">
-
-            <div class="achievement-number">06</div>
-
-            <div class="achievement-icon">
-                🚀
-            </div>
-
-            <h3>Main Character</h3>
-
+        <article class="award tilt reveal">
+            <div class="award-index">06</div>
+            <div class="award-icon">🚀</div>
+            <h3>Main Character Award</h3>
             <p>
-                Side characters have reportedly become
-                irrelevant whenever Kacper enters the scene.
+                Awarded for repeatedly becoming the most important character
+                without requesting the position.
             </p>
-
-        </div>
+        </article>
 
     </div>
-
 </section>
 
+<!-- ============================================================
+     HISTORY
+     ============================================================ -->
+<section class="section" id="history">
 
-<!-- =====================================================
-     TIMELINE
-===================================================== -->
-
-<section class="content">
-
-    <div class="label reveal">
-        04 / HISTORY
+    <div class="section-head reveal">
+        <div class="section-label">06 / ARCHIVE</div>
+        <h2 class="section-title">
+            The timeline<br>
+            of greatness.
+        </h2>
     </div>
-
-    <h2 class="title reveal">
-        The Kacper
-        <br>
-        timeline.
-    </h2>
 
     <div class="timeline">
 
-        <div class="timeline-item reveal">
-
+        <article class="timeline-item reveal">
             <div class="timeline-dot"></div>
-
-            <div class="timeline-year">
-                ORIGIN
-            </div>
-
-            <h3>The Beginning</h3>
-
-            <p>
-                Kacper entered existence.
-                Humanity immediately entered a new era.
+            <div class="timeline-date">ORIGIN // 001</div>
+            <h3 class="timeline-title">The Beginning</h3>
+            <p class="timeline-copy">
+                Kacper entered the fictional historical record. Analysts
+                immediately noticed something was different.
             </p>
+        </article>
 
-        </div>
-
-
-        <div class="timeline-item reveal">
-
+        <article class="timeline-item reveal">
             <div class="timeline-dot"></div>
-
-            <div class="timeline-year">
-                PHASE I
-            </div>
-
-            <h3>The Aura Awakening</h3>
-
-            <p>
-                The first measurable signs of extraordinary
-                Kacper energy were detected.
+            <div class="timeline-date">PHASE // 002</div>
+            <h3 class="timeline-title">Aura Awakening</h3>
+            <p class="timeline-copy">
+                The first aura spike was recorded. Researchers initially assumed
+                the equipment was broken.
             </p>
+        </article>
 
-        </div>
-
-
-        <div class="timeline-item reveal">
-
+        <article class="timeline-item reveal">
             <div class="timeline-dot"></div>
-
-            <div class="timeline-year">
-                PHASE II
-            </div>
-
-            <h3>The Great Cooking</h3>
-
-            <p>
-                Kacper began consistently cooking.
-                Nobody was prepared.
+            <div class="timeline-date">PHASE // 003</div>
+            <h3 class="timeline-title">The Cooking Era</h3>
+            <p class="timeline-copy">
+                Kacper began producing an unprecedented number of W's. The term
+                "cooking" was officially added to the archive.
             </p>
+        </article>
 
-        </div>
-
-
-        <div class="timeline-item reveal">
-
+        <article class="timeline-item reveal">
             <div class="timeline-dot"></div>
-
-            <div class="timeline-year">
-                PRESENT DAY
-            </div>
-
-            <h3>The Glazing Era</h3>
-
-            <p>
-                This website was created.
-                The glazing has officially become industrial.
+            <div class="timeline-date">PHASE // 004</div>
+            <h3 class="timeline-title">Empire Formation</h3>
+            <p class="timeline-copy">
+                The digital empire was established to document the phenomenon
+                with unnecessarily expensive-looking technology.
             </p>
+        </article>
 
-        </div>
+        <article class="timeline-item reveal">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date">PRESENT // 005</div>
+            <h3 class="timeline-title">The Glazing Era</h3>
+            <p class="timeline-copy">
+                This website went live. The glazing department has never looked
+                back.
+            </p>
+        </article>
 
     </div>
-
 </section>
 
-
-<!-- =====================================================
+<!-- ============================================================
      QUOTE
-===================================================== -->
+     ============================================================ -->
+<section class="quote-section">
 
-<section class="quote">
+    <div class="section-label reveal">07 / PHILOSOPHY</div>
 
-    <div class="label reveal">
-        05 / PHILOSOPHY
-    </div>
-
-    <div class="quote-text reveal">
-
-        "Some people chase greatness.
-        <span class="gradient-text">
-            Kacper makes greatness chase him.
-        </span>"
-
-    </div>
-
+    <blockquote class="quote reveal">
+        “Some people chase greatness.
+        <span class="gradient">Kacper makes greatness chase him.</span>”
+    </blockquote>
 </section>
 
+<!-- ============================================================
+     RANKING
+     ============================================================ -->
+<section class="section" id="ranking">
 
-<!-- =====================================================
-     LEADERBOARD
-===================================================== -->
-
-<section class="content" id="ranking">
-
-    <div class="label reveal">
-        06 / GLOBAL RANKING
+    <div class="section-head reveal">
+        <div class="section-label">08 / GLOBAL RANKING</div>
+        <h2 class="section-title">
+            The leaderboard<br>
+            is not competitive.
+        </h2>
     </div>
-
-    <h2 class="title reveal">
-        Nobody comes
-        <br>
-        close.
-    </h2>
 
     <div class="leaderboard reveal">
 
-        <div class="leader">
-
-            <div class="rank first">
-                #01
-            </div>
-
-            <div class="name">
-                Kacper 👑
-            </div>
-
-            <div class="score">
-                ∞ AURA
-            </div>
-
+        <div class="leader-head">
+            <span>RANK</span>
+            <span>ENTITY</span>
+            <span>AURA SCORE</span>
+            <span>STATUS</span>
         </div>
 
+        <div class="leader-row">
+            <span class="rank gold">#01</span>
+            <span class="person">
+                <span class="avatar">K</span>
+                Kacper
+            </span>
+            <span class="leader-score">∞ AURA</span>
+            <span class="leader-status">UNTOUCHABLE</span>
+        </div>
 
-        <div class="leader">
-
-            <div class="rank">
-                #02
-            </div>
-
-            <div class="name">
+        <div class="leader-row">
+            <span class="rank">#02</span>
+            <span class="person">
+                <span class="avatar">E</span>
                 Everyone Else
-            </div>
-
-            <div class="score">
-                37 AURA
-            </div>
-
+            </span>
+            <span class="leader-score">37 AURA</span>
+            <span class="leader-status">TRYING</span>
         </div>
 
-
-        <div class="leader">
-
-            <div class="rank">
-                #03
-            </div>
-
-            <div class="name">
-                The Competition
-            </div>
-
-            <div class="score">
-                -12 AURA
-            </div>
-
+        <div class="leader-row">
+            <span class="rank">#03</span>
+            <span class="person">
+                <span class="avatar">C</span>
+                Competition
+            </span>
+            <span class="leader-score">-12 AURA</span>
+            <span class="leader-status">MISSING</span>
         </div>
 
-
-        <div class="leader">
-
-            <div class="rank">
-                #04
-            </div>
-
-            <div class="name">
-                That One Guy
-            </div>
-
-            <div class="score">
-                0 AURA
-            </div>
-
+        <div class="leader-row">
+            <span class="rank">#04</span>
+            <span class="person">
+                <span class="avatar">?</span>
+                Unknown Candidate
+            </span>
+            <span class="leader-score">0 AURA</span>
+            <span class="leader-status">SCANNING</span>
         </div>
 
     </div>
-
-
-    <!-- HYPE -->
-
-    <div class="hype-box reveal">
-
-        <div class="hype-top">
-
-            <span>
-                CURRENT KACPER HYPE
-            </span>
-
-            <span class="hype-value">
-                97.4%
-            </span>
-
-        </div>
-
-        <div class="hype-bar">
-            <div class="hype-fill"></div>
-        </div>
-
-    </div>
-
 </section>
 
+<!-- ============================================================
+     CONTROL CENTRE
+     ============================================================ -->
+<section class="section">
 
-<!-- =====================================================
-     KACPER AI
-===================================================== -->
-
-<section class="content" id="ai">
-
-    <div class="label reveal">
-        07 / ARTIFICIAL INTELLIGENCE
+    <div class="section-head reveal">
+        <div class="section-label">09 / CONTROL CENTRE</div>
+        <h2 class="section-title">
+            Live telemetry<br>
+            from the empire.
+        </h2>
     </div>
 
-    <h2 class="title reveal">
-        Ask Kacper AI.
-    </h2>
+    <div class="control-grid">
 
-    <p class="description reveal">
-        An advanced artificial intelligence trained exclusively
-        on the extremely important subject of Kacper.
-    </p>
+        <article class="control-card reveal">
+            <div class="control-header">
+                <span class="control-title">HYPE CORE</span>
+                <span class="control-live">● LIVE</span>
+            </div>
 
+            <div class="control-body">
+                <div class="big-meter">
+                    <div class="big-ring"></div>
 
-    <div class="ai reveal">
+                    <div class="big-ring-text">
+                        <strong id="hypeValue">97</strong>
+                        <span>HYPE %</span>
+                    </div>
+                </div>
+            </div>
+        </article>
 
-        <div class="ai-header">
+        <article class="control-card reveal">
+            <div class="control-header">
+                <span class="control-title">SIGNAL MATRIX</span>
+                <span class="control-live">● STABLE</span>
+            </div>
 
-            <div class="ai-status"></div>
+            <div class="control-body">
+                <div class="signal-list">
 
-            <span>
-                KACPER AI — ONLINE
-            </span>
+                    <div class="signal">
+                        <span class="signal-name">AURA DENSITY</span>
+                        <span class="signal-bar"><span style="width:99%"></span></span>
+                        <span class="signal-value">99%</span>
+                    </div>
 
+                    <div class="signal">
+                        <span class="signal-name">COOKING RATE</span>
+                        <span class="signal-bar"><span style="width:100%"></span></span>
+                        <span class="signal-value">MAX</span>
+                    </div>
+
+                    <div class="signal">
+                        <span class="signal-name">DRIP OUTPUT</span>
+                        <span class="signal-bar"><span style="width:96%"></span></span>
+                        <span class="signal-value">96%</span>
+                    </div>
+
+                    <div class="signal">
+                        <span class="signal-name">BRAIN POWER</span>
+                        <span class="signal-bar"><span style="width:98%"></span></span>
+                        <span class="signal-value">98%</span>
+                    </div>
+
+                    <div class="signal">
+                        <span class="signal-name">MAIN CHARACTER</span>
+                        <span class="signal-bar"><span style="width:100%"></span></span>
+                        <span class="signal-value">∞</span>
+                    </div>
+
+                    <div class="signal">
+                        <span class="signal-name">COMPETITION</span>
+                        <span class="signal-bar"><span style="width:1%"></span></span>
+                        <span class="signal-value">1%</span>
+                    </div>
+
+                </div>
+            </div>
+        </article>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     AI
+     ============================================================ -->
+<section class="section" id="ai">
+
+    <div class="section-head reveal">
+        <div class="section-label">10 / ARTIFICIAL INTELLIGENCE</div>
+        <h2 class="section-title">
+            Ask the machine<br>
+            about Kacper.
+        </h2>
+        <p class="section-copy">
+            KACPER-AI™ has been trained on a completely fictional database
+            containing highly scientific evidence of Kacper's greatness.
+        </p>
+    </div>
+
+    <div class="ai-shell reveal">
+
+        <div class="ai-top">
+            <span class="ai-light"></span>
+            <span class="ai-name">KACPER-AI // ONLINE // MODEL: GLAZE-∞</span>
         </div>
-
 
         <div class="ai-body">
 
-            <div class="ai-response" id="aiResponse">
-
-                Hello. I am Kacper AI.
-
-                <br><br>
-
-                I have analysed 847,293 fictional pieces
-                of evidence and reached one conclusion:
-
-                <br><br>
-
+            <div class="ai-output" id="aiOutput">
+                Hello. I am <strong>KACPER-AI™</strong>.<br><br>
+                I have analysed 847,293 fictional data points, 12,000 imaginary
+                aura readings and several extremely questionable scientific
+                papers.<br><br>
+                My current conclusion is simple:
                 <strong>Kacper is him.</strong>
-
             </div>
 
-
-            <div class="ai-buttons">
-
-                <button class="ai-btn"
-                        onclick="askAI('why')">
+            <div class="ai-options">
+                <button class="ai-option" onclick="askAI('why')">
                     Why is Kacper so good?
                 </button>
 
-                <button class="ai-btn"
-                        onclick="askAI('aura')">
+                <button class="ai-option" onclick="askAI('aura')">
                     Calculate his aura
                 </button>
 
-                <button class="ai-btn"
-                        onclick="askAI('competition')">
-                    Who can beat Kacper?
+                <button class="ai-option" onclick="askAI('competition')">
+                    Who can beat him?
                 </button>
 
-                <button class="ai-btn"
-                        onclick="askAI('future')">
-                    What happens next?
+                <button class="ai-option" onclick="askAI('future')">
+                    Predict the future
                 </button>
 
+                <button class="ai-option" onclick="askAI('scientist')">
+                    Ask a scientist
+                </button>
             </div>
 
         </div>
-
     </div>
-
 </section>
 
-
-<!-- =====================================================
+<!-- ============================================================
      FINAL CTA
-===================================================== -->
-
-<section class="final">
+     ============================================================ -->
+<section class="final-section">
 
     <div class="final-inner">
 
-        <div class="label reveal">
-            08 / CONCLUSION
-        </div>
+        <div class="section-label reveal">11 / FINAL PROTOCOL</div>
 
-        <h2 class="reveal">
-            KACPER
-            <br>
+        <h2 class="final-title reveal" id="finalTitle">
+            KACPER<br>
             IS HIM.
         </h2>
 
-        <p class="reveal">
-
-            You've seen the evidence.
-            You've witnessed the statistics.
-            You've consulted the artificial intelligence.
-
+        <p class="final-copy reveal">
+            You have reached the end of the archive.
+            The statistics have been reviewed.
+            The systems have been interrogated.
+            The AI has spoken.
             <br><br>
-
-            There is only one logical conclusion.
-
+            There is only one reasonable next step.
         </p>
 
-        <button class="btn btn-primary magnetic reveal"
-                onclick="ultimateGlaze()">
+        <div class="final-buttons">
+            <button class="button primary magnetic reveal" onclick="maximumGlaze()">
+                ✦ ACTIVATE MAXIMUM GLAZE
+            </button>
 
-            ✦ ACTIVATE MAXIMUM GLAZE
-
-        </button>
+            <button class="button magnetic reveal" onclick="systemOverdrive()">
+                ⚡ SYSTEM OVERDRIVE
+            </button>
+        </div>
 
     </div>
-
 </section>
 
+</main>
 
-<!-- FOOTER -->
-
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
 <footer>
-
-    <div>
-        © 2026 KACPER™
-    </div>
-
-    <div>
-        THE OFFICIAL DIGITAL GLAZING DEPARTMENT
-    </div>
-
+    <span>© 2026 KACPER™ DIGITAL EMPIRE</span>
+    <span>FICTIONAL • UNNECESSARY • ABSOLUTELY CINEMATIC</span>
 </footer>
-
-
-<!-- TOAST -->
 
 <div class="toast" id="toast"></div>
 
-
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
 <script>
+/* ============================================================
+   CORE STATE
+   ============================================================ */
 
-/* =========================================================
+const state = {
+    aura: 999999,
+    glaze: 84201,
+    hype: 97,
+    mouseX: window.innerWidth / 2,
+    mouseY: window.innerHeight / 2,
+    ringX: window.innerWidth / 2,
+    ringY: window.innerHeight / 2,
+    overdrive: false
+};
+
+/* ============================================================
    LOADER
-========================================================= */
+   ============================================================ */
 
 window.addEventListener("load", () => {
-
     setTimeout(() => {
-
-        document
-            .getElementById("loader")
-            .classList
-            .add("hidden");
-
-    }, 2600);
-
+        document.body.classList.remove("no-scroll");
+        document.getElementById("loader").classList.add("hide");
+    }, 2700);
 });
 
+document.body.classList.add("no-scroll");
 
-/* =========================================================
+/* ============================================================
    CURSOR
-========================================================= */
+   ============================================================ */
 
-const dot = document.querySelector(".cursor-dot");
-const ring = document.querySelector(".cursor-ring");
+const cursorDot = document.getElementById("cursorDot");
+const cursorRing = document.getElementById("cursorRing");
 
-let mouseX = 0;
-let mouseY = 0;
+document.addEventListener("mousemove", event => {
+    state.mouseX = event.clientX;
+    state.mouseY = event.clientY;
 
-let ringX = 0;
-let ringY = 0;
-
-document.addEventListener("mousemove", e => {
-
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-
-    dot.style.left = mouseX + "px";
-    dot.style.top = mouseY + "px";
-
+    cursorDot.style.left = state.mouseX + "px";
+    cursorDot.style.top = state.mouseY + "px";
 });
 
-function cursorLoop() {
+function animateCursor() {
+    state.ringX += (state.mouseX - state.ringX) * 0.13;
+    state.ringY += (state.mouseY - state.ringY) * 0.13;
 
-    ringX += (mouseX - ringX) * .13;
-    ringY += (mouseY - ringY) * .13;
+    cursorRing.style.left = state.ringX + "px";
+    cursorRing.style.top = state.ringY + "px";
 
-    ring.style.left = ringX + "px";
-    ring.style.top = ringY + "px";
-
-    requestAnimationFrame(cursorLoop);
-
+    requestAnimationFrame(animateCursor);
 }
 
-cursorLoop();
+animateCursor();
 
+function bindCursorHover() {
+    document.querySelectorAll(
+        "a, button, .tilt, .feature, .award, .stat-card"
+    ).forEach(element => {
+        element.addEventListener("mouseenter", () => {
+            cursorRing.classList.add("active");
+        });
 
-document.querySelectorAll("button,a,.achievement,.live-card").forEach(el => {
-
-    el.addEventListener("mouseenter", () => {
-        ring.classList.add("hover");
+        element.addEventListener("mouseleave", () => {
+            cursorRing.classList.remove("active");
+        });
     });
-
-    el.addEventListener("mouseleave", () => {
-        ring.classList.remove("hover");
-    });
-
-});
-
-
-/* =========================================================
-   PARTICLE SYSTEM
-========================================================= */
-
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-
-let particles = [];
-
-function resizeCanvas() {
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
 }
 
-resizeCanvas();
+bindCursorHover();
 
-window.addEventListener("resize", resizeCanvas);
+/* ============================================================
+   STAR FIELD
+   ============================================================ */
 
+const starCanvas = document.getElementById("stars");
+const starCtx = starCanvas.getContext("2d");
 
-for(let i = 0; i < 90; i++) {
+let stars = [];
 
-    particles.push({
+function resizeStars() {
+    starCanvas.width = window.innerWidth;
+    starCanvas.height = window.innerHeight;
+}
 
+resizeStars();
+
+window.addEventListener("resize", resizeStars);
+
+for (let i = 0; i < 150; i++) {
+    stars.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-
-        size: Math.random() * 1.8 + .3,
-
-        speedX: (Math.random() - .5) * .25,
-        speedY: (Math.random() - .5) * .25
-
+        radius: Math.random() * 1.3 + .2,
+        speed: Math.random() * .25 + .03,
+        alpha: Math.random() * .5 + .1
     });
-
 }
 
-
-function drawParticles() {
-
-    ctx.clearRect(
+function renderStars() {
+    starCtx.clearRect(
         0,
         0,
-        canvas.width,
-        canvas.height
+        starCanvas.width,
+        starCanvas.height
     );
 
-    particles.forEach(p => {
+    stars.forEach(star => {
+        star.y += star.speed;
 
-        p.x += p.speedX;
-        p.y += p.speedY;
+        if (star.y > starCanvas.height) {
+            star.y = -5;
+            star.x = Math.random() * starCanvas.width;
+        }
 
-        if(p.x < 0) p.x = canvas.width;
-        if(p.x > canvas.width) p.x = 0;
-
-        if(p.y < 0) p.y = canvas.height;
-        if(p.y > canvas.height) p.y = 0;
-
-        ctx.beginPath();
-
-        ctx.arc(
-            p.x,
-            p.y,
-            p.size,
+        starCtx.beginPath();
+        starCtx.arc(
+            star.x,
+            star.y,
+            star.radius,
             0,
             Math.PI * 2
         );
 
-        ctx.fillStyle =
-            "rgba(160,140,255,.45)";
+        starCtx.fillStyle =
+            "rgba(255,255,255," + star.alpha + ")";
 
-        ctx.fill();
-
+        starCtx.fill();
     });
 
-    requestAnimationFrame(drawParticles);
-
+    requestAnimationFrame(renderStars);
 }
 
-drawParticles();
+renderStars();
 
+/* ============================================================
+   ENERGY LINES
+   ============================================================ */
 
-/* =========================================================
-   SCROLL REVEALS
-========================================================= */
+const energyCanvas = document.getElementById("energyCanvas");
+const energyCtx = energyCanvas.getContext("2d");
 
-const revealElements =
-    document.querySelectorAll(".reveal");
+function resizeEnergy() {
+    energyCanvas.width = window.innerWidth;
+    energyCanvas.height = window.innerHeight;
+}
 
-const revealObserver =
-    new IntersectionObserver(
+resizeEnergy();
+window.addEventListener("resize", resizeEnergy);
 
-        entries => {
+let energyTime = 0;
 
-            entries.forEach(entry => {
+function drawEnergy() {
+    energyTime += 0.004;
 
-                if(entry.isIntersecting) {
-
-                    entry.target
-                        .classList
-                        .add("visible");
-
-                }
-
-            });
-
-        },
-
-        {
-            threshold: .12
-        }
-
+    energyCtx.clearRect(
+        0,
+        0,
+        energyCanvas.width,
+        energyCanvas.height
     );
 
+    for (let line = 0; line < 5; line++) {
+        energyCtx.beginPath();
 
-revealElements.forEach(el =>
-    revealObserver.observe(el)
+        for (let x = 0; x <= energyCanvas.width; x += 20) {
+            const y =
+                energyCanvas.height * (0.18 + line * 0.17) +
+                Math.sin(x * 0.006 + energyTime * (1 + line * .2)) * 35;
+
+            if (x === 0) {
+                energyCtx.moveTo(x, y);
+            } else {
+                energyCtx.lineTo(x, y);
+            }
+        }
+
+        energyCtx.strokeStyle =
+            line % 2 === 0
+                ? "rgba(139,92,246,.08)"
+                : "rgba(34,211,238,.055)";
+
+        energyCtx.lineWidth = 1;
+        energyCtx.stroke();
+    }
+
+    requestAnimationFrame(drawEnergy);
+}
+
+drawEnergy();
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+
+const revealObserver = new IntersectionObserver(
+    entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("show");
+            }
+        });
+    },
+    {
+        threshold: 0.12
+    }
 );
 
+document.querySelectorAll(".reveal").forEach(element => {
+    revealObserver.observe(element);
+});
 
-/* =========================================================
-   LIVE COUNTERS
-========================================================= */
+/* ============================================================
+   TILT CARDS
+   ============================================================ */
 
-let aura = 999999;
-let glazes = 48201;
+document.querySelectorAll(".tilt").forEach(card => {
+    card.addEventListener("mousemove", event => {
+        if (window.innerWidth < 800) return;
 
-setInterval(() => {
-
-    aura += Math.floor(Math.random() * 150);
-
-    glazes += Math.floor(Math.random() * 4);
-
-    document.getElementById("aura")
-        .textContent =
-        aura.toLocaleString();
-
-    document.getElementById("glazeCount")
-        .textContent =
-        glazes.toLocaleString();
-
-}, 1300);
-
-
-/* =========================================================
-   MAGNETIC BUTTONS
-========================================================= */
-
-document.querySelectorAll(".magnetic").forEach(button => {
-
-    button.addEventListener("mousemove", e => {
-
-        const rect =
-            button.getBoundingClientRect();
+        const rect = card.getBoundingClientRect();
 
         const x =
-            e.clientX - rect.left - rect.width / 2;
+            event.clientX - rect.left;
 
         const y =
-            e.clientY - rect.top - rect.height / 2;
+            event.clientY - rect.top;
+
+        const rotateX =
+            ((y / rect.height) - .5) * -6;
+
+        const rotateY =
+            ((x / rect.width) - .5) * 6;
+
+        card.style.transform =
+            "perspective(900px) rotateX(" +
+            rotateX +
+            "deg) rotateY(" +
+            rotateY +
+            "deg) translateY(-5px)";
+    });
+
+    card.addEventListener("mouseleave", () => {
+        card.style.transform = "";
+    });
+});
+
+/* ============================================================
+   MAGNETIC BUTTONS
+   ============================================================ */
+
+document.querySelectorAll(".magnetic").forEach(button => {
+    button.addEventListener("mousemove", event => {
+        if (window.innerWidth < 800) return;
+
+        const rect = button.getBoundingClientRect();
+
+        const x =
+            event.clientX - rect.left - rect.width / 2;
+
+        const y =
+            event.clientY - rect.top - rect.height / 2;
 
         button.style.transform =
-            `translate(${x * .15}px, ${y * .15}px)`;
-
+            "translate(" +
+            x * .12 +
+            "px," +
+            y * .12 +
+            "px)";
     });
 
     button.addEventListener("mouseleave", () => {
-
         button.style.transform = "";
-
     });
-
 });
 
+/* ============================================================
+   LIVE COUNTERS
+   ============================================================ */
 
-/* =========================================================
-   GLAZE
-========================================================= */
+function updateCounters() {
+    state.aura += Math.floor(Math.random() * 180);
+    state.glaze += Math.floor(Math.random() * 7);
 
-function glaze() {
+    document.getElementById("auraCounter").textContent =
+        state.aura.toLocaleString();
 
-    const messages = [
+    document.getElementById("glazeCounter").textContent =
+        state.glaze.toLocaleString();
 
-        "Kacper has gained +10,000 aura.",
-        "The glazing department is impressed.",
-        "Another Kacper W detected.",
-        "Scientists have been notified.",
-        "Kacper remains undefeated.",
-        "Aura levels are becoming dangerous.",
-        "The leaderboard has been updated.",
-        "Common sense has left the building.",
-        "Kacper is currently cooking.",
-        "Absolutely immaculate glazing."
+    document.getElementById("terminalAura").textContent =
+        state.aura;
 
-    ];
+    const hype =
+        97 + Math.random() * 1.7;
 
-    const message =
-        messages[
-            Math.floor(
-                Math.random() * messages.length
-            )
-        ];
+    state.hype = hype;
 
-    showToast(message);
+    document.getElementById("terminalHype").textContent =
+        hype.toFixed(1) + "%";
 
-    createConfetti();
-
+    document.getElementById("hypeValue").textContent =
+        Math.round(hype);
 }
 
+setInterval(updateCounters, 1100);
 
-/* =========================================================
-   ULTIMATE GLAZE
-========================================================= */
-
-function ultimateGlaze() {
-
-    showToast(
-        "⚠ MAXIMUM GLAZE ACTIVATED ⚠"
-    );
-
-    document.body.style.animation =
-        "flash .2s";
-
-    createConfetti(250);
-
-    setTimeout(() => {
-
-        document.body.style.animation = "";
-
-    }, 300);
-
-}
-
-
-/* =========================================================
+/* ============================================================
    TOAST
-========================================================= */
+   ============================================================ */
 
-let toastTimer;
+let toastTimeout;
 
 function showToast(message) {
-
-    const toast =
-        document.getElementById("toast");
+    const toast = document.getElementById("toast");
 
     toast.textContent = message;
-
     toast.classList.add("show");
 
-    clearTimeout(toastTimer);
+    clearTimeout(toastTimeout);
 
-    toastTimer = setTimeout(() => {
-
+    toastTimeout = setTimeout(() => {
         toast.classList.remove("show");
-
-    }, 2600);
-
+    }, 2800);
 }
 
-
-/* =========================================================
+/* ============================================================
    CONFETTI
-========================================================= */
+   ============================================================ */
 
-function createConfetti(amount = 80) {
+function confetti(amount = 120) {
+    const fragments = [];
 
-    for(let i = 0; i < amount; i++) {
-
-        const piece =
-            document.createElement("div");
+    for (let i = 0; i < amount; i++) {
+        const piece = document.createElement("div");
 
         piece.style.position = "fixed";
-        piece.style.left =
-            Math.random() * 100 + "vw";
-
+        piece.style.left = Math.random() * 100 + "vw";
         piece.style.top = "-20px";
-
         piece.style.width =
-            Math.random() * 7 + 4 + "px";
-
+            Math.random() * 8 + 3 + "px";
         piece.style.height =
-            Math.random() * 14 + 6 + "px";
-
-        piece.style.background =
-            [
-                "#8b5cf6",
-                "#22d3ee",
-                "#ffffff",
-                "#ec4899"
-            ][
-                Math.floor(Math.random() * 4)
-            ];
-
+            Math.random() * 14 + 5 + "px";
         piece.style.zIndex = "999999";
         piece.style.pointerEvents = "none";
 
+        const colors = [
+            "#8b5cf6",
+            "#22d3ee",
+            "#ec4899",
+            "#ffffff",
+            "#facc15"
+        ];
+
+        piece.style.background =
+            colors[Math.floor(Math.random() * colors.length)];
+
         document.body.appendChild(piece);
+        fragments.push(piece);
 
         const duration =
-            Math.random() * 2500 + 1800;
+            1600 + Math.random() * 2600;
 
         piece.animate(
-
             [
                 {
-                    transform:
-                        "translateY(0) rotate(0deg)",
+                    transform: "translateY(0) rotate(0deg)",
                     opacity: 1
                 },
-
                 {
                     transform:
-                        `translateY(110vh)
-                         translateX(${(Math.random()-.5)*300}px)
-                         rotate(${Math.random()*1000}deg)`,
+                        "translateY(110vh) translateX(" +
+                        ((Math.random() - .5) * 500) +
+                        "px) rotate(" +
+                        Math.random() * 1400 +
+                        "deg)",
                     opacity: 0
                 }
             ],
-
             {
-                duration,
+                duration: duration,
                 easing: "cubic-bezier(.2,.7,.3,1)"
             }
-
         );
 
-        setTimeout(() => {
-
-            piece.remove();
-
-        }, duration);
-
+        setTimeout(() => piece.remove(), duration);
     }
-
 }
 
+/* ============================================================
+   MAXIMUM GLAZE
+   ============================================================ */
 
-/* =========================================================
-   AI
-========================================================= */
+function maximumGlaze() {
+    state.glaze += 500;
+
+    document.getElementById("glazeCounter").textContent =
+        state.glaze.toLocaleString();
+
+    showToast(
+        "⚠ MAXIMUM GLAZE ACTIVATED // AURA +500,000"
+    );
+
+    document.getElementById("heroTitle")
+        .classList.add("glitch");
+
+    document.getElementById("finalTitle")
+        .classList.add("glitch");
+
+    confetti(180);
+
+    setTimeout(() => {
+        document.getElementById("heroTitle")
+            .classList.remove("glitch");
+
+        document.getElementById("finalTitle")
+            .classList.remove("glitch");
+    }, 800);
+}
+
+/* ============================================================
+   SYSTEM OVERDRIVE
+   ============================================================ */
+
+function systemOverdrive() {
+    state.overdrive = !state.overdrive;
+
+    if (state.overdrive) {
+        document.documentElement.style.setProperty(
+            "--purple",
+            "#ec4899"
+        );
+
+        document.documentElement.style.setProperty(
+            "--cyan",
+            "#facc15"
+        );
+
+        document.body.style.filter =
+            "saturate(1.35) contrast(1.06)";
+
+        showToast(
+            "SYSTEM OVERDRIVE // REALITY IS NOW OPTIONAL"
+        );
+
+        confetti(100);
+    } else {
+        document.documentElement.style.setProperty(
+            "--purple",
+            "#8b5cf6"
+        );
+
+        document.documentElement.style.setProperty(
+            "--cyan",
+            "#22d3ee"
+        );
+
+        document.body.style.filter = "";
+
+        showToast(
+            "SYSTEM OVERDRIVE // DISABLED"
+        );
+    }
+}
+
+/* ============================================================
+   AI RESPONSES
+   ============================================================ */
 
 function askAI(type) {
+    const output = document.getElementById("aiOutput");
 
-    const response =
-        document.getElementById("aiResponse");
-
-    const answers = {
-
+    const responses = {
         why: `
-        Analysis complete.<br><br>
-        Kacper possesses an extremely rare combination
-        of aura, intelligence, confidence and unexplained
-        main-character energy.<br><br>
-        <strong>Conclusion: Kacper is simply better.</strong>
+            Analysis complete.<br><br>
+            Kacper's performance is the result of an extremely
+            rare combination of aura, confidence, intelligence,
+            cooking ability and unexplained main-character energy.
+            <br><br>
+            <strong>Final answer: Kacper is simply him.</strong>
         `,
 
         aura: `
-        Calculating...<br><br>
-        █████████████████████ 100%<br><br>
-        Numerical limit exceeded.<br>
-        Replacing number with: <strong>∞</strong>
+            Initiating aura calculation...<br><br>
+            Scanning... ████████████████████ 100%<br><br>
+            Numeric overflow detected.<br>
+            Attempting scientific notation... failed.<br><br>
+            <strong>Result: ∞ AURA.</strong>
         `,
 
         competition: `
-        Searching database...<br><br>
-        8,492,102 candidates found.<br>
-        8,492,102 candidates rejected.<br><br>
-        <strong>No suitable competition detected.</strong>
+            Searching global database...<br><br>
+            Candidates found: 8,492,102<br>
+            Candidates qualified: 0<br><br>
+            <strong>No suitable competition detected.</strong>
         `,
 
         future: `
-        Predictive model running...<br><br>
-        Kacper continues being Kacper.<br>
-        Aura continues increasing.<br>
-        Everyone else continues trying.<br><br>
-        <strong>Probability of another Kacper W: 100%.</strong>
-        `
+            Running predictive model...<br><br>
+            Tomorrow: Kacper W.<br>
+            Next week: Kacper W.<br>
+            Next month: suspicious amounts of aura.<br>
+            Long-term forecast: increasingly ridiculous greatness.<br><br>
+            <strong>Probability of another W: 100%.</strong>
+        `,
 
+        scientist: `
+            CONSULTING FICTIONAL SCIENTIST...<br><br>
+            Dr. █████████ has reviewed the evidence.<br>
+            Their official statement is:<br><br>
+            <strong>"We genuinely have no idea how this is possible."</strong>
+        `
     };
 
-    response.innerHTML =
-        answers[type];
+    output.innerHTML =
+        responses[type] ||
+        "<strong>System error: too much aura.</strong>";
 
+    output.animate(
+        [
+            { opacity: .2, transform: "translateY(8px)" },
+            { opacity: 1, transform: "translateY(0)" }
+        ],
+        {
+            duration: 450,
+            easing: "ease-out"
+        }
+    );
 }
 
+/* ============================================================
+   SECRET KEYBOARD MODE
+   ============================================================ */
 
-/* =========================================================
-   SMOOTH SCROLL
-========================================================= */
+let keyBuffer = "";
 
-function scrollToLegend() {
+document.addEventListener("keydown", event => {
+    keyBuffer += event.key.toLowerCase();
 
-    document
-        .getElementById("legend")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
-
-}
-
-
-/* =========================================================
-   SECRET EASTER EGG
-========================================================= */
-
-let keys = "";
-
-document.addEventListener("keydown", e => {
-
-    keys += e.key.toLowerCase();
-
-    if(keys.length > 20) {
-        keys = keys.slice(-20);
+    if (keyBuffer.length > 30) {
+        keyBuffer = keyBuffer.slice(-30);
     }
 
-    if(keys.includes("kacper")) {
+    if (keyBuffer.includes("kacper")) {
+        keyBuffer = "";
 
         showToast(
-            "🔓 SECRET KACPER MODE UNLOCKED"
+            "🔓 SECRET MODE // KACPER PROTOCOL UNLOCKED"
         );
 
-        createConfetti(180);
-
-        keys = "";
-
+        maximumGlaze();
     }
-
 });
 
-
-/* =========================================================
-   PARALLAX HERO
-========================================================= */
+/* ============================================================
+   HERO PARALLAX
+   ============================================================ */
 
 window.addEventListener("scroll", () => {
+    const hero = document.getElementById("heroInner");
 
-    const hero =
-        document.querySelector(".hero-inner");
+    if (!hero) return;
 
-    const scroll =
-        window.scrollY;
+    const scrollY = window.scrollY;
 
-    if(scroll < window.innerHeight) {
-
+    if (scrollY < window.innerHeight) {
         hero.style.transform =
-            `translateY(${scroll * .15}px)`;
+            "translateY(" + scrollY * .12 + "px)";
 
         hero.style.opacity =
-            1 - scroll / 800;
-
+            Math.max(0, 1 - scrollY / 850);
     }
-
 });
 
+/* ============================================================
+   RANDOM TERMINAL EVENTS
+   ============================================================ */
 
+const terminalEvents = [
+    "background aura recalibration complete.",
+    "cooking engine reports another W.",
+    "competition detector still empty.",
+    "main-character protocol operating normally.",
+    "glaze levels approaching unnecessary threshold.",
+    "digital empire stability: 100%.",
+    "Kacper has once again exceeded expectations."
+];
+
+setInterval(() => {
+    const terminal = document.getElementById("terminalBody");
+
+    if (!terminal) return;
+
+    const line = document.createElement("span");
+
+    line.className = "terminal-line terminal-muted";
+
+    line.textContent =
+        "> " +
+        terminalEvents[
+            Math.floor(Math.random() * terminalEvents.length)
+        ];
+
+    terminal.appendChild(line);
+
+    if (terminal.children.length > 18) {
+        terminal.removeChild(terminal.children[0]);
+    }
+}, 3000);
+
+/* ============================================================
+   CLICK RIPPLE
+   ============================================================ */
+
+document.addEventListener("click", event => {
+    if (event.target.closest("button, a")) {
+        const ripple = document.createElement("div");
+
+        ripple.style.position = "fixed";
+        ripple.style.left = event.clientX + "px";
+        ripple.style.top = event.clientY + "px";
+        ripple.style.width = "10px";
+        ripple.style.height = "10px";
+        ripple.style.border = "1px solid rgba(167,139,250,.8)";
+        ripple.style.borderRadius = "50%";
+        ripple.style.pointerEvents = "none";
+        ripple.style.zIndex = "999999";
+
+        document.body.appendChild(ripple);
+
+        ripple.animate(
+            [
+                {
+                    transform: "translate(-50%,-50%) scale(1)",
+                    opacity: 1
+                },
+                {
+                    transform: "translate(-50%,-50%) scale(10)",
+                    opacity: 0
+                }
+            ],
+            {
+                duration: 650,
+                easing: "ease-out"
+            }
+        );
+
+        setTimeout(() => ripple.remove(), 700);
+    }
+});
+
+/* ============================================================
+   MOBILE SAFETY
+   ============================================================ */
+
+if (window.matchMedia("(max-width: 650px)").matches) {
+    document.body.style.cursor = "auto";
+}
+
+/* ============================================================
+   FINAL INIT
+   ============================================================ */
+
+showToast("KACPER DIGITAL EMPIRE // SYSTEMS ONLINE");
+
+console.log(
+    "%cKACPER DIGITAL EMPIRE",
+    "font-size:24px;font-weight:900;color:#8b5cf6"
+);
+
+console.log(
+    "%cIf you are reading this, you have discovered the command centre.",
+    "font-size:12px;color:#22d3ee"
+);
+
+console.log(
+    "%cSecret: type 'kacper' on your keyboard.",
+    "font-size:11px;color:#777"
+);
 </script>
 
+<!-- ============================================================
+     END OF KACPER DIGITAL EMPIRE
+     ============================================================ -->
+
 </body>
+
+<!--
+====================================================================
+KACPER DIGITAL EMPIRE // DEVELOPER NOTES
+====================================================================
+
+SECTION MAP
+--------------------------------------------------------------------
+01. Reset and design tokens
+02. Global visual layers
+03. Loader
+04. Custom cursor
+05. Navigation
+06. Hero
+07. Marquee
+08. Section system
+09. Live statistics
+10. Feature architecture
+11. Terminal
+12. Profile
+13. Awards
+14. Timeline
+15. Philosophy quote
+16. Ranking
+17. Control centre
+18. Kacper AI
+19. Final CTA
+20. Footer
+21. Loader JavaScript
+22. Cursor JavaScript
+23. Star field
+24. Energy wave renderer
+25. Scroll reveal
+26. Card tilt
+27. Magnetic buttons
+28. Live counters
+29. Toast notifications
+30. Confetti
+31. Maximum glaze
+32. System overdrive
+33. AI responses
+34. Secret keyboard mode
+35. Parallax
+36. Terminal event stream
+37. Click ripple
+38. Responsive handling
+39. Console easter eggs
+
+DESIGN PRINCIPLES
+--------------------------------------------------------------------
+- Keep the visual language dark, premium and cinematic.
+- Use borders and transparency instead of heavy boxes.
+- Use large typography as the primary visual element.
+- Keep animation smooth and transform-based where possible.
+- Avoid unnecessary external dependencies.
+- Everything in this page is self-contained.
+- The fictional statistics are intentionally exaggerated.
+- The website is a parody / fan-style concept and is not intended to
+  represent factual measurements about any real person.
+
+CUSTOMISATION
+--------------------------------------------------------------------
+Change the primary purple:
+    --purple: #8b5cf6;
+
+Change the cyan:
+    --cyan: #22d3ee;
+
+Change the pink:
+    --pink: #ec4899;
+
+Change the background:
+    --bg: #040406;
+
+Change the main page width:
+    --max: 1400px;
+
+Change the hero title:
+    <h1 class="hero-title">KACPER</h1>
+
+Change the brand:
+    <span class="brand-mark">K</span>
+    KACPER
+    <small>EMPIRE™</small>
+
+CHANGE THE AI
+--------------------------------------------------------------------
+The AI responses live in the askAI() function.
+
+Example structure:
+
+function askAI(type) {
+    const responses = {
+        custom: `
+            Your custom answer here.
+        `
+    };
+}
+
+Then add a button:
+
+<button onclick="askAI('custom')">
+    Ask the custom question
+</button>
+
+ADDING A NEW STAT
+--------------------------------------------------------------------
+Copy a stat-card:
+
+<article class="stat-card tilt reveal">
+    <div class="stat-top">
+        <span>NEW STAT</span>
+        <span class="stat-icon">★</span>
+    </div>
+
+    <div class="stat-number">100%</div>
+
+    <div class="stat-name">
+        New description
+    </div>
+</article>
+
+ADDING A NEW AWARD
+--------------------------------------------------------------------
+Copy an award component:
+
+<article class="award tilt reveal">
+    <div class="award-index">07</div>
+    <div class="award-icon">🏆</div>
+    <h3>New Award</h3>
+    <p>
+        New fictional award description.
+    </p>
+</article>
+
+ADDING A NEW TIMELINE EVENT
+--------------------------------------------------------------------
+Copy a timeline item and change its date, title and description.
+
+PERFORMANCE
+--------------------------------------------------------------------
+The star renderer uses requestAnimationFrame.
+The energy renderer uses requestAnimationFrame.
+Scroll reveal uses IntersectionObserver.
+No external JavaScript library is required.
+
+ACCESSIBILITY
+--------------------------------------------------------------------
+The main structure uses semantic sections and articles.
+Buttons have readable labels.
+The page remains usable on narrow screens.
+Decorative canvas layers use pointer-events:none.
+
+RESPONSIVE BREAKPOINTS
+--------------------------------------------------------------------
+At 1050px:
+- navigation links hide
+- stats become two columns
+- feature layout becomes two columns
+- profile/control layouts stack
+- awards become two columns
+
+At 650px:
+- navigation becomes compact
+- grids become one column
+- leaderboard simplifies
+- custom cursor is removed
+- spacing becomes smaller
+
+ANIMATION INVENTORY
+--------------------------------------------------------------------
+gradientMove
+loadBar
+terminalIn
+float
+marquee
+driftA
+driftB
+driftC
+rotate
+corePulse
+glitch
+
+JAVASCRIPT SYSTEMS
+--------------------------------------------------------------------
+state
+loader
+cursor
+star renderer
+energy renderer
+scroll observer
+tilt handler
+magnetic buttons
+counter engine
+toast engine
+confetti engine
+maximum glaze
+system overdrive
+AI engine
+keyboard secret
+hero parallax
+terminal event stream
+click ripple
+
+EASTER EGGS
+--------------------------------------------------------------------
+1. Type "kacper" on the keyboard.
+2. Open the browser console.
+3. Press MAX GLAZE.
+4. Press SYSTEM OVERDRIVE.
+5. Watch the terminal for random system messages.
+
+CONSOLE MESSAGE
+--------------------------------------------------------------------
+The console intentionally contains a tiny easter egg.
+Open developer tools and look for the KACPER DIGITAL EMPIRE message.
+
+END OF DEVELOPER NOTES
+====================================================================
+-->
+
 </html>
-```
