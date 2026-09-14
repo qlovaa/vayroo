@@ -3,70 +3,166 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kacper Clicker</title>
+<title>Kacper Clicker — Deluxe</title>
 <style>
-:root{--bg:#080a12;--panel:#111522;--panel2:#171b2b;--text:#f6f7fb;--muted:#9299ad;--accent:#8b5cf6;--accent2:#22d3ee;--good:#34d399;--danger:#fb7185}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0%,#201344 0,#080a12 38%),var(--bg);color:var(--text);font:14px Inter,ui-sans-serif,system-ui,sans-serif;min-height:100vh}
-button{font:inherit;color:inherit}.app{display:grid;grid-template-columns:230px 1fr 330px;min-height:100vh}.side,.right{background:rgba(12,15,25,.84);backdrop-filter:blur(18px);border-right:1px solid #252a3b}.right{border-left:1px solid #252a3b;border-right:0;padding:22px}.brand{padding:24px;font-size:21px;font-weight:900}.brand span{color:var(--accent2)}nav{padding:8px 12px}nav button{width:100%;background:none;border:0;padding:12px 14px;text-align:left;border-radius:11px;color:var(--muted);cursor:pointer;margin:3px 0}nav button.active,nav button:hover{background:#1b2031;color:white}.main{padding:26px 34px;max-width:1000px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.badge{padding:7px 10px;border:1px solid #2d3348;background:#121626;border-radius:999px;color:#aeb6ca}.hero{background:linear-gradient(135deg,#17172b,#101728);border:1px solid #2a3045;border-radius:24px;padding:30px;box-shadow:0 18px 60px #0006}.eyebrow{color:var(--accent2);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:11px}.count{font-size:48px;font-weight:950;margin:8px 0}.rate{color:var(--muted)}.cookie{width:205px;height:205px;margin:25px auto;border-radius:50%;border:10px solid #c084fc;background:radial-gradient(circle,#d8b4fe,#8b5cf6);box-shadow:0 0 70px #8b5cf655,inset 0 0 25px #fff8;display:grid;place-items:center;font-size:80px;cursor:pointer;user-select:none;transition:.08s transform}.cookie:active{transform:scale(.94)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.card{background:#121625;border:1px solid #282e42;border-radius:16px;padding:17px}.card b{font-size:16px}.muted{color:var(--muted);line-height:1.5}.buy{margin-top:13px;width:100%;border:0;border-radius:10px;padding:10px;background:#262c42;cursor:pointer}.buy:hover{background:#343c58}.buy:disabled{opacity:.35;cursor:not-allowed}.right h3{margin-top:0}.stat{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #24293a}.tabs{display:flex;gap:8px;margin:18px 0}.tabs button{background:#111625;border:1px solid #292f43;padding:9px 12px;border-radius:10px;cursor:pointer}.tabs button.on{background:#2b2350;border-color:#7049cf}.toast{position:fixed;right:25px;bottom:25px;background:#191e2d;border:1px solid #363d55;border-radius:13px;padding:12px 15px;opacity:0;transform:translateY(10px);transition:.25s}.toast.show{opacity:1;transform:none}.ach{display:flex;gap:10px;align-items:center;margin:10px 0;padding:12px;background:#101421;border-radius:12px}.dot{width:10px;height:10px;border-radius:50%;background:#353b4e}.done .dot{background:var(--good)}@media(max-width:950px){.app{grid-template-columns:70px 1fr}.side{overflow:hidden}.brand{padding:20px 15px;font-size:0}.brand span{font-size:20px}.side nav button{font-size:0;text-align:center}.side nav button:first-letter{font-size:18px}.right{display:none}.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.app{display:block}.side{position:sticky;top:0;z-index:5;border:0}.side nav{display:flex;overflow:auto}.side nav button{font-size:12px}.brand{display:none}.main{padding:16px}.grid{grid-template-columns:1fr}.count{font-size:38px}}
+:root{--bg:#070910;--panel:#0f1320;--panel2:#151a2a;--line:#282f45;--text:#f8f9ff;--muted:#8e97ae;--a:#8b5cf6;--b:#22d3ee;--g:#34d399;--r:#fb7185;--y:#fbbf24}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 10% -10%,#39205e 0,transparent 35%),radial-gradient(circle at 100% 10%,#073b4c 0,transparent 30%),var(--bg);color:var(--text);font:14px Inter,system-ui,sans-serif;min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer;color:inherit}.app{display:grid;grid-template-columns:245px 1fr 340px;min-height:100vh}.side,.right{background:#0a0d16dd;backdrop-filter:blur(20px);border-right:1px solid var(--line);position:sticky;top:0;height:100vh;overflow:auto}.right{border-left:1px solid var(--line);border-right:0;padding:22px}.brand{padding:25px 22px;font-weight:1000;font-size:20px;letter-spacing:-.04em}.brand em{font-style:normal;color:var(--b)}.version{font-size:10px;color:var(--muted);margin-top:4px}nav{padding:8px 12px}nav button{display:flex;align-items:center;gap:12px;width:100%;padding:12px 13px;margin:3px 0;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--muted);text-align:left}nav button:hover{background:#151a28;color:#fff}nav button.active{background:linear-gradient(90deg,#211a39,#161b2b);border-color:#3d315d;color:#fff}.main{width:100%;max-width:1050px;margin:auto;padding:25px 30px 60px}.top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:18px}.title{font-size:22px;font-weight:900}.subtitle{color:var(--muted);margin-top:4px}.pill{border:1px solid var(--line);background:#111624;padding:8px 12px;border-radius:999px}.hero{position:relative;overflow:hidden;border:1px solid #303750;border-radius:25px;background:linear-gradient(135deg,#15182b,#0d1521);padding:28px;box-shadow:0 25px 90px #0007}.hero:before{content:"";position:absolute;width:300px;height:300px;background:#8b5cf622;filter:blur(50px);right:-100px;top:-140px}.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--b);font-weight:900}.balance{font-size:54px;font-weight:1000;letter-spacing:-.06em;margin:8px 0}.rate{color:var(--muted)}.kacper{position:relative;margin:24px auto;width:220px;height:220px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#e9d5ff,#9b6cff 58%,#6d28d9);border:11px solid #c4a1ff;box-shadow:0 0 90px #8b5cf655,inset 0 0 30px #fff9,0 12px 0 #4c1d95;user-select:none;transition:transform .06s}.kacper:after{content:"K";font-size:100px;font-weight:1000;text-shadow:0 5px 0 #6d28d9}.kacper:active{transform:scale(.94) translateY(4px);box-shadow:0 0 55px #8b5cf655,inset 0 0 30px #fff9}.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.mini{background:#101523;border:1px solid var(--line);padding:14px;border-radius:14px}.mini b{display:block;font-size:17px;margin-top:5px}.label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.section{margin-top:20px}.section h2{margin:0 0 10px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:linear-gradient(180deg,#121727,#0f1320);border:1px solid var(--line);border-radius:17px;padding:17px}.card.locked{opacity:.48}.card h3{margin:0 0 6px}.muted{color:var(--muted);line-height:1.5}.price{display:flex;justify-content:space-between;align-items:center;margin-top:13px}.buy{border:0;border-radius:10px;background:#2a3150;padding:9px 12px}.buy:hover{background:#3a4267}.buy:disabled{opacity:.3;cursor:not-allowed}.progress{height:7px;background:#252a3b;border-radius:99px;overflow:hidden;margin:10px 0}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--b));border-radius:99px}.stat{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #22283a}.sideTitle{font-weight:900;font-size:16px;margin:0 0 12px}.feed{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #202638}.feed small{color:var(--muted)}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}.tab{border:1px solid var(--line);background:#101522;border-radius:10px;padding:9px 11px}.tab.on{background:#292043;border-color:#6243a0}.toast{position:fixed;right:25px;bottom:25px;z-index:99;padding:13px 16px;background:#171d2c;border:1px solid #3a425a;border-radius:13px;box-shadow:0 20px 60px #0008;opacity:0;transform:translateY(12px);transition:.25s}.toast.show{opacity:1;transform:none}.float{position:fixed;pointer-events:none;font-size:20px;font-weight:900;animation:float 1s ease-out forwards;z-index:100}@keyframes float{to{transform:translateY(-90px);opacity:0}}.modal{position:fixed;inset:0;background:#0009;backdrop-filter:blur(8px);display:none;place-items:center;z-index:90}.modal.show{display:grid}.modalBox{width:min(560px,92vw);background:#111625;border:1px solid #343c56;border-radius:20px;padding:22px}.close{float:right;border:0;background:#252b3d;border-radius:9px;padding:6px 10px}.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:11px;border-bottom:1px solid #252b3b}.rarity-common{border-color:#3c455d}.rarity-rare{border-color:#287ea1}.rarity-epic{border-color:#7044bd}.rarity-legendary{border-color:#a26c18}.toggle{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #252a3b}.switch{width:44px;height:24px;border-radius:99px;background:#30374b;padding:3px}.switch i{display:block;width:18px;height:18px;border-radius:50%;background:white;transition:.2s}.switch.on{background:var(--a)}.switch.on i{transform:translateX(20px)}@media(max-width:1100px){.app{grid-template-columns:80px 1fr}.right{display:none}.brand{font-size:0;text-align:center;padding:22px 5px}.brand em{font-size:19px}nav button span:last-child{display:none}nav button{justify-content:center}.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.app{display:block}.side{height:auto;position:sticky;z-index:50}.brand{display:none}nav{display:flex;overflow:auto}.side nav button{min-width:max-content;font-size:12px;justify-content:center}.main{padding:15px}.balance{font-size:38px}.quick{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.kacper{width:185px;height:185px}.kacper:after{font-size:82px}}
 </style>
 </head>
 <body>
 <div class="app">
-<aside class="side"><div class="brand">KACPER<span>CLICKER</span></div><nav id="nav">
-<button class="active" data-page="clicker">◉ Clicker</button>
-<button data-page="upgrades">⚡ Upgrades</button>
-<button data-page="achievements">★ Achievements</button>
-<button data-page="stats">▣ Statistics</button>
-<button data-page="settings">⚙ Settings</button>
-</nav></aside>
-
+<aside class="side">
+<div class="brand">KACPER <em>CLICKER</em><div class="version">DELUXE EDITION • v2.0</div></div>
+<nav id="nav">
+<button class="active" data-page="home">◉ <span>Clicker</span></button>
+<button data-page="shop">⚡ <span>Upgrades</span></button>
+<button data-page="buildings">⌂ <span>Buildings</span></button>
+<button data-page="research">✦ <span>Research</span></button>
+<button data-page="achievements">★ <span>Achievements</span></button>
+<button data-page="quests">☑ <span>Quests</span></button>
+<button data-page="inventory">◆ <span>Inventory</span></button>
+<button data-page="events">☄ <span>Events</span></button>
+<button data-page="stats">▣ <span>Statistics</span></button>
+<button data-page="settings">⚙ <span>Settings</span></button>
+</nav>
+</aside>
 <main class="main">
-<div class="top"><div><b id="pageTitle">Kacper Clicker</b><div class="muted">Build your empire, one click at a time.</div></div><div class="badge" id="prestigeBadge">Level 1</div></div>
-<section id="content"></section>
+<div class="top"><div><div class="title" id="title">Kacper Clicker</div><div class="subtitle" id="subtitle">Build an absurdly large Kacper empire.</div></div><div class="pill" id="level">Level 1</div></div>
+<div id="content"></div>
 </main>
-
 <aside class="right">
-<h3>Empire</h3>
-<div class="stat"><span>Kacpers</span><b id="sideCount">0</b></div>
-<div class="stat"><span>Per click</span><b id="sideClick">1</b></div>
-<div class="stat"><span>Per second</span><b id="sideSec">0</b></div>
-<div class="stat"><span>Clicks</span><b id="sideClicks">0</b></div>
-<div style="height:18px"></div><h3>Next milestone</h3>
-<div class="card"><b id="milestone">100 Kacpers</b><p class="muted" id="milestoneText">Keep clicking.</p></div>
+<div class="sideTitle">Empire Overview</div>
+<div class="stat"><span>Kacpers</span><b id="sK">0</b></div>
+<div class="stat"><span>Per click</span><b id="sC">1</b></div>
+<div class="stat"><span>Per second</span><b id="sS">0</b></div>
+<div class="stat"><span>Lifetime</span><b id="sT">0</b></div>
+<div class="stat"><span>Clicks</span><b id="sClicks">0</b></div>
+<div class="section"><div class="sideTitle">Next Level</div><div class="card"><b id="nextLevel">100</b><div class="progress"><i id="levelBar" style="width:0%"></i></div><small class="muted" id="levelHint">Keep going!</small></div></div>
+<div class="section"><div class="sideTitle">Activity</div><div id="feed"></div></div>
 </aside>
 </div>
-<div class="toast" id="toast"></div>
+<div id="toast" class="toast"></div>
+<div id="modal" class="modal"><div class="modalBox" id="modalBox"></div></div>
 <script>
-const saveKey='kacper_clicker_save_v1';
-let s=JSON.parse(localStorage.getItem(saveKey)||'null')||{
-k:0,clicks:0,perClick:1,perSec:0,level:1,total:0,
-up:{cursor:0,auto:0,lab:0,quantum:0},settings:{compact:false}
+const KEY='kacper_clicker_deluxe_v2';
+const defaultState={
+k:0,total:0,clicks:0,level:1,prestige:0,perClick:1,perSec:0,mult:1,
+up:{},build:{},research:{},ach:{},quests:{},inventory:[],events:[],
+settings:{sound:true,numbers:true,particles:true},
+daily:{date:'',claimed:false},stats:{crit:0,biggest:0,spent:0,buildings:0,research:0}
 };
+let s=JSON.parse(localStorage.getItem(KEY)||'null')||structuredClone(defaultState);
+function merge(a,b){for(const k in b){if(a[k]===undefined)a[k]=b[k];else if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k]))merge(a[k],b[k])}return a}
+s=merge(s,structuredClone(defaultState));
 const upgrades=[
-{id:'cursor',name:'Kacper Cursor',desc:'+1 Kacper per click',base:15,scale:1.17,apply:()=>s.perClick+=1},
-{id:'auto',name:'Auto Kacper',desc:'+1 Kacper per second',base:75,scale:1.22,apply:()=>s.perSec+=1},
-{id:'lab',name:'Kacper Lab',desc:'+8 Kacpers per second',base:500,scale:1.27,apply:()=>s.perSec+=8},
-{id:'quantum',name:'Quantum Kacper',desc:'+10 Kacpers per click',base:2500,scale:1.32,apply:()=>s.perClick+=10}
+['cursor','Kacper Cursor','Every purchase adds +1 Kacper per click.',25,1.16,'click',1],
+['glove','Golden Glove','Adds +5 Kacpers per click.',250,1.20,'click',5],
+['keyboard','Mechanical Keyboard','Adds +20 Kacpers per click.',1800,1.24,'click',20],
+['factory','Kacper Factory','Adds +10 Kacpers per second.',5000,1.22,'sec',10],
+['server','Kacper Server','Adds +75 Kacpers per second.',35000,1.27,'sec',75],
+['quantum','Quantum Finger','Adds +100 Kacpers per click.',250000,1.30,'click',100],
+['clone','Kacper Cloning','Doubles passive production.',1500000,1.45,'mult',2],
+['infinity','Infinity Tap','Adds +1000 Kacpers per click.',25000000,1.55,'click',1000],
+['singularity','Kacper Singularity','Adds +1000 Kacpers per second.',250000000,1.60,'sec',1000]
 ];
-function cost(u){return Math.floor(u.base*Math.pow(u.scale,s.up[u.id]))}
-function fmt(n){if(n<1000)return Math.floor(n).toLocaleString();let x=['K','M','B','T','Qa','Qi'];let i=-1;while(n>=1000&&i<x.length-1){n/=1000;i++}return n.toFixed(n<10?1:0)+x[i]}
-function save(){localStorage.setItem(saveKey,JSON.stringify(s))}
-function toast(t){let e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800)}
-function clickK(){s.k+=s.perClick;s.clicks++;s.total+=s.perClick;checkLevel();save();render()}
-function buy(id){let u=upgrades.find(x=>x.id===id),c=cost(u);if(s.k<c)return toast('Not enough Kacpers');s.k-=c;s.up[id]++;u.apply();toast(u.name+' purchased!');save();render()}
-function checkLevel(){let next=Math.pow(10,s.level)*100;if(s.k>=next){s.level++;toast('Level up! You are now level '+s.level)}}
-function contentClicker(){return `<div class="hero"><div class="eyebrow">Your Kacper Empire</div><div class="count" id="big">${fmt(s.k)} Kacpers</div><div class="rate">${fmt(s.perSec)} / sec • ${fmt(s.perClick)} / click</div><div class="cookie" onclick="clickK()">K</div><div class="muted" style="text-align:center">Click the K to generate Kacpers</div></div>
-<div class="grid">${upgrades.slice(0,3).map(u=>card(u)).join('')}</div>`}
-function card(u){let c=cost(u);return `<div class="card"><b>${u.name}</b><p class="muted">${u.desc}</p><div class="stat"><span>Owned</span><b>${s.up[u.id]}</b></div><button class="buy" onclick="buy('${u.id}')" ${s.k<c?'disabled':''}>Buy • ${fmt(c)}</button></div>`}
-function page(p){let c=document.getElementById('content');if(p==='clicker')c.innerHTML=contentClicker();
-if(p==='upgrades')c.innerHTML='<h2>Upgrades</h2><p class="muted">Invest in the machinery behind your Kacper production.</p><div class="grid">'+upgrades.map(card).join('')+'</div>';
-if(p==='achievements'){let a=[['First Click',s.clicks>=1],['Kacper Collector',s.k>=100],['Kacper Tycoon',s.k>=10000],['Speed Demon',s.perSec>=25],['Click Machine',s.clicks>=1000],['Level 10',s.level>=10]];c.innerHTML='<h2>Achievements</h2>'+a.map(x=>`<div class="ach ${x[1]?'done':''}"><span class="dot"></span><div><b>${x[0]}</b><div class="muted">${x[1]?'Unlocked!':'Locked achievement'}</div></div></div>`).join('')}
-if(p==='stats')c.innerHTML=`<h2>Statistics</h2><div class="grid"><div class="card"><b>Total earned</b><p class="count">${fmt(s.total)}</p></div><div class="card"><b>Total clicks</b><p class="count">${fmt(s.clicks)}</p></div><div class="card"><b>Level</b><p class="count">${s.level}</p></div></div>`;
-if(p==='settings')c.innerHTML=`<h2>Settings</h2><div class="card"><b>Save data</b><p class="muted">Progress is stored automatically in your browser.</p><button class="buy" onclick="save();toast('Saved!')">Save now</button><button class="buy" onclick="if(confirm('Reset all progress?')){localStorage.removeItem(saveKey);location.reload()}">Reset progress</button></div>`;
-document.getElementById('pageTitle').textContent=p[0].toUpperCase()+p.slice(1)}
-document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');page(b.dataset.page)});
-function render(){let active=document.querySelector('#nav button.active').dataset.page;page(active);document.getElementById('sideCount').textContent=fmt(s.k);document.getElementById('sideClick').textContent=fmt(s.perClick);document.getElementById('sideSec').textContent=fmt(s.perSec);document.getElementById('sideClicks').textContent=fmt(s.clicks);document.getElementById('prestigeBadge').textContent='Level '+s.level;let m=Math.pow(10,s.level)*100;document.getElementById('milestone').textContent=fmt(m)+' Kacpers';document.getElementById('milestoneText').textContent=fmt(Math.max(0,m-s.k))+' remaining'}
-setInterval(()=>{if(s.perSec){s.k+=s.perSec;s.total+=s.perSec;checkLevel();save();render()}},1000);
+const buildings=[
+['hut','Kacper Hut','A suspiciously productive shed.',100,1.15,1],
+['shop','Kacper Shop','Sell imaginary Kacper merchandise.',1000,1.16,8],
+['office','Kacper HQ','A tower dedicated to clicking.',10000,1.18,60],
+['stadium','Kacper Stadium','Ten thousand fans, one giant K.',100000,1.20,450],
+['city','Kacper City','The entire city now clicks.',1000000,1.22,3000],
+['moon','Kacper Moon Base','Zero gravity. Infinite clicking.',50000000,1.25,25000],
+['dyson','Kacper Dyson Sphere','Harness the power of a star.',5000000000,1.30,2500000]
+];
+const research=[
+['focus','Focused Clicking','Critical click chance +5%.',25000],
+['automation','Automation','Passive production +25%.',100000],
+['economy','Kacper Economics','All income +50%.',500000],
+['luck','Ridiculous Luck','Rare event rewards are doubled.',2500000],
+['multiverse','Kacper Multiverse','All production x3.',100000000],
+['ascension','Ascension Theory','Unlocks prestige.',10000000000]
+];
+const achievements=[
+['first','First Click','Make your first Kacper.',()=>s.clicks>=1,10],
+['hundred','Hundred','Reach 100 Kacpers.',()=>s.total>=100,50],
+['thousand','Thousandaire','Reach 1,000 lifetime Kacpers.',()=>s.total>=1000,250],
+['million','Millionaire','Reach 1,000,000 lifetime Kacpers.',()=>s.total>=1e6,5000],
+['click100','Click Machine','Click 100 times.',()=>s.clicks>=100,1000],
+['click1000','Click Legend','Click 1,000 times.',()=>s.clicks>=1000,10000],
+['passive','Self Made','Reach 100 Kacpers/sec.',()=>s.perSec>=100,2500],
+['collector','Collector','Own 10 upgrades.',()=>Object.values(s.up).reduce((a,b)=>a+b,0)>=10,5000],
+['builder','Property Mogul','Own 10 buildings.',()=>Object.values(s.build).reduce((a,b)=>a+b,0)>=10,10000],
+['researcher','Scientist','Complete 3 research projects.',()=>Object.values(s.research).filter(Boolean).length>=3,15000],
+['critical','Critical Thinking','Get 10 critical clicks.',()=>s.stats.crit>=10,7500],
+['big','Big Number','Get a single click worth 1,000 Kacpers.',()=>s.stats.biggest>=1000,12000],
+['level10','Veteran','Reach level 10.',()=>s.level>=10,25000],
+['prestige','Beyond','Prestige once.',()=>s.prestige>=1,100000]
+];
+const questList=[
+['clicks','Warm Up','Click 25 times.',25,()=>s.clicks,100],
+['earn','Pocket Money','Earn 10,000 lifetime Kacpers.',10000,()=>s.total,500],
+['buy','Shopping Spree','Buy 5 upgrades.',5,()=>Object.values(s.up).reduce((a,b)=>a+b,0),750],
+['build','Construction','Own 3 buildings.',3,()=>Object.values(s.build).reduce((a,b)=>a+b,0),1200],
+['research','Brain Power','Complete 2 research projects.',2,()=>Object.values(s.research).filter(Boolean).length,2500],
+['speed','Speedrun','Reach 500 Kacpers/sec.',500,()=>s.perSec,10000]
+];
+const events=[
+['Kacper Rain','The sky is literally Kacper. Click the button to collect a huge bonus.','rain'],
+['Golden K','A golden K appeared! Claim it before it disappears.','gold'],
+['Office Pizza','Everyone is working harder after free pizza. Production is doubled for 60 seconds.','boost']
+];
+function fmt(n){if(!s.settings.numbers)return Math.floor(n);if(n<1000)return Math.floor(n).toLocaleString();const units=['K','M','B','T','Qa','Qi','Sx','Sp','Oc','No','Dc'];let i=-1;while(n>=1000&&i<units.length-1){n/=1000;i++}return n.toFixed(n<10?2:n<100?1:0)+units[i]}
+function save(){localStorage.setItem(KEY,JSON.stringify(s))}
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove('show'),1900)}
+function addFeed(t){s.events.unshift({t:Date.now(),text:t});s.events=s.events.slice(0,8)}
+function cost(item,owned){return Math.floor(item[3]*Math.pow(item[4],owned))}
+function totalUp(){return Object.values(s.up).reduce((a,b)=>a+b,0)}
+function totalBuild(){return Object.values(s.build).reduce((a,b)=>a+b,0)}
+function incomeMultiplier(){let m=s.mult;if(s.research.economy)m*=1.5;if(s.research.multiverse)m*=3;return m*(s.research.automation?1.25:1)}
+function critChance(){return .05+(s.research.focus?0.05:0)}
+function clickK(ev){
+ let amount=s.perClick*incomeMultiplier(),crit=Math.random()<critChance();
+ if(crit){amount*=5;s.stats.crit++;toast('CRITICAL KACPER! x5')}
+ amount=Math.floor(amount);s.k+=amount;s.total+=amount;s.clicks++;s.stats.biggest=Math.max(s.stats.biggest,amount);
+ if(s.settings.particles&&ev){let f=document.createElement('div');f.className='float';f.textContent='+'+fmt(amount);f.style.left=(ev.clientX-20)+'px';f.style.top=(ev.clientY-15)+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),1000)}
+ levelCheck();save();render();
+}
+function levelCheck(){while(s.k>=levelCost(s.level)){s.level++;s.perClick+=s.level%5===0?2:0;toast('LEVEL UP! Level '+s.level);addFeed('Reached level '+s.level)}}
+function levelCost(l){return Math.floor(100*Math.pow(1.55,l-1))}
+function buyUpgrade(id){let u=upgrades.find(x=>x[0]===id),owned=s.up[id]||0,c=cost(u,owned);if(s.k<c)return toast('Not enough Kacpers');s.k-=c;s.stats.spent+=c;s.up[id]=owned+1;
+if(u[5]==='click')s.perClick+=u[6];if(u[5]==='sec')s.perSec+=u[6];if(u[5]==='mult')s.mult*=u[6];addFeed('Purchased '+u[1]);toast(u[1]+' purchased');save();render()}
+function buyBuilding(id){let b=buildings.find(x=>x[0]===id),owned=s.build[id]||0,c=cost(b,owned);if(s.k<c)return toast('Not enough Kacpers');s.k-=c;s.stats.spent+=c;s.build[id]=owned+1;s.perSec+=b[6];s.stats.buildings++;addFeed('Built '+b[1]);toast(b[1]+' constructed');save();render()}
+function doResearch(id){let r=research.find(x=>x[0]===id);if(s.research[id])return;if(s.k<r[3])return toast('Research requires more Kacpers');s.k-=r[3];s.stats.spent+=r[3];s.research[id]=true;s.stats.research++;addFeed('Completed research: '+r[1]);toast('Research complete!');save();render()}
+function claimAch(id){let a=achievements.find(x=>x[0]===id);if(!s.ach[id]&&a[3]()){s.ach[id]=true;s.k+=a[4];toast('Achievement unlocked: '+a[1]);addFeed('Achievement: '+a[1]);save();render()}}
+function claimQuest(id){let q=questList.find(x=>x[0]===id);if(s.quests[id])return;if(q[4]()>=q[3]){s.quests[id]=true;s.k+=q[5];toast('Quest complete! +'+fmt(q[5]));save();render()}}
+function daily(){let d=new Date().toISOString().slice(0,10);if(s.daily.date!==d){s.daily={date:d,claimed:false}}if(s.daily.claimed)return toast('Daily reward already claimed');s.daily.claimed=true;let reward=Math.floor(5000*(1+s.prestige));s.k+=reward;toast('Daily reward: '+fmt(reward));save();render()}
+function prestige(){if(s.total<1e9)return toast('You need 1B lifetime Kacpers to prestige');if(!confirm('Prestige resets your current empire but grants a permanent production bonus. Continue?'))return;s.prestige++;s.k=0;s.level=1;s.perClick=1+Math.floor(s.prestige*.5);s.perSec=0;s.mult=1;s.up={};s.build={};s.research={};addFeed('Prestiged! Total prestige: '+s.prestige);toast('PRESTIGE '+s.prestige+'!');save();render()}
+function eventRoll(){if(Math.random()>.025)return;let e=events[Math.floor(Math.random()*events.length)];showModal(`<button class="close" onclick="closeModal()">×</button><h2>${e[0]}</h2><p class="muted">${e[1]}</p><button class="buy" onclick="claimEvent('${e[2]}')">Claim event</button>`)}
+function claimEvent(type){closeModal();let reward=type==='gold'?Math.floor(s.k*.25+5000):Math.floor(s.perSec*120+10000);if(type==='boost')reward=Math.floor(s.k*.1+1000);s.k+=reward;addFeed('Event reward: '+fmt(reward));toast('Event reward +'+fmt(reward));save();render()}
+function showModal(x){document.getElementById('modalBox').innerHTML=x;document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function cardUpgrade(u){let owned=s.up[u[0]]||0,c=cost(u,owned);return `<div class="card"><h3>${u[1]}</h3><p class="muted">${u[2]}</p><div class="stat"><span>Owned</span><b>${owned}</b></div><div class="price"><b>${fmt(c)}</b><button class="buy" onclick="buyUpgrade('${u[0]}')" ${s.k<c?'disabled':''}>Buy</button></div></div>`}
+function cardBuilding(b){let owned=s.build[b[0]]||0,c=cost(b,owned);return `<div class="card"><h3>${b[1]}</h3><p class="muted">${b[2]}</p><div class="stat"><span>Owned</span><b>${owned}</b></div><div class="stat"><span>Production</span><b>+${fmt(b[6])}/s</b></div><div class="price"><b>${fmt(c)}</b><button class="buy" onclick="buyBuilding('${b[0]}')" ${s.k<c?'disabled':''}>Build</button></div></div>`}
+function renderHome(){return `<section class="hero"><div class="eyebrow">DELUXE EMPIRE</div><div class="balance">${fmt(s.k)} Kacpers</div><div class="rate">${fmt(s.perSec*incomeMultiplier())} / sec • ${fmt(s.perClick*incomeMultiplier())} / click • ${s.prestige} prestige</div><div class="kacper" onclick="clickK(event)" aria-label="Click Kacper"></div><div style="text-align:center" class="muted">CLICK THE K • CRITICAL CHANCE ${Math.round(critChance()*100)}%</div></section><div class="quick section"><div class="mini"><span class="label">Lifetime</span><b>${fmt(s.total)}</b></div><div class="mini"><span class="label">Clicks</span><b>${fmt(s.clicks)}</b></div><div class="mini"><span class="label">Upgrades</span><b>${totalUp()}</b></div><div class="mini"><span class="label">Buildings</span><b>${totalBuild()}</b></div></div><div class="section"><h2>Featured Upgrades</h2><div class="grid">${upgrades.slice(0,3).map(cardUpgrade).join('')}</div></div>`}
+function renderShop(){return `<h2>Upgrade Lab</h2><p class="muted">Stack upgrades to turn tiny clicks into ridiculous numbers.</p><div class="grid">${upgrades.map(cardUpgrade).join('')}</div>`}
+function renderBuildings(){return `<h2>Kacper Industries</h2><p class="muted">Buildings generate Kacpers automatically every second.</p><div class="grid">${buildings.map(cardBuilding).join('')}</div>`}
+function renderResearch(){return `<h2>Research Tree</h2><p class="muted">Permanent technologies that change how your empire works.</p><div class="grid">${research.map(r=>`<div class="card ${s.research[r[0]]?'':'rarity-rare'}"><h3>${r[1]} ${s.research[r[0]]?'✓':''}</h3><p class="muted">${r[2]}</p><button class="buy" onclick="doResearch('${r[0]}')" ${s.research[r[0]]||s.k<r[3]?'disabled':''}>${s.research[r[0]]?'Completed':'Research • '+fmt(r[3])}</button></div>`).join('')}</div>`}
+function renderAchievements(){achievements.forEach(a=>claimAch(a[0]));return `<h2>Achievements</h2><p class="muted">Unlock milestones and collect bonus Kacpers.</p><div class="grid">${achievements.map(a=>`<div class="card ${s.ach[a[0]]?'rarity-legendary':''}"><h3>${s.ach[a[0]]?'✓ ':''}${a[1]}</h3><p class="muted">${a[2]}</p><div class="stat"><span>Reward</span><b>+${fmt(a[4])}</b></div></div>`).join('')}</div>`}
+function renderQuests(){return `<h2>Quest Board</h2><div class="grid">${questList.map(q=>{let v=Math.min(q[4](),q[3]),done=v>=q[3];return `<div class="card"><h3>${q[1]}</h3><p class="muted">${q[2]}</p><div class="progress"><i style="width:${v/q[3]*100}%"></i></div><div class="stat"><span>${fmt(v)} / ${fmt(q[3])}</span><b>+${fmt(q[5])}</b></div><button class="buy" onclick="claimQuest('${q[0]}')" ${!done||s.quests[q[0]]?'disabled':''}>${s.quests[q[0]]?'Claimed':done?'Claim reward':'In progress'}</button></div>`}).join('')}</div>`}
+function renderInventory(){return `<h2>Inventory</h2><p class="muted">Collect rare Kacper artifacts from events and milestones.</p><div class="card"><h3>Artifact Slots</h3><p class="muted">Artifacts are a foundation for future expansions.</p><div class="grid">${['Kacper Crown','Neon Cursor','Golden K','Quantum Badge','Empire Flag','Mystery Box'].map((x,i)=>`<div class="card ${i%3===0?'rarity-legendary':i%2?'rarity-rare':''}"><h3>${x}</h3><p class="muted">${s.inventory.includes(x)?'Collected':'Not discovered yet'}</p></div>`).join('')}</div></div>`}
+function renderEvents(){return `<h2>Live Events</h2><div class="card"><h3>🎁 Daily Reward</h3><p class="muted">Come back every day for a growing reward.</p><button class="buy" onclick="daily()">Claim Daily Reward</button></div><div class="section card"><h3>☄ Random Events</h3><p class="muted">Random events can appear while you play. Keep the game open!</p><button class="buy" onclick="eventRoll()">Roll for Event</button></div><div class="section card"><h3>Prestige</h3><p class="muted">Reset your current empire at 1 billion lifetime Kacpers for a permanent prestige bonus.</p><div class="stat"><span>Current prestige</span><b>${s.prestige}</b></div><button class="buy" onclick="prestige()" ${s.total<1e9?'disabled':''}>Prestige</button></div>`}
+function renderStats(){return `<h2>Statistics</h2><div class="grid">${[['Current Kacpers',s.k],['Lifetime Kacpers',s.total],['Total clicks',s.clicks],['Per click',s.perClick],['Per second',s.perSec],['Critical clicks',s.stats.crit],['Biggest click',s.stats.biggest],['Kacpers spent',s.stats.spent],['Prestiges',s.prestige]].map(x=>`<div class="card"><span class="label">${x[0]}</span><div class="count" style="font-size:28px;font-weight:900;margin-top:7px">${fmt(x[1])}</div></div>`).join('')}</div>`}
+function renderSettings(){return `<h2>Settings</h2><div class="card">${[['sound','Sound effects'],['numbers','Compact numbers'],['particles','Click particles']].map(x=>`<div class="toggle"><span>${x[1]}</span><button class="switch ${s.settings[x[0]]?'on':''}" onclick="s.settings.${x[0]}=!s.settings.${x[0]};save();render()"><i></i></button></div>`).join('')}<div class="section"><button class="buy" onclick="save();toast('Game saved')">Save now</button> <button class="buy" onclick="exportSave()">Export save</button> <button class="buy" onclick="importSave()">Import save</button> <button class="buy" onclick="resetGame()">Reset everything</button></div></div>`}
+function exportSave(){navigator.clipboard?.writeText(btoa(JSON.stringify(s)));toast('Save copied to clipboard')}
+function importSave(){let x=prompt('Paste your exported save code');if(!x)return;try{s=merge(JSON.parse(atob(x)),structuredClone(defaultState));save();render();toast('Save imported')}catch(e){toast('Invalid save')}}
+function resetGame(){if(confirm('Really reset ALL progress?')){localStorage.removeItem(KEY);location.reload()}}
+const pages={home:['Kacper Clicker','Build an absurdly large Kacper empire.',renderHome],shop:['Upgrades','Make every click stronger.',renderShop],buildings:['Buildings','Automate the Kacper machine.',renderBuildings],research:['Research','Discover increasingly ridiculous technology.',renderResearch],achievements:['Achievements','Collect milestones and rewards.',renderAchievements],quests:['Quests','Complete objectives for bonus Kacpers.',renderQuests],inventory:['Inventory','Your collection of rare Kacper artifacts.',renderInventory],events:['Events','Daily rewards, random events and prestige.',renderEvents],stats:['Statistics','Everything your empire has accomplished.',renderStats],settings:['Settings','Tune your Kacper experience.',renderSettings]};
+function render(){let p=document.querySelector('#nav button.active').dataset.page;document.getElementById('title').textContent=pages[p][0];document.getElementById('subtitle').textContent=pages[p][1];document.getElementById('content').innerHTML=pages[p][2]();document.getElementById('sK').textContent=fmt(s.k);document.getElementById('sC').textContent=fmt(s.perClick*incomeMultiplier());document.getElementById('sS').textContent=fmt(s.perSec*incomeMultiplier());document.getElementById('sT').textContent=fmt(s.total);document.getElementById('sClicks').textContent=fmt(s.clicks);document.getElementById('level').textContent='Level '+s.level+' • '+s.prestige+' Prestige';let need=levelCost(s.level),prev=levelCost(Math.max(1,s.level-1));document.getElementById('nextLevel').textContent=fmt(need)+' Kacpers';document.getElementById('levelBar').style.width=Math.min(100,Math.max(0,(s.k-prev)/(need-prev)*100))+'%';document.getElementById('levelHint').textContent=fmt(Math.max(0,need-s.k))+' to next level';document.getElementById('feed').innerHTML=(s.events||[]).slice(0,6).map(e=>`<div class="feed"><div>•</div><div>${e.text}<br><small>${new Date(e.t).toLocaleTimeString()}</small></div></div>`).join('')}
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
+setInterval(()=>{let gain=s.perSec*incomeMultiplier();if(gain>0){s.k+=gain;s.total+=gain;levelCheck();save();render()}},1000);
+setInterval(eventRoll,20000);
+setInterval(()=>{achievements.forEach(a=>{if(!s.ach[a[0]]&&a[3]())claimAch(a[0])})},1500);
 render();
 </script>
 </body>
