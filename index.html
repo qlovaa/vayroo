@@ -47,7 +47,7 @@ button{border:1px solid rgba(120,231,255,.45);background:rgba(40,150,180,.1);col
     <div class="row"><span>ROAD GRIP</span><strong id="grip">100%</strong></div>
     <div class="bar"><i id="gripbar"></i></div>
   </div>
-  <div id="help" class="panel"><kbd>W</kbd>/<kbd>↑</kbd> ACCELERATE &nbsp; <kbd>S</kbd>/<kbd>↓</kbd> BRAKE<br><kbd>A</kbd>/<kbd>←</kbd> <kbd>D</kbd>/<kbd>→</kbd> STEER &nbsp; <kbd>R</kbd> RESET</div>
+  <div id="help" class="panel"><kbd>W</kbd>/<kbd>↑</kbd> ACCELERATE &nbsp; <kbd>S</kbd>/<kbd>↓</kbd> BRAKE<br><kbd>A</kbd>/<kbd>←</kbd> <kbd>D</kbd>/<kbd>→</kbd> STEER &nbsp; <kbd>R</kbd> RESET &nbsp; <kbd>G</kbd> GARAGE<br><kbd>P</kbd> PAUSE &nbsp; <kbd>V</kbd> PHOTO MODE &nbsp; <kbd>E</kbd> REFUEL</div>
   <canvas id="minimap" width="260" height="140"></canvas>
   <div id="damage"></div>
 </div>
@@ -55,177 +55,818 @@ button{border:1px solid rgba(120,231,255,.45);background:rgba(40,150,180,.1);col
   <div class="card panel">
     <div class="eyebrow">AN INFINITE PROCEDURAL WORLD</div>
     <h1>DRIVE<br>FOREVER.</h1>
-    <p class="sub">A cinematic endless-road experiment. The world generates as you move: mountains, forests, traffic, storms, tunnels, wildlife, roadworks, sunsets, fog banks and things the simulation refuses to explain.</p>
+    <p class="sub">An endless driving game built around discovery: procedural highways, traffic, weather, police pursuits, missions, drifting, near-misses, collectibles, fuel stops, upgrades, XP, money, changing biomes and a world that keeps generating.</p>
     <button id="startBtn">START ENGINE</button>
   </div>
 </div>
 
 <script>
 "use strict";
+
+/* ============================================================
+   INFINITE // ROAD — EXTENDED GAME BUILD
+   Systems:
+   - arcade/realistic vehicle dynamics
+   - procedural road segments
+   - traffic AI
+   - police pursuit events
+   - fuel + service stops
+   - missions / contracts
+   - XP + level progression
+   - collectibles
+   - near-miss / drift / speed combos
+   - weather transitions
+   - day/night
+   - biome changes
+   - roadside POIs
+   - collisions
+   - damage
+   - pause
+   - photo mode
+   - save/load using localStorage
+   ============================================================ */
+
 const canvas=document.getElementById("world"),ctx=canvas.getContext("2d",{alpha:false});
 const mini=document.getElementById("minimap"),mctx=mini.getContext("2d");
 let W=innerWidth,H=innerHeight,DPR=Math.min(devicePixelRatio||1,2);
-function resize(){W=innerWidth;H=innerHeight;canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}addEventListener("resize",resize);resize();
 
-const ui={speed:document.getElementById("speed"),distance:document.getElementById("distance"),time:document.getElementById("time"),weather:document.getElementById("weather"),rpm:document.getElementById("rpm"),fuel:document.getElementById("fuel"),fuelbar:document.getElementById("fuelbar"),grip:document.getElementById("grip"),gripbar:document.getElementById("gripbar"),event:document.getElementById("event"),eventTitle:document.getElementById("eventTitle"),eventText:document.getElementById("eventText"),damage:document.getElementById("damage")};
+function resize(){
+  W=innerWidth;H=innerHeight;
+  canvas.width=W*DPR;canvas.height=H*DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+addEventListener("resize",resize);resize();
 
-const keys={};addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(e.key.toLowerCase()))e.preventDefault();if(e.key.toLowerCase()==="r")reset()});addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+const ui={
+ speed:document.getElementById("speed"),distance:document.getElementById("distance"),
+ time:document.getElementById("time"),weather:document.getElementById("weather"),
+ rpm:document.getElementById("rpm"),fuel:document.getElementById("fuel"),
+ fuelbar:document.getElementById("fuelbar"),grip:document.getElementById("grip"),
+ gripbar:document.getElementById("gripbar"),event:document.getElementById("event"),
+ eventTitle:document.getElementById("eventTitle"),eventText:document.getElementById("eventText"),
+ damage:document.getElementById("damage")
+};
 
-function hash(n){let x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)}
-function noise(x){const i=Math.floor(x),f=x-i,u=f*f*(3-2*f);return hash(i)*(1-u)+hash(i+1)*u}
-function fbm(x){return noise(x)*.55+noise(x*2.1)*.25+noise(x*4.7)*.12+noise(x*9.3)*.08}
-function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
-function lerp(a,b,t){return a+(b-a)*t}
+const keys={};
+addEventListener("keydown",e=>{
+  const k=e.key.toLowerCase();
+  keys[k]=true;
+  if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();
+  if(k==="r") resetCar();
+  if(k==="p" || k==="escape") togglePause();
+  if(k==="v") photoMode=!photoMode;
+  if(k==="m") mapExpanded=!mapExpanded;
+});
+addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const ease=t=>t*t*(3-2*t);
+const hash=n=>{let x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+function noise(x){const i=Math.floor(x),f=x-i,u=ease(f);return hash(i)*(1-u)+hash(i+1)*u}
+function fbm(x){return noise(x)*.52+noise(x*2.07)*.26+noise(x*4.41)*.13+noise(x*9.1)*.06+noise(x*17.7)*.03}
 function rr(c,x,y,w,h,r){c.beginPath();c.roundRect(x,y,w,h,r);c.fill()}
-function glowLine(points,width,alpha){ctx.save();ctx.lineCap="round";ctx.lineJoin="round";ctx.shadowBlur=width*3;ctx.shadowColor=`rgba(180,230,255,${alpha})`;ctx.strokeStyle=`rgba(210,235,245,${alpha})`;ctx.lineWidth=width;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.restore()}
 
-const state={running:false,t:0,dist:0,speed:0,steer:0,x:0,fuel:100,grip:1,damage:0,weather:"CLEAR",eventTimer:7,eventText:"",eventTitle:"",eventFade:0,seed:Math.random()*99999,night:0};
-function reset(){state.t=0;state.dist=0;state.speed=0;state.steer=0;state.x=0;state.fuel=100;state.grip=1;state.damage=0;state.weather="CLEAR";state.eventTimer=5;state.eventFade=0}
-document.getElementById("startBtn").onclick=()=>{state.running=true;document.getElementById("start").classList.add("hide");reset();last=performance.now();requestAnimationFrame(loop)};
+const SAVE_KEY="infinite-road-v3";
+const save={
+  xp:0,level:1,money:1200,bestDistance:0,bestSpeed:0,
+  fuelUpgrades:0,handlingUpgrades:0,engineUpgrades:0,
+  missionsCompleted:0,coins:0
+};
+try{Object.assign(save,JSON.parse(localStorage.getItem(SAVE_KEY)||"{}"))}catch(e){}
+function persist(){localStorage.setItem(SAVE_KEY,JSON.stringify(save))}
 
-const events=[
- ["WILDLIFE","A deer crosses the road ahead."],["ROADWORK","Temporary lane shift detected."],["WEATHER","A storm front is forming on the horizon."],
- ["TRAFFIC","A convoy appears from the mist."],["SIGNAL","Unknown roadside beacon detected."],["FOG","Dense fog bank approaching."],
- ["TUNNEL","A mountain tunnel has generated ahead."],["SUNSET","Atmospheric transition: golden hour."],["RAIN","Rainfall intensity increasing."],
- ["MIRAGE","Heat shimmer distorts the horizon."],["NIGHT","Night cycle commencing."],["CLEAR","Clouds break. Visibility restored."]
+const CAR={
+  mass:1450,basePower:1,topSpeed:235,turn:1,brake:1,drag:.017,
+  tireGrip:1,accel:1
+};
+
+function applyUpgrades(){
+  CAR.topSpeed=235+save.engineUpgrades*18;
+  CAR.accel=1+save.engineUpgrades*.12;
+  CAR.turn=1+save.handlingUpgrades*.10;
+  CAR.tireGrip=1+save.handlingUpgrades*.09;
+  CAR.brake=1+save.handlingUpgrades*.08;
+}
+applyUpgrades();
+
+const state={
+ running:false,paused:false,photo:false,
+ t:0,dist:0,speed:0,steer:0,x:0,
+ lateralVel:0,heading:0,
+ fuel:100,grip:1,damage:0,
+ weather:"CLEAR",weatherTarget:"CLEAR",weatherBlend:0,
+ biome:"COASTAL",biomeTarget:"COASTAL",
+ eventTimer:7,eventFade:0,eventTitle:"",eventText:"",
+ police:false,policeTime:0,
+ combo:0,comboTimer:0,
+ nearMisses:0,driftScore:0,
+ money:save.money,xp:save.xp,level:save.level,
+ mission:null,missionProgress:0,
+ missionTimer:0,
+ collectibles:[],
+ roadSeed:Math.random()*100000,
+ worldSeed:Math.random()*100000,
+ trafficSeed:Math.random()*100000,
+ flash:0,
+ shake:0,
+ checkpoint:0,
+ totalEvents:0
+};
+
+const missionTemplates=[
+ {type:"distance",goal:8,name:"LONG HAUL",text:"Drive 8 km without running dry",reward:450,xp:180},
+ {type:"speed",goal:190,name:"REDLINE",text:"Reach 190 km/h",reward:300,xp:120},
+ {type:"near",goal:4,name:"THREAD THE NEEDLE",text:"Pull off 4 near misses",reward:650,xp:250},
+ {type:"drift",goal:800,name:"SIDEWAYS",text:"Accumulate 800 drift points",reward:700,xp:300},
+ {type:"coins",goal:5,name:"ROAD TREASURE",text:"Collect 5 roadside tokens",reward:550,xp:220},
+ {type:"police",goal:25,name:"ESCAPE VELOCITY",text:"Survive police pursuit for 25 sec",reward:1000,xp:400}
 ];
-let worldSeed=Math.random()*10000;
-function roadCenter(z){return Math.sin(z*.00055)*1.7+Math.sin(z*.00143+2)*.75+Math.sin(z*.00013)*2.5}
-function terrain(z,side){return fbm(z*.004+side*7+worldSeed)*1.8+fbm(z*.0011+9)*3}
-function roadWidth(z){return 5.4+Math.sin(z*.0008)*.25}
-function project(z,side=0){let d=z-state.dist;let depth=1/(1+Math.max(d,0)*.00075);let horizon=H*.47;let y=horizon+(1-depth)*H*.53;let cx=W/2+(roadCenter(z)-state.x)*depth*W*.085;let x=cx+side*depth*W*.34;return{x,y,depth,cx}}
-function setEvent(title,text){ui.eventTitle.textContent=title;ui.eventText.textContent=text;ui.event.classList.add("show");state.eventFade=4}
+
+function newMission(){
+  const m=missionTemplates[Math.floor(hash(Math.floor(state.dist/1000)+state.worldSeed)*missionTemplates.length)];
+  state.mission={...m};state.missionProgress=0;state.missionTimer=0;
+  setEvent("NEW CONTRACT",m.name+" — "+m.text);
+}
+function missionAdd(type,amount){
+  if(!state.mission)return;
+  if(state.mission.type!==type)return;
+  state.missionProgress+=amount;
+  if(state.missionProgress>=state.mission.goal)completeMission();
+}
+function completeMission(){
+  if(!state.mission)return;
+  const m=state.mission;
+  save.money+=m.reward;save.xp+=m.xp;save.missionsCompleted++;
+  state.money=save.money;state.xp=save.xp;
+  while(save.xp>=save.level*1000){save.xp-=save.level*1000;save.level++;setEvent("LEVEL UP","Driver level "+save.level)}
+  save.xp=state.xp;
+  persist();
+  setEvent("CONTRACT COMPLETE","+$"+m.reward+"  •  +"+m.xp+" XP");
+  state.mission=null;
+  setTimeout(newMission,4500);
+}
+
+function setEvent(title,text){
+  ui.eventTitle.textContent=title;ui.eventText.textContent=text;
+  ui.event.classList.add("show");state.eventFade=4.2;
+}
+function resetCar(){
+  state.speed=0;state.x=0;state.lateralVel=0;state.heading=0;
+  state.damage=Math.max(0,state.damage-.18);
+  state.fuel=Math.max(state.fuel,18);
+  state.shake=0;
+  setEvent("VEHICLE RESET","Control restored.");
+}
+function togglePause(){
+  if(!state.running)return;
+  state.paused=!state.paused;
+  setEvent(state.paused?"PAUSED":"BACK ON ROAD",state.paused?"Press P or ESC to resume.":"Simulation resumed.");
+}
+
+function roadCenter(z){
+  return Math.sin(z*.00042+state.roadSeed)*2.0+
+         Math.sin(z*.00107+1.7)*.85+
+         Math.sin(z*.000083+4)*3.2+
+         (fbm(z*.00032+state.roadSeed)-.5)*3;
+}
+function roadSlope(z){return (roadCenter(z+3)-roadCenter(z-3))/6}
+function roadWidth(z){return 6.0+Math.sin(z*.00063)*.22}
+function roadElevation(z){return fbm(z*.0008+8)*180+Math.sin(z*.00022)*35}
+function biomeAt(z){
+  const q=fbm(z*.000055+77);
+  if(q<.23)return "DESERT";
+  if(q<.48)return "PLAINS";
+  if(q<.7)return "FOREST";
+  if(q<.86)return "MOUNTAIN";
+  return "COASTAL";
+}
+function weatherAt(z){
+  const q=fbm(z*.00011+212);
+  if(q<.12)return "FOG";
+  if(q<.29)return "RAIN";
+  if(q<.39)return "STORM";
+  if(q>.91)return "SNOW";
+  return "CLEAR";
+}
+function project(z,side=0){
+  const d=z-state.dist;
+  const depth=1/(1+Math.max(d,0)*.00072);
+  const horizon=H*.455;
+  const elevation=(roadElevation(z)-roadElevation(state.dist))*depth*.00045;
+  const y=horizon+(1-depth)*H*.56-elevation;
+  const cx=W/2+(roadCenter(z)-state.x)*depth*W*.088;
+  return{x:cx+side*depth*W*.33,y,depth,cx};
+}
+
+function updateWeather(dt){
+  const target=weatherAt(state.dist+1600);
+  if(target!==state.weatherTarget){state.weatherTarget=target;state.weatherBlend=0}
+  if(state.weather!==state.weatherTarget){
+    state.weatherBlend+=dt*.12;
+    if(state.weatherBlend>=1){state.weather=state.weatherTarget;state.weatherBlend=0}
+  }
+  const b=biomeAt(state.dist+900);
+  if(b!==state.biomeTarget)state.biomeTarget=b;
+  state.night=(Math.sin(state.t*.012-1.1)+1)/2;
+}
+
+function spawnRoadObjects(){
+  const objects=[];
+  const base=Math.floor(state.dist/80);
+  for(let i=-2;i<110;i++){
+    const id=base+i;
+    const z=state.dist+(i*80+80);
+    const r=hash(id+state.worldSeed);
+    const side=r<.5?-1:1;
+    const type=hash(id*2.31+state.worldSeed);
+    let kind=type<.08?"fuel":type<.13?"coin":type<.18?"billboard":type<.25?"rocks":type<.75?"tree":"lamp";
+    objects.push({id,z,side,kind,r});
+  }
+  return objects;
+}
+
+function spawnTraffic(){
+  const cars=[];
+  const base=Math.floor(state.dist/210);
+  const count=22;
+  for(let i=0;i<count;i++){
+    const id=base+i;
+    const lane=hash(id*3.7+state.trafficSeed)<.5?-1:1;
+    const z=state.dist+220+((hash(id+7)*7200));
+    const type=hash(id*4.7+2);
+    cars.push({
+      id,z,lane,
+      speed:55+hash(id*1.7)*95,
+      color:Math.floor(hash(id*5.2)*6),
+      truck:type<.16,
+      police:type>.94
+    });
+  }
+  return cars;
+}
+
+let objects=[],traffic=[];
+function refreshWorld(){
+  objects=spawnRoadObjects();
+  traffic=spawnTraffic();
+}
+refreshWorld();
+
+function collision(a,b){return Math.abs(a-b)<1.65}
+
+function vehiclePhysics(dt){
+  const throttle=(keys.w||keys.arrowup)?1:0;
+  const brake=(keys.s||keys.arrowdown)?1:0;
+  const left=(keys.a||keys.arrowleft)?-1:0;
+  const right=(keys.d||keys.arrowright)?1:0;
+  const steerInput=left+right;
+
+  const slope=roadSlope(state.dist);
+  const weatherGrip={CLEAR:1,RAIN:.78,FOG:.9,STORM:.58,SNOW:.42}[state.weather]||1;
+  state.grip=weatherGrip*CAR.tireGrip;
+
+  const engineForce=throttle*92*CAR.accel*(1-state.speed/CAR.topSpeed*.55);
+  const brakeForce=brake*165*CAR.brake;
+  state.speed+=engineForce*dt-brakeForce*dt;
+  state.speed-=state.speed*CAR.drag*dt;
+  state.speed-=Math.abs(slope)*state.speed*.025*dt;
+  state.speed=clamp(state.speed,0,CAR.topSpeed+25);
+
+  const steerPower=(.75+state.speed/190)*CAR.turn*state.grip;
+  state.lateralVel=lerp(state.lateralVel,steerInput*steerPower,dt*4.5);
+  state.x+=state.lateralVel*dt*(.42+state.speed/145);
+
+  // road boundary and shoulder physics
+  const half=roadWidth(state.dist)/2;
+  const edge=Math.abs(state.x-roadCenter(state.dist));
+  if(edge>half){
+    state.speed-=35*dt*(1-state.grip*.25);
+    state.damage=clamp(state.damage+dt*.015,0,1);
+    state.shake=Math.max(state.shake,.06);
+  }
+  if(edge>half+2.5){
+    state.speed-=80*dt;
+    state.x=lerp(state.x,Math.sign(state.x)*half,dt*.12);
+  }
+
+  // controlled drift
+  const drifting=Math.abs(state.lateralVel)>0.65 && state.speed>75 && steerInput!==0;
+  if(drifting){
+    const pts=state.speed*Math.abs(state.lateralVel)*dt*1.7;
+    state.driftScore+=pts;missionAdd("drift",pts);
+    state.comboTimer=2.4;state.combo+=dt*2;
+  }else{
+    state.comboTimer-=dt;
+    if(state.comboTimer<=0)state.combo=0;
+  }
+
+  const prevDist=state.dist;
+  state.dist+=state.speed*dt/3.6;
+  if(state.dist-prevDist>0)missionAdd("distance",(state.dist-prevDist)/1000);
+
+  state.fuel-=dt*(.012+state.speed*.000035);
+  if(throttle)state.fuel-=dt*.012;
+  if(state.fuel<=0){
+    state.fuel=0;state.speed=Math.max(0,state.speed-28*dt);
+    if(state.speed<4 && state.eventFade<0)setEvent("OUT OF FUEL","Find a service station.");
+  }
+
+  state.heading=lerp(state.heading,-state.lateralVel*.035,dt*3);
+}
+
+function updateTraffic(dt){
+  for(const car of traffic){
+    car.z+=car.speed*dt/3.6;
+    if(car.z<state.dist-100)car.z+=8000+hash(car.id)*3000;
+
+    const gap=car.z-state.dist;
+    if(gap>5 && gap<55 && collision(state.x,roadCenter(car.z)+car.lane*1.15)){
+      if(state.speed>car.speed+65){
+        state.nearMisses++;state.combo+=1;state.comboTimer=2.5;
+        missionAdd("near",1);
+        save.coins++;state.flash=.15;state.shake=.08;
+        setEvent("NEAR MISS","Traffic threaded • combo x"+Math.max(1,Math.floor(state.combo)));
+      }
+    }
+    if(car.police && gap>0 && gap<90 && Math.abs(state.x-roadCenter(car.z)-car.lane*1.15)<2){
+      state.police=true;state.policeTime+=dt;missionAdd("police",dt);
+    }
+  }
+  if(state.police){
+    state.policeTime+=dt;
+    if(state.speed<80){
+      state.police=false;state.policeTime=0;
+      state.money=Math.max(0,state.money-250);
+      setEvent("PURSUIT ENDED","Traffic unit caught you. -$250");
+    }
+  }
+}
+
+function collectObjects(){
+  for(const o of objects){
+    if(Math.abs(o.z-state.dist)<4 && o.kind==="coin" &&
+       Math.abs(state.x-roadCenter(o.z)-o.side*3.2)<2){
+      if(!state.collectibles.includes(o.id)){
+        state.collectibles.push(o.id);save.coins++;state.money+=35;
+        missionAdd("coins",1);state.flash=.25;
+        setEvent("ROAD TOKEN","+$35  •  "+save.coins+" tokens collected");
+      }
+    }
+    if(Math.abs(o.z-state.dist)<7 && o.kind==="fuel" &&
+       Math.abs(state.x-roadCenter(o.z)-o.side*4)<2 && keys.e){
+      state.fuel=100;state.money=Math.max(0,state.money-90);
+      setEvent("SERVICE STOP","Tank refilled. Hold E near service stations.");
+    }
+  }
+}
+
+function randomEvents(dt){
+  state.eventTimer-=dt;state.eventFade-=dt;
+  if(state.eventFade<=0)ui.event.classList.remove("show");
+  if(state.eventTimer>0)return;
+  const events=[
+    ["WILDLIFE","A deer herd is moving across the road."],
+    ["ROADWORK","Temporary lane shift ahead."],
+    ["TRUCK CONVOY","Heavy traffic detected ahead."],
+    ["STORM CELL","Severe weather developing on route."],
+    ["MYSTERY","A strange light is moving beside the highway."],
+    ["SERVICE","Fuel station ahead — press E when close."],
+    ["POLICE","Traffic unit spotted. Keep it clean."],
+    ["MOUNTAIN PASS","Elevation increasing rapidly."],
+    ["COASTAL RUN","Ocean road section generated."],
+    ["DESERT HEAT","Heat shimmer reducing visual clarity."]
+  ];
+  const e=events[Math.floor(hash(Math.floor(state.dist/160)+state.worldSeed)*events.length)];
+  setEvent(e[0],e[1]);state.totalEvents++;
+  if(e[0]==="POLICE")state.police=true;
+  state.eventTimer=22+hash(state.dist*.13)*34;
+}
+
+function collisions(){
+  for(const car of traffic){
+    const gap=Math.abs(car.z-state.dist);
+    const lateral=Math.abs(state.x-(roadCenter(car.z)+car.lane*1.15));
+    if(gap<3.8 && lateral<1.4){
+      state.damage=clamp(state.damage+.18,0,1);
+      state.speed*=.52;state.shake=.45;state.flash=.55;
+      state.combo=0;
+      setEvent("IMPACT","Vehicle collision — damage "+Math.round(state.damage*100)+"%");
+      car.z+=100;
+    }
+  }
+  if(state.damage>.88 && state.speed<8){
+    setEvent("VEHICLE CRITICAL","Press R to reset the vehicle.");
+  }
+}
+
+function saveRun(){
+  save.money=state.money;save.bestDistance=Math.max(save.bestDistance,state.dist/1000);
+  save.bestSpeed=Math.max(save.bestSpeed,state.speed);
+  save.xp=state.xp;save.level=state.level;persist();
+}
+
 function update(dt){
- const accel=(keys.w||keys.arrowup)?1:0, brake=(keys.s||keys.arrowdown)?1:0;
- const steer=((keys.a||keys.arrowleft)?-1:0)+((keys.d||keys.arrowright)?1:0);
- state.steer=lerp(state.steer,steer,1-Math.pow(.001,dt));
- state.speed+=accel*105*dt-brake*150*dt;
- state.speed-=state.speed*.055*dt;
- state.speed=clamp(state.speed,0,245);
- state.x+=state.steer*(state.speed/190)*dt*3.5;
- state.dist+=state.speed*dt/3.6;
- state.t+=dt;
- state.fuel=clamp(state.fuel-state.speed*dt*.00095,0,100);
- if(state.fuel<=0)state.speed=Math.max(0,state.speed-50*dt);
- const n=fbm(state.t*.025+worldSeed);
- state.grip=state.weather==="RAIN"?lerp(.72,.92,n):state.weather==="FOG"?.86:1;
- state.eventTimer-=dt;state.eventFade-=dt;
- if(state.eventTimer<=0){
-   const e=events[Math.floor(hash(Math.floor(state.dist/100)+worldSeed)*events.length)];
-   setEvent(e[0],e[1]);state.eventTimer=18+hash(state.dist)*24;
-   if(["RAIN","FOG","NIGHT"].includes(e[0]))state.weather=e[0];
-   if(e[0]==="CLEAR")state.weather="CLEAR";
- }
- if(state.eventFade<=0)ui.event.classList.remove("show");
- state.night=clamp((Math.sin(state.t*.018-.7)+1)/2,0,1);
- ui.speed.textContent=String(Math.round(state.speed)).padStart(3,"0")+" KM/H";
- ui.distance.textContent=(state.dist/1000).toFixed(1)+" KM";
- ui.time.textContent=new Date(state.t*1000).toISOString().slice(14,19);
- ui.weather.textContent=state.weather;
- ui.rpm.textContent=state.speed<2?"IDLE":Math.round(1100+state.speed*31)+" RPM";
- ui.fuel.textContent=Math.round(state.fuel)+"%";ui.fuelbar.style.width=state.fuel+"%";
- ui.grip.textContent=Math.round(state.grip*100)+"%";ui.gripbar.style.width=(state.grip*100)+"%";
- const danger=clamp(Math.abs(state.x)-2.1,0,2);state.damage=lerp(state.damage,danger/2,dt*2);
- ui.damage.style.borderWidth=(state.damage*24)+"px";ui.damage.style.borderColor=`rgba(255,45,65,${state.damage*.45})`;
+  if(state.paused)return;
+  state.t+=dt;
+  vehiclePhysics(dt);
+  updateTraffic(dt);
+  collectObjects();
+  collisions();
+  updateWeather(dt);
+  randomEvents(dt);
+
+  if(Math.floor(state.dist/200)!==state.checkpoint){
+    state.checkpoint=Math.floor(state.dist/200);
+    if(state.checkpoint%3===0){
+      state.xp+=5;
+      while(state.xp>=state.level*1000){
+        state.xp-=state.level*1000;state.level++;
+        setEvent("LEVEL UP","Driver level "+state.level);
+      }
+    }
+  }
+
+  if(state.police)state.policeTime+=dt;
+  state.shake=Math.max(0,state.shake-dt*1.8);
+  state.flash=Math.max(0,state.flash-dt*1.8);
+
+  if(state.dist>save.bestDistance*1000)saveRun();
+
+  ui.speed.textContent=String(Math.round(state.speed)).padStart(3,"0")+" KM/H";
+  ui.distance.textContent=(state.dist/1000).toFixed(1)+" KM";
+  ui.time.textContent=new Date(state.t*1000).toISOString().slice(14,19);
+  ui.weather.textContent=state.weather;
+  ui.rpm.textContent=state.speed<3?"IDLE":Math.round(1050+state.speed*34+Math.sin(state.t*18)*70)+" RPM";
+  ui.fuel.textContent=Math.round(state.fuel)+"%";ui.fuelbar.style.width=state.fuel+"%";
+  ui.grip.textContent=Math.round(state.grip*100)+"%";ui.gripbar.style.width=(state.grip*100)+"%";
+
+  const danger=clamp(state.damage,0,1);
+  ui.damage.style.borderWidth=(danger*28)+"px";
+  ui.damage.style.borderColor=`rgba(255,35,55,${danger*.42})`;
 }
 
 function sky(){
- const night=state.night;
- const g=ctx.createLinearGradient(0,0,0,H);
- g.addColorStop(0,`rgb(${lerp(7,2,night)},${lerp(18,5,night)},${lerp(30,12,night)})`);
- g.addColorStop(.5,`rgb(${lerp(60,10,night)},${lerp(105,22,night)},${lerp(125,35,night)})`);
- g.addColorStop(1,`rgb(${lerp(24,3,night)},${lerp(31,7,night)},${lerp(32,10,night)})`);
- ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
- // stars
- if(night>.55){ctx.fillStyle=`rgba(220,245,255,${(night-.55)*1.4})`;for(let i=0;i<180;i++){let x=hash(i+worldSeed)*W,y=hash(i*4.2+2)*H*.42,r=hash(i*8.1)*1.4;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}}
- // sun / moon
- const sx=W*(.72+Math.sin(state.t*.01)*.08),sy=H*(.2+Math.cos(state.t*.012)*.035);
- const glow=ctx.createRadialGradient(sx,sy,4,sx,sy,130);glow.addColorStop(0,`rgba(255,220,150,${1-night})`);glow.addColorStop(1,"rgba(255,180,90,0)");
- ctx.fillStyle=glow;ctx.fillRect(sx-140,sy-140,280,280);ctx.fillStyle=`rgba(255,231,178,${1-night})`;ctx.beginPath();ctx.arc(sx,sy,28,0,Math.PI*2);ctx.fill();
+  const n=state.night;
+  const biome=state.biomeTarget;
+  const g=ctx.createLinearGradient(0,0,0,H);
+  const horizonTint=biome==="DESERT"?"#a76d49":biome==="COASTAL"?"#4e94a6":biome==="MOUNTAIN"?"#637381":"#5d8a91";
+  g.addColorStop(0,`rgb(${Math.round(lerp(18,2,n))},${Math.round(lerp(38,7,n))},${Math.round(lerp(60,18,n))})`);
+  g.addColorStop(.5, n>.6?"#111c2a":horizonTint);
+  g.addColorStop(1,n>.6?"#05090d":"#17251f");
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+
+  if(n>.55){
+    ctx.fillStyle=`rgba(220,240,255,${(n-.55)*1.5})`;
+    for(let i=0;i<210;i++){
+      const x=hash(i+state.worldSeed)*W,y=hash(i*4.1+2)*H*.42;
+      ctx.fillRect(x,y,hash(i*3)*1.6+.3,hash(i*7)*1.6+.3);
+    }
+  }
+  const sx=W*(.74+Math.sin(state.t*.008)*.07),sy=H*(.19+Math.cos(state.t*.01)*.03);
+  const glow=ctx.createRadialGradient(sx,sy,3,sx,sy,150);
+  glow.addColorStop(0,`rgba(255,224,165,${1-n})`);
+  glow.addColorStop(1,"rgba(255,180,90,0)");
+  ctx.fillStyle=glow;ctx.fillRect(sx-160,sy-160,320,320);
+  ctx.fillStyle=`rgba(255,235,190,${1-n})`;
+  ctx.beginPath();ctx.arc(sx,sy,27,0,Math.PI*2);ctx.fill();
 }
+
 function mountains(){
- const horizon=H*.47;
- for(let layer=0;layer<4;layer++){
-   ctx.beginPath();ctx.moveTo(0,horizon+layer*8);
-   for(let x=0;x<=W;x+=14){let z=x*.006+layer*13;let y=horizon+layer*22-fbm(z)*H*(.12-layer*.015);ctx.lineTo(x,y)}
-   ctx.lineTo(W,H*.58);ctx.lineTo(0,H*.58);ctx.closePath();
-   ctx.fillStyle=`rgba(${18+layer*5},${29+layer*6},${38+layer*6},${.9-layer*.1})`;ctx.fill();
- }
+  const h=H*.46;
+  for(let layer=0;layer<5;layer++){
+    ctx.beginPath();ctx.moveTo(0,h+layer*7);
+    for(let x=0;x<=W;x+=12){
+      const z=x*.0048+layer*21;
+      const y=h+layer*24-fbm(z+state.worldSeed)*H*(.11-layer*.012);
+      ctx.lineTo(x,y);
+    }
+    ctx.lineTo(W,H*.58);ctx.lineTo(0,H*.58);ctx.closePath();
+    const a=.88-layer*.12;
+    ctx.fillStyle=`rgba(${15+layer*7},${24+layer*7},${32+layer*8},${a})`;
+    ctx.fill();
+  }
 }
+
 function ground(){
- const horizon=H*.49;ctx.fillStyle="#07100e";ctx.fillRect(0,horizon,W,H-horizon);
- // road slabs from horizon outward
- const maxZ=state.dist+9000;
- for(let i=0;i<70;i++){
-   const z=state.dist+Math.pow(i/69,1.9)*9000;
-   const p=project(z), left=project(z,-roadWidth(z)/2),right=project(z,roadWidth(z)/2);
-   const farZ=z+140, fl=project(farZ,-roadWidth(farZ)/2),fr=project(farZ,roadWidth(farZ)/2);
-   ctx.beginPath();ctx.moveTo(left.x,left.y);ctx.lineTo(right.x,right.y);ctx.lineTo(fr.x,fr.y);ctx.lineTo(fl.x,fl.y);ctx.closePath();
-   ctx.fillStyle=i%2?"#111518":"#101416";ctx.fill();
- }
- // shoulders
- const ptsL=[],ptsR=[];for(let i=0;i<45;i++){let z=state.dist+Math.pow(i/44,1.8)*8500;let w=roadWidth(z);ptsL.push([project(z,-w*.58).x,project(z,-w*.58).y]);ptsR.push([project(z,w*.58).x,project(z,w*.58).y])}
- glowLine(ptsL,2,.38);glowLine(ptsR,2,.38);
- // center markings
- for(let i=0;i<34;i++){let z=state.dist+100+Math.pow(i/33,2)*7600;if(Math.floor(z/65)%2===0){let p=project(z);let p2=project(z+26);ctx.strokeStyle=`rgba(230,236,222,${p.depth*.9})`;ctx.lineWidth=Math.max(1,p.depth*7);ctx.beginPath();ctx.moveTo(p.cx,p.y);ctx.lineTo(p2.cx,p2.y);ctx.stroke()}}
+  const horizon=H*.47;
+  const biome=state.biomeTarget;
+  ctx.fillStyle=biome==="DESERT"?"#261a12":biome==="PLAINS"?"#121b13":biome==="MOUNTAIN"?"#11171b":biome==="COASTAL"?"#0c1a1b":"#0b1510";
+  ctx.fillRect(0,horizon,W,H-horizon);
+
+  for(let i=0;i<86;i++){
+    const t=i/85,z=state.dist+Math.pow(t,1.85)*11000;
+    const w=roadWidth(z);
+    const l=project(z,-w/2),r=project(z,w/2);
+    const z2=z+Math.max(20,160*(1-t)),l2=project(z2,-roadWidth(z2)/2),r2=project(z2,roadWidth(z2)/2);
+    ctx.beginPath();ctx.moveTo(l.x,l.y);ctx.lineTo(r.x,r.y);ctx.lineTo(r2.x,r2.y);ctx.lineTo(l2.x,l2.y);ctx.closePath();
+    ctx.fillStyle=i%2?"#111518":"#0e1214";ctx.fill();
+  }
+
+  // road edge reflectors
+  for(let i=0;i<38;i++){
+    const z=state.dist+90+Math.pow(i/37,2)*7800,w=roadWidth(z);
+    for(const side of [-1,1]){
+      const p=project(z,side*w*.57);
+      ctx.fillStyle=`rgba(220,245,250,${clamp(p.depth*2,0,.85)})`;
+      ctx.fillRect(p.x-1.5,p.y-1.5,3,3);
+    }
+  }
+
+  // center dashed line
+  for(let i=0;i<48;i++){
+    const z=state.dist+90+Math.pow(i/47,2)*9000;
+    if(Math.floor(z/60)%2===0){
+      const a=project(z),b=project(z+27);
+      ctx.strokeStyle=`rgba(235,238,225,${clamp(a.depth*1.3,0,.9)})`;
+      ctx.lineWidth=Math.max(1,a.depth*7);
+      ctx.beginPath();ctx.moveTo(a.cx,a.y);ctx.lineTo(b.cx,b.y);ctx.stroke();
+    }
+  }
+}
+
+function drawTree(x,y,s,dead=false){
+  ctx.save();ctx.translate(x,y);
+  ctx.fillStyle=dead?"#17120f":"#151c18";ctx.fillRect(-s*.055,-s*.7,s*.11,s*.7);
+  const col=dead?"#28231d":"#102a20";
+  ctx.fillStyle=col;
+  for(let j=0;j<3;j++){
+    ctx.beginPath();ctx.arc((j-1)*s*.17,-s*(.62-j*.14),s*(.38-j*.04),0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
 }
 function roadside(){
- for(let i=0;i<75;i++){
-   const z=state.dist+120+((i*173)%8500);const side=i%2?-1:1;const p=project(z,side*(roadWidth(z)*(.62+hash(i)*1.8)));if(p.y<H*.5||p.y>H)continue;
-   const scale=p.depth*45;const type=Math.floor(hash(i*7.3+worldSeed)*5);
-   ctx.save();ctx.translate(p.x,p.y);ctx.globalAlpha=clamp(p.depth*2.4,0,.85);
-   if(type<3){ // tree
-     ctx.fillStyle="#161b18";ctx.fillRect(-scale*.07,-scale*.7,scale*.14,scale*.7);
-     ctx.fillStyle=type===2?"#173329":"#10261f";ctx.beginPath();ctx.arc(0,-scale*.72,scale*.48,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(-scale*.25,-scale*.48,scale*.4,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(scale*.25,-scale*.5,scale*.42,0,Math.PI*2);ctx.fill();
-   }else if(type===3){ // sign
-     ctx.fillStyle="#4b5960";ctx.fillRect(-2,-scale*.75,4,scale*.75);ctx.fillStyle="#c7d4d5";rr(ctx,-scale*.35,-scale*.95,scale*.7,scale*.3,2);
-   }else{ // reflector
-     ctx.fillStyle="#d8f8ff";ctx.shadowBlur=12;ctx.shadowColor="#bff4ff";ctx.beginPath();ctx.arc(0,-scale*.3,scale*.06,0,Math.PI*2);ctx.fill()
-   }ctx.restore();
- }
+  for(const o of objects){
+    const d=o.z-state.dist;if(d<70||d>9000)continue;
+    const p=project(o.z,o.side*(roadWidth(o.z)*(.62+o.r*1.7)));
+    if(p.y<H*.47||p.y>H+30)continue;
+    const s=p.depth*55;ctx.globalAlpha=clamp(p.depth*2.6,0,.9);
+    if(o.kind==="tree")drawTree(p.x,p.y,s,state.biomeTarget==="DESERT");
+    else if(o.kind==="rocks"){
+      ctx.fillStyle="#333b3d";ctx.beginPath();ctx.ellipse(p.x,p.y,s*.3,s*.13,0,0,Math.PI*2);ctx.fill();
+    }else if(o.kind==="lamp"){
+      ctx.strokeStyle="#3a4b50";ctx.lineWidth=Math.max(1,s*.045);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x,p.y-s*1.4);ctx.stroke();
+      ctx.fillStyle="#d9fbff";ctx.shadowBlur=s*.5;ctx.shadowColor="#c8f6ff";ctx.fillRect(p.x-s*.06,p.y-s*1.42,s*.12,s*.12);ctx.shadowBlur=0;
+    }else if(o.kind==="billboard"){
+      ctx.fillStyle="#3a464c";ctx.fillRect(p.x-s*.04,p.y-s*1.7,s*.08,s*1.7);
+      ctx.fillStyle="#152a32";rr(ctx,p.x-s*.55,p.y-s*2.1,s*1.1,s*.45,3);
+      ctx.fillStyle="#bfeaf2";ctx.font=`${Math.max(4,s*.12)}px system-ui`;ctx.fillText("DRIVE ON",p.x-s*.42,p.y-s*1.83);
+    }else if(o.kind==="coin"){
+      ctx.fillStyle="#ffd36a";ctx.shadowBlur=20;ctx.shadowColor="#ffb92e";
+      ctx.beginPath();ctx.arc(p.x,p.y-s*.55,s*.16,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    }else if(o.kind==="fuel"){
+      ctx.fillStyle="#dce9ec";rr(ctx,p.x-s*.35,p.y-s*1.7,s*.7,s*.9,4);
+      ctx.fillStyle="#e33d4d";rr(ctx,p.x-s*.22,p.y-s*1.5,s*.44,s*.4,2);
+    }
+    ctx.globalAlpha=1;
+  }
 }
-function traffic(){
- for(let i=0;i<13;i++){
-   const z=state.dist+500+((i*913+Math.floor(state.dist/600)*317)%6500);const lane=i%2?-1:1;const p=project(z,lane*1.2);if(p.y<H*.5||p.y>H+30)continue;
-   const s=p.depth*55;ctx.save();ctx.translate(p.x,p.y);ctx.scale(s/50,s/50);ctx.globalAlpha=clamp(p.depth*2.8,0,1);
-   ctx.fillStyle="#161b20";rr(ctx,-24,-10,48,20,5);ctx.fillStyle="#25323a";rr(ctx,-15,-7,30,9,3);
-   ctx.fillStyle="#ff3348";ctx.shadowBlur=18;ctx.shadowColor="#ff3348";ctx.fillRect(-18,5,6,3);ctx.fillRect(12,5,6,3);ctx.restore();
- }
+
+function drawTrafficCar(car){
+  const p=project(car.z,car.lane*1.15);if(p.y<H*.47||p.y>H+40)return;
+  const s=clamp(p.depth*50,2,52);
+  ctx.save();ctx.translate(p.x,p.y);
+  const colors=["#26343b","#6e7c82","#9b4f48","#4e6770","#d2c8a7","#242a30"];
+  ctx.fillStyle=car.police?"#11171b":colors[car.color];
+  const w=car.truck?s*1.1:s*.78,h=car.truck?s*.45:s*.36;
+  rr(ctx,-w/2,-h,w,h,Math.max(2,s*.08));
+  ctx.fillStyle=car.truck?"#47555a":"#1c3038";rr(ctx,-w*.3,-h*.82,w*.6,h*.65,2);
+  ctx.fillStyle="#ff334d";ctx.shadowBlur=s*.35;ctx.shadowColor="#ff334d";
+  ctx.fillRect(-w*.37,h*.02,w*.16,Math.max(1,s*.055));ctx.fillRect(w*.21,h*.02,w*.16,Math.max(1,s*.055));
+  if(car.police){
+    ctx.fillStyle="#5be8ff";ctx.fillRect(-w*.18,-h*.95,w*.17,Math.max(1,s*.05));
+    ctx.fillStyle="#ff4960";ctx.fillRect(w*.01,-h*.95,w*.17,Math.max(1,s*.05));
+  }
+  ctx.restore();
 }
-function weather(){
- if(state.weather==="RAIN"){ctx.strokeStyle="rgba(160,210,235,.28)";ctx.lineWidth=1;for(let i=0;i<260;i++){let x=hash(i+state.t*40)*W,y=hash(i*2.3+state.t*65)*H;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-5,y+18);ctx.stroke()}}
- if(state.weather==="FOG"){let g=ctx.createLinearGradient(0,H*.4,0,H);g.addColorStop(0,"rgba(210,230,230,.02)");g.addColorStop(.7,"rgba(190,215,220,.18)");g.addColorStop(1,"rgba(220,235,235,.26)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
+
+function trafficLayer(){for(const car of traffic)drawTrafficCar(car)}
+
+function drawPolice(){
+  if(!state.police)return;
+  const x=W/2-state.steer*W*.08,y=H*.97;
+  ctx.save();ctx.translate(x,y);
+  ctx.fillStyle="rgba(255,40,60,.25)";ctx.shadowBlur=45;ctx.shadowColor="#ff3d52";
+  ctx.beginPath();ctx.ellipse(0,0,180,18,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#ff334d";ctx.fillRect(-100,-5,55,5);
+  ctx.fillStyle="#55eaff";ctx.fillRect(45,-5,55,5);
+  ctx.restore();
 }
+
 function car(){
- const cx=W/2+state.steer*W*.075,cy=H*.86;
- ctx.save();ctx.translate(cx,cy);ctx.rotate(state.steer*.045);
- // shadow
- ctx.fillStyle="rgba(0,0,0,.55)";ctx.beginPath();ctx.ellipse(0,35,170,38,0,0,Math.PI*2);ctx.fill();
- // rear body
- const body=ctx.createLinearGradient(0,-100,0,100);body.addColorStop(0,"#364750");body.addColorStop(.45,"#121a1f");body.addColorStop(1,"#05080b");ctx.fillStyle=body;
- ctx.beginPath();ctx.moveTo(-125,72);ctx.quadraticCurveTo(-140,20,-104,-45);ctx.quadraticCurveTo(-75,-105,0,-112);ctx.quadraticCurveTo(75,-105,104,-45);ctx.quadraticCurveTo(140,20,125,72);ctx.quadraticCurveTo(60,98,0,101);ctx.quadraticCurveTo(-60,98,-125,72);ctx.fill();
- // glass
- const glass=ctx.createLinearGradient(0,-105,0,-15);glass.addColorStop(0,"#9bd0dc");glass.addColorStop(.5,"#1a343e");glass.addColorStop(1,"#081117");ctx.fillStyle=glass;ctx.beginPath();ctx.moveTo(-72,-52);ctx.quadraticCurveTo(-53,-91,0,-96);ctx.quadraticCurveTo(53,-91,72,-52);ctx.lineTo(60,-22);ctx.lineTo(-60,-22);ctx.closePath();ctx.fill();
- // lights
- ctx.fillStyle="#ff334d";ctx.shadowBlur=28;ctx.shadowColor="#ff334d";rr(ctx,-103,35,48,15,7);rr(ctx,55,35,48,15,7);
- ctx.shadowBlur=0;ctx.fillStyle="rgba(255,255,255,.14)";ctx.fillRect(-90,-2,180,3);
- // wheels
- ctx.fillStyle="#030405";ctx.fillRect(-137,32,23,57);ctx.fillRect(114,32,23,57);
- ctx.restore();
+  const cx=W/2+state.steer*W*.075+state.x*2.2;
+  const cy=H*.855;
+  const shake=(Math.random()-.5)*state.shake*15;
+  ctx.save();ctx.translate(cx+shake,cy+shake*.4);ctx.rotate(state.heading);
+  ctx.fillStyle="rgba(0,0,0,.62)";ctx.beginPath();ctx.ellipse(0,38,175,40,0,0,Math.PI*2);ctx.fill();
+
+  // detailed sports sedan
+  const body=ctx.createLinearGradient(0,-115,0,100);
+  body.addColorStop(0,"#6b7f87");body.addColorStop(.2,"#29373d");body.addColorStop(.58,"#10181d");body.addColorStop(1,"#040709");
+  ctx.fillStyle=body;
+  ctx.beginPath();ctx.moveTo(-126,74);ctx.quadraticCurveTo(-143,10,-108,-52);
+  ctx.quadraticCurveTo(-72,-108,0,-116);ctx.quadraticCurveTo(72,-108,108,-52);
+  ctx.quadraticCurveTo(143,10,126,74);ctx.quadraticCurveTo(65,101,0,104);
+  ctx.quadraticCurveTo(-65,101,-126,74);ctx.fill();
+
+  // roof / windows
+  const glass=ctx.createLinearGradient(0,-106,0,-15);
+  glass.addColorStop(0,"#a9d7df");glass.addColorStop(.3,"#34535e");glass.addColorStop(1,"#071016");
+  ctx.fillStyle=glass;
+  ctx.beginPath();ctx.moveTo(-74,-57);ctx.quadraticCurveTo(-52,-96,0,-101);
+  ctx.quadraticCurveTo(52,-96,74,-57);ctx.lineTo(62,-21);ctx.lineTo(-62,-21);ctx.closePath();ctx.fill();
+  ctx.strokeStyle="rgba(220,245,250,.3)";ctx.lineWidth=2;ctx.stroke();
+
+  // taillights
+  ctx.fillStyle="#ff334d";ctx.shadowBlur=30;ctx.shadowColor="#ff334d";
+  rr(ctx,-105,34,48,16,7);rr(ctx,57,34,48,16,7);
+  ctx.shadowBlur=0;
+  ctx.fillStyle="rgba(255,255,255,.15)";ctx.fillRect(-91,-2,182,3);
+
+  // wheels
+  ctx.fillStyle="#020304";ctx.fillRect(-139,33,25,61);ctx.fillRect(114,33,25,61);
+  ctx.fillStyle="#8d9da1";ctx.fillRect(-133,43,13,40);ctx.fillRect(120,43,13,40);
+
+  // exhaust glow when accelerating
+  if(keys.w&&state.speed>40){
+    ctx.fillStyle="rgba(140,220,255,.35)";ctx.shadowBlur=20;ctx.shadowColor="#a8eaff";
+    ctx.fillRect(-74,87,25,4);ctx.fillRect(49,87,25,4);
+  }
+  ctx.restore();
 }
+
+function weather(){
+  const intensity={RAIN:.7,STORM:1,FOG:.8,SNOW:.65,CLEAR:0}[state.weather]||0;
+  if(intensity){
+    ctx.strokeStyle=state.weather==="SNOW"?"rgba(240,248,255,.55)":"rgba(155,205,230,.27)";
+    ctx.lineWidth=1;
+    const count=Math.floor(180+intensity*260);
+    for(let i=0;i<count;i++){
+      const x=(hash(i+Math.floor(state.t*25))*W);
+      const y=(hash(i*2.37+Math.floor(state.t*18))*H);
+      ctx.beginPath();
+      if(state.weather==="SNOW")ctx.arc(x,y,hash(i)*2.2,0,Math.PI*2);
+      else{ctx.moveTo(x,y);ctx.lineTo(x-5,y+16+intensity*13)}
+      ctx.stroke();
+    }
+  }
+  if(state.weather==="FOG"||state.weather==="STORM"){
+    const g=ctx.createLinearGradient(0,H*.35,0,H);
+    g.addColorStop(0,"rgba(190,215,220,.02)");
+    g.addColorStop(.55,`rgba(190,215,220,${state.weather==="STORM"?.08:.14})`);
+    g.addColorStop(1,"rgba(220,235,235,.25)");
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  }
+  if(state.weather==="STORM"){
+    if(hash(Math.floor(state.t*2.5))>.96){
+      ctx.fillStyle="rgba(230,245,255,.18)";ctx.fillRect(0,0,W,H);
+    }
+  }
+}
+
 function minimap(){
- mctx.clearRect(0,0,260,140);mctx.fillStyle="rgba(4,8,12,.82)";mctx.fillRect(0,0,260,140);
- mctx.strokeStyle="rgba(110,220,240,.7)";mctx.lineWidth=5;mctx.beginPath();
- for(let i=0;i<80;i++){let y=135-i*1.65,x=130+roadCenter(state.dist+i*80)*12;if(i===0)mctx.moveTo(x,y);else mctx.lineTo(x,y)}mctx.stroke();
- mctx.fillStyle="#fff";mctx.beginPath();mctx.arc(130,125,4,0,Math.PI*2);mctx.fill();
+  mctx.clearRect(0,0,260,140);
+  mctx.fillStyle="rgba(3,7,11,.88)";mctx.fillRect(0,0,260,140);
+  mctx.strokeStyle="rgba(105,220,240,.75)";mctx.lineWidth=5;
+  mctx.beginPath();
+  for(let i=0;i<100;i++){
+    const y=135-i*1.4,x=130+roadCenter(state.dist+i*75)*10;
+    if(i===0)mctx.moveTo(x,y);else mctx.lineTo(x,y);
+  }
+  mctx.stroke();
+  for(const car of traffic){
+    const d=car.z-state.dist;
+    if(d>0&&d<7000){
+      const y=135-d/55,x=130+(car.lane*1.15)*9;
+      mctx.fillStyle=car.police?"#ff5268":"#a5b6bc";mctx.fillRect(x-2,y-2,4,4);
+    }
+  }
+  mctx.fillStyle="#fff";mctx.beginPath();mctx.arc(130,126,4,0,Math.PI*2);mctx.fill();
 }
+
+function missionHUD(){
+  if(!state.mission)return;
+  // use browser canvas overlay area at bottom center
+  const m=state.mission;
+  const ratio=clamp(state.missionProgress/m.goal,0,1);
+  ctx.save();
+  ctx.fillStyle="rgba(5,10,15,.72)";rr(ctx,W/2-170,H-115,340,42,10);
+  ctx.fillStyle="#9bd9e7";ctx.font="700 10px system-ui";ctx.textAlign="center";
+  ctx.fillText(m.name+"  •  "+m.text,W/2,H-96);
+  ctx.fillStyle="#162932";rr(ctx,W/2-135,H-84,270,5,4);
+  ctx.fillStyle="#61e7ff";rr(ctx,W/2-135,H-84,270*ratio,5,4);
+  ctx.fillStyle="#dcecf1";ctx.font="9px system-ui";
+  ctx.fillText((m.type==="drift"?Math.floor(state.missionProgress):Math.floor(state.missionProgress))+" / "+m.goal,W/2,H-69);
+  ctx.restore();
+}
+
+function telemetryExtra(){
+  ctx.save();
+  ctx.textAlign="right";
+  ctx.fillStyle="rgba(220,245,250,.7)";
+  ctx.font="700 10px system-ui";
+  ctx.fillText("LVL "+state.level+"   $"+Math.floor(state.money),W-28,H-130);
+  ctx.font="9px system-ui";
+  ctx.fillStyle="rgba(140,180,190,.7)";
+  ctx.fillText("BEST "+save.bestDistance.toFixed(1)+" KM   •   TOKENS "+save.coins,W-28,H-115);
+  if(state.combo>1){
+    ctx.fillStyle="#ffd36a";ctx.font="700 18px system-ui";
+    ctx.fillText("COMBO ×"+state.combo.toFixed(1),W-28,H-92);
+  }
+  if(state.police){
+    ctx.fillStyle="#ff596d";ctx.font="700 12px system-ui";
+    ctx.fillText("⚠ PURSUIT  "+Math.floor(state.policeTime)+"s",W-28,H-75);
+  }
+  ctx.restore();
+}
+
 function render(){
- sky();mountains();ground();roadside();traffic();weather();car();minimap();
- // subtle film grain
- ctx.fillStyle="rgba(255,255,255,.018)";for(let i=0;i<900;i++){ctx.fillRect(hash(i+state.t*2)*W,hash(i*4+state.t)*H,1,1)}
+  ctx.save();
+  const sx=(Math.random()-.5)*state.shake*18,sy=(Math.random()-.5)*state.shake*12;
+  ctx.translate(sx,sy);
+  sky();mountains();ground();roadside();trafficLayer();weather();drawPolice();car();
+  if(!photoMode)missionHUD();
+  ctx.restore();
+  minimap();
+  if(!photoMode)telemetryExtra();
+
+  if(state.flash>0){
+    ctx.fillStyle=`rgba(255,255,255,${state.flash*.18})`;ctx.fillRect(0,0,W,H);
+  }
+  if(state.paused){
+    ctx.fillStyle="rgba(0,0,0,.46)";ctx.fillRect(0,0,W,H);
+    ctx.fillStyle="#fff";ctx.textAlign="center";ctx.font="700 38px system-ui";ctx.fillText("PAUSED",W/2,H/2);
+    ctx.font="12px system-ui";ctx.fillStyle="#9db4bc";ctx.fillText("PRESS P OR ESC TO RESUME",W/2,H/2+28);
+  }
 }
-let last=0;
-function loop(now){if(!state.running)return;let dt=Math.min((now-last)/1000,.05);last=now;update(dt);render();requestAnimationFrame(loop)}
+
+let last=0,photoMode=false,mapExpanded=false;
+function loop(now){
+  if(!state.running)return;
+  const dt=Math.min((now-last)/1000,.045);last=now;
+  update(dt);render();
+  requestAnimationFrame(loop);
+}
+
+document.getElementById("startBtn").onclick=()=>{
+  state.running=true;state.paused=false;resetCar();newMission();
+  document.getElementById("start").classList.add("hide");
+  last=performance.now();requestAnimationFrame(loop);
+};
+
+// Periodically recycle procedural entities so the world feels continuous.
+setInterval(()=>{
+  if(!state.running)return;
+  refreshWorld();
+},1500);
+
+window.addEventListener("beforeunload",saveRun);
+
+// Add a compact in-game garage / upgrade interaction without needing another page.
+const garage=document.createElement("div");
+garage.style.cssText="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9;display:none;width:min(520px,90vw);padding:25px;background:rgba(5,10,16,.94);border:1px solid rgba(140,220,240,.3);border-radius:18px;backdrop-filter:blur(18px);color:#eaf8ff;font:12px system-ui;box-shadow:0 30px 100px #000";
+garage.innerHTML=`
+<h2 style="margin:0 0 5px;letter-spacing:.15em">GARAGE</h2>
+<p style="color:#829aa5">Press G anywhere on the road to open upgrades. Each upgrade costs more than the last.</p>
+<div id="garageRows"></div>
+<p style="color:#708994">ESC closes garage</p>`;
+document.body.appendChild(garage);
+
+function garageRows(){
+ const rows=[
+  ["ENGINE","engineUpgrades","Top speed +18 km/h / acceleration",450],
+  ["HANDLING","handlingUpgrades","Grip, steering and brakes",500],
+  ["FUEL TANK","fuelUpgrades","Fuel consumption reduced",380]
+ ];
+ const box=document.getElementById("garageRows");box.innerHTML="";
+ for(const [name,key,desc,base] of rows){
+  const lvl=save[key],cost=base*(lvl+1);
+  const b=document.createElement("button");
+  b.style.cssText="display:block;width:100%;margin:8px 0;text-align:left";
+  b.textContent=`${name}  LVL ${lvl} — $${cost} — ${desc}`;
+  b.onclick=()=>{
+    if(save.money>=cost){
+      save.money-=cost;save[key]++;applyUpgrades();state.money=save.money;persist();garageRows();
+      setEvent("UPGRADE INSTALLED",name+" upgraded to level "+save[key]);
+    }
+  };
+  box.appendChild(b);
+ }
+}
+garageRows();
+
+addEventListener("keydown",e=>{
+ if(e.key.toLowerCase()==="g"&&state.running&&!state.paused){
+   garage.style.display=garage.style.display==="none"?"block":"none";
+   garageRows();
+   state.paused=garage.style.display!=="none";
+ }
+ if(e.key==="Escape"&&garage.style.display!=="none"){
+   garage.style.display="none";state.paused=false;
+ }
+});
+
+// First mission appears only after engine start; this keeps the title screen clean.
 </script>
 </body>
 </html>
