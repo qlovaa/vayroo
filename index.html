@@ -3,75 +3,70 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEBULA // Arcade</title>
+<title>Kacper Clicker</title>
 <style>
-:root{--bg:#070811;--panel:#101322;--panel2:#151a2d;--text:#f5f7ff;--muted:#8c94ad;--a:#7c5cff;--b:#00e5ff;--c:#ff3cac;--good:#35f2a0;--line:#242a42}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 15% 10%,#24145b 0,transparent 30%),radial-gradient(circle at 85% 15%,#073b52 0,transparent 28%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(#fff1 1px,transparent 1px),linear-gradient(90deg,#fff1 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,#000,transparent 75%);z-index:-1}
-a{text-decoration:none;color:inherit}.top{position:sticky;top:0;z-index:20;height:76px;display:flex;align-items:center;gap:22px;padding:0 5vw;background:#070811cc;backdrop-filter:blur(22px);border-bottom:1px solid #ffffff12}
-.logo{font-weight:1000;letter-spacing:-2px;font-size:24px}.logo span{color:var(--b)}.search{flex:1;max-width:680px;position:relative}.search input{width:100%;padding:14px 18px 14px 46px;border:1px solid var(--line);border-radius:16px;background:#0d1020;color:#fff;outline:0}.search input:focus{border-color:#7c5cff;box-shadow:0 0 0 4px #7c5cff22}.search i{position:absolute;left:17px;top:13px;color:var(--muted)}
-.nav{display:flex;gap:8px}.nav button,.pill{background:#ffffff08;border:1px solid #ffffff10;color:#ccd2e6;padding:10px 13px;border-radius:12px;cursor:pointer}.nav button:hover,.pill:hover{background:#ffffff14;color:#fff}
-.hero{min-height:570px;padding:80px 5vw 45px;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}.eyebrow{color:var(--b);font-weight:800;letter-spacing:3px;font-size:12px}.hero h1{font-size:clamp(58px,8vw,116px);line-height:.82;letter-spacing:-7px;margin:15px 0 30px;max-width:850px}.gradient{background:linear-gradient(100deg,#fff 15%,#b4a3ff 45%,#00e5ff 75%,#ff3cac);-webkit-background-clip:text;color:transparent}.hero p{font-size:18px;color:#aab1c8;max-width:680px;line-height:1.65}.actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}.primary{border:0;border-radius:14px;padding:15px 22px;background:linear-gradient(100deg,var(--a),var(--c));color:#fff;font-weight:900;cursor:pointer;box-shadow:0 12px 40px #7c5cff44}.secondary{border:1px solid #ffffff1c;border-radius:14px;padding:15px 22px;background:#ffffff08;color:#fff;font-weight:800;cursor:pointer}
-.hero-art{height:390px;border-radius:32px;border:1px solid #ffffff18;background:linear-gradient(145deg,#15142b,#071f2b);position:relative;overflow:hidden;box-shadow:0 30px 100px #0008}.orb{position:absolute;width:220px;height:220px;border-radius:50%;left:50%;top:45%;transform:translate(-50%,-50%);background:radial-gradient(circle at 35% 30%,#fff,#00e5ff 8%,#7c5cff 35%,#170f44 70%);box-shadow:0 0 100px #00e5ff99,0 0 180px #7c5cff66;animation:float 5s ease-in-out infinite}.ring{position:absolute;border:1px solid #00e5ff88;border-radius:50%;width:360px;height:130px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-18deg);box-shadow:0 0 25px #00e5ff22}.ring.r2{transform:translate(-50%,-50%) rotate(25deg);border-color:#ff3cac88}.scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#00e5ff,transparent);animation:scan 3s linear infinite}@keyframes scan{from{top:-2%}to{top:102%}}@keyframes float{50%{transform:translate(-50%,-56%) scale(1.05)}}.badge{position:absolute;padding:9px 12px;border-radius:12px;background:#090b16cc;border:1px solid #ffffff1a;backdrop-filter:blur(10px);font-size:12px;font-weight:800}.b1{top:25px;left:25px}.b2{bottom:25px;right:25px;color:var(--good)}
-.section{padding:30px 5vw}.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:20px}.section h2{font-size:30px;margin:0;letter-spacing:-1px}.muted{color:var(--muted);font-size:14px}.chips{display:flex;gap:9px;overflow:auto;padding-bottom:8px}.chip{white-space:nowrap;border:1px solid #ffffff10;background:#ffffff06;color:#b7bed2;border-radius:999px;padding:9px 14px;cursor:pointer}.chip.active{background:#7c5cff22;border-color:#7c5cff88;color:#fff}
-.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}.card{min-width:0;background:linear-gradient(145deg,#111526,#0d101d);border:1px solid #ffffff0d;border-radius:20px;overflow:hidden;transition:.25s;cursor:pointer}.card:hover{transform:translateY(-7px) scale(1.01);border-color:#ffffff25;box-shadow:0 20px 55px #0009}.thumb{height:150px;position:relative;display:grid;place-items:center;font-size:46px;background:var(--g);overflow:hidden}.thumb:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,#0008)}.play{position:absolute;z-index:2;opacity:0;transform:scale(.7);transition:.2s;width:52px;height:52px;border-radius:50%;border:1px solid #fff5;background:#080b14dd;color:#fff;font-size:20px}.card:hover .play{opacity:1;transform:scale(1)}.card-body{padding:14px}.title{font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{display:flex;justify-content:space-between;margin-top:8px;color:#777f99;font-size:12px}.tag{color:#a9b0c4}.wide{grid-column:span 2}.wide .thumb{height:190px}.featured{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}.feature{min-height:250px;border-radius:24px;padding:28px;background:linear-gradient(125deg,#201450,#0c3c48);border:1px solid #ffffff14;position:relative;overflow:hidden}.feature h3{font-size:34px;max-width:440px;margin:8px 0}.feature p{color:#c1c6d5;max-width:480px}.mini-list{display:grid;gap:12px}.mini{display:flex;align-items:center;gap:13px;padding:13px;border:1px solid #ffffff0c;background:#ffffff05;border-radius:16px}.mini .icon{width:52px;height:52px;border-radius:13px;display:grid;place-items:center;font-size:25px;background:var(--g)}footer{padding:70px 5vw 100px;color:#697189;text-align:center}.modal{position:fixed;inset:0;background:#000b;backdrop-filter:blur(12px);display:none;place-items:center;z-index:100;padding:20px}.modal.show{display:grid}.modalbox{width:min(900px,100%);border:1px solid #ffffff1c;background:#0c0f1c;border-radius:28px;overflow:hidden;box-shadow:0 30px 100px #000}.modalbar{padding:17px 20px;display:flex;justify-content:space-between;border-bottom:1px solid #ffffff10}.close{cursor:pointer;border:0;background:#fff1;color:#fff;border-radius:10px;padding:8px 12px}.game{height:500px;display:grid;place-items:center;background:radial-gradient(circle,#171c35,#06070d)}.game h3{font-size:48px;margin:0}.game button{margin-top:18px}.toast{position:fixed;right:24px;bottom:24px;background:#111526;border:1px solid #ffffff18;padding:14px 17px;border-radius:14px;display:none;z-index:200}.toast.show{display:block}
-@media(max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}.hero{grid-template-columns:1fr}.hero-art{display:none}.featured{grid-template-columns:1fr}}@media(max-width:650px){.nav{display:none}.top{padding:0 18px}.hero,.section{padding-left:18px;padding-right:18px}.hero h1{letter-spacing:-4px}.grid{grid-template-columns:repeat(2,1fr)}.wide{grid-column:span 2}.thumb{height:125px}.featured{display:block}.mini-list{margin-top:12px}}
+:root{--bg:#080a12;--panel:#111522;--panel2:#171b2b;--text:#f6f7fb;--muted:#9299ad;--accent:#8b5cf6;--accent2:#22d3ee;--good:#34d399;--danger:#fb7185}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0%,#201344 0,#080a12 38%),var(--bg);color:var(--text);font:14px Inter,ui-sans-serif,system-ui,sans-serif;min-height:100vh}
+button{font:inherit;color:inherit}.app{display:grid;grid-template-columns:230px 1fr 330px;min-height:100vh}.side,.right{background:rgba(12,15,25,.84);backdrop-filter:blur(18px);border-right:1px solid #252a3b}.right{border-left:1px solid #252a3b;border-right:0;padding:22px}.brand{padding:24px;font-size:21px;font-weight:900}.brand span{color:var(--accent2)}nav{padding:8px 12px}nav button{width:100%;background:none;border:0;padding:12px 14px;text-align:left;border-radius:11px;color:var(--muted);cursor:pointer;margin:3px 0}nav button.active,nav button:hover{background:#1b2031;color:white}.main{padding:26px 34px;max-width:1000px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.badge{padding:7px 10px;border:1px solid #2d3348;background:#121626;border-radius:999px;color:#aeb6ca}.hero{background:linear-gradient(135deg,#17172b,#101728);border:1px solid #2a3045;border-radius:24px;padding:30px;box-shadow:0 18px 60px #0006}.eyebrow{color:var(--accent2);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:11px}.count{font-size:48px;font-weight:950;margin:8px 0}.rate{color:var(--muted)}.cookie{width:205px;height:205px;margin:25px auto;border-radius:50%;border:10px solid #c084fc;background:radial-gradient(circle,#d8b4fe,#8b5cf6);box-shadow:0 0 70px #8b5cf655,inset 0 0 25px #fff8;display:grid;place-items:center;font-size:80px;cursor:pointer;user-select:none;transition:.08s transform}.cookie:active{transform:scale(.94)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.card{background:#121625;border:1px solid #282e42;border-radius:16px;padding:17px}.card b{font-size:16px}.muted{color:var(--muted);line-height:1.5}.buy{margin-top:13px;width:100%;border:0;border-radius:10px;padding:10px;background:#262c42;cursor:pointer}.buy:hover{background:#343c58}.buy:disabled{opacity:.35;cursor:not-allowed}.right h3{margin-top:0}.stat{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #24293a}.tabs{display:flex;gap:8px;margin:18px 0}.tabs button{background:#111625;border:1px solid #292f43;padding:9px 12px;border-radius:10px;cursor:pointer}.tabs button.on{background:#2b2350;border-color:#7049cf}.toast{position:fixed;right:25px;bottom:25px;background:#191e2d;border:1px solid #363d55;border-radius:13px;padding:12px 15px;opacity:0;transform:translateY(10px);transition:.25s}.toast.show{opacity:1;transform:none}.ach{display:flex;gap:10px;align-items:center;margin:10px 0;padding:12px;background:#101421;border-radius:12px}.dot{width:10px;height:10px;border-radius:50%;background:#353b4e}.done .dot{background:var(--good)}@media(max-width:950px){.app{grid-template-columns:70px 1fr}.side{overflow:hidden}.brand{padding:20px 15px;font-size:0}.brand span{font-size:20px}.side nav button{font-size:0;text-align:center}.side nav button:first-letter{font-size:18px}.right{display:none}.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.app{display:block}.side{position:sticky;top:0;z-index:5;border:0}.side nav{display:flex;overflow:auto}.side nav button{font-size:12px}.brand{display:none}.main{padding:16px}.grid{grid-template-columns:1fr}.count{font-size:38px}}
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="logo">NEBULA<span>//</span>ARCADE</div>
-  <div class="search"><i>⌕</i><input id="search" placeholder="Search 500+ games..."></div>
-  <div class="nav"><button onclick="toast('Library synced ✦')">Library</button><button onclick="toast('Profile panel coming alive ✦')">Profile</button></div>
-</header>
+<div class="app">
+<aside class="side"><div class="brand">KACPER<span>CLICKER</span></div><nav id="nav">
+<button class="active" data-page="clicker">◉ Clicker</button>
+<button data-page="upgrades">⚡ Upgrades</button>
+<button data-page="achievements">★ Achievements</button>
+<button data-page="stats">▣ Statistics</button>
+<button data-page="settings">⚙ Settings</button>
+</nav></aside>
 
-<main>
-<section class="hero">
-  <div>
-    <div class="eyebrow">THE NEXT-GEN BROWSER ARCADE</div>
-    <h1>PLAY<br><span class="gradient">WITHOUT LIMITS.</span></h1>
-    <p>Hundreds of bite-sized worlds. Instant launches. Competitive scores. Zero downloads. Built like a game, not a directory.</p>
-    <div class="actions"><button class="primary" onclick="scrollToGames()">⚡ EXPLORE THE ARCADE</button><button class="secondary" onclick="randomGame()">🎲 SURPRISE ME</button></div>
-  </div>
-  <div class="hero-art"><div class="scan"></div><div class="orb"></div><div class="ring"></div><div class="ring r2"></div><div class="badge b1">◉ LIVE // 24,891 PLAYERS</div><div class="badge b2">SYSTEMS NOMINAL</div></div>
-</section>
-
-<section class="section" id="games">
-  <div class="section-head"><div><div class="eyebrow">DISCOVER</div><h2>Featured worlds</h2></div><div class="muted" id="count"></div></div>
-  <div class="chips" id="chips"></div>
-  <div class="grid" id="grid"></div>
-</section>
-
-<section class="section">
-  <div class="section-head"><div><div class="eyebrow">WHAT'S HOT</div><h2>Arcade pulse</h2></div></div>
-  <div class="featured">
-    <div class="feature"><div class="eyebrow">GAME OF THE MOMENT</div><h3>VOID RUNNER: HYPERDRIVE</h3><p>Thread impossible neon tunnels, chain multipliers and survive the speed wall. Every run is different.</p><button class="primary" onclick="launch('Void Runner: Hyperdrive')">PLAY NOW →</button></div>
-    <div class="mini-list" id="mini"></div>
-  </div>
-</section>
+<main class="main">
+<div class="top"><div><b id="pageTitle">Kacper Clicker</b><div class="muted">Build your empire, one click at a time.</div></div><div class="badge" id="prestigeBadge">Level 1</div></div>
+<section id="content"></section>
 </main>
-<footer>NEBULA // ARCADE — A fictional front-end concept. Press <b>R</b> for a random game.</footer>
 
-<div class="modal" id="modal"><div class="modalbox"><div class="modalbar"><b id="modalTitle">GAME</b><button class="close" onclick="closeGame()">✕</button></div><div class="game"><div style="text-align:center"><div id="modalIcon" style="font-size:80px">🎮</div><h3 id="gameTitle">Ready?</h3><div class="muted">This demo opens a playable arcade placeholder.</div><button class="primary" onclick="toast('Game engine initialized! Score: 000420')">START RUN</button></div></div></div></div>
+<aside class="right">
+<h3>Empire</h3>
+<div class="stat"><span>Kacpers</span><b id="sideCount">0</b></div>
+<div class="stat"><span>Per click</span><b id="sideClick">1</b></div>
+<div class="stat"><span>Per second</span><b id="sideSec">0</b></div>
+<div class="stat"><span>Clicks</span><b id="sideClicks">0</b></div>
+<div style="height:18px"></div><h3>Next milestone</h3>
+<div class="card"><b id="milestone">100 Kacpers</b><p class="muted" id="milestoneText">Keep clicking.</p></div>
+</aside>
+</div>
 <div class="toast" id="toast"></div>
-
 <script>
-const games=[
-['Void Runner: Hyperdrive','Racing','🚀','#1c1247,#005b72','9.8','2.4M'],['Neon Chess','Strategy','♟️','#3a104e,#101c55','9.7','1.1M'],['Pixel Samurai','Action','⚔️','#4c1720,#152d45','9.6','890K'],['Orbit Breaker','Arcade','🪐','#102e48,#27104e','9.5','2.1M'],['Dungeon 404','RPG','🗡️','#32150f,#151b3c','9.4','740K'],['Drift//Core','Racing','🏎️','#29110e,#082f3e','9.4','1.8M'],['Cosmic Garden','Casual','🌱','#092d2a,#24134b','9.3','620K'],['Cyber Hoops','Sports','🏀','#15204b,#4b153a','9.2','1.3M'],['Stack Overflow','Puzzle','🧱','#08343b,#1a1648','9.2','970K'],['Mecha Mayhem','Action','🤖','#38100f,#17244e','9.1','2.0M'],['Bubble Nova','Casual','🫧','#102f52,#4c1350','9.1','560K'],['Hexa Forge','Strategy','⬡','#2b1a08,#122d3a','9.0','440K'],['Skyline Sprint','Racing','🏙️','#092d43,#35104d','9.0','1.5M'],['Dungeon Dice','RPG','🎲','#2c160b,#24153e','8.9','810K'],['Laser League','Sports','🔫','#061f42,#40103d','8.9','1.2M'],['Gravity Flip','Arcade','🌀','#301250,#083744','8.8','930K'],['Mind Melt','Puzzle','🧠','#35143a,#10263f','8.8','680K'],['Star Merchant','Strategy','💫','#17184a,#083842','8.7','390K'],['Frostbyte','Action','❄️','#092e46,#152154','8.7','720K'],['Tiny Titans','RPG','👾','#3a142b,#122c37','8.6','510K'],['Goal Rush','Sports','🥅','#102d18,#211649','8.6','1.0M'],['Word Warp','Puzzle','🔤','#251b08,#1b1742','8.5','460K'],['Moonbase 9','Strategy','🌕','#101a39,#30113f','8.5','350K'],['Fruit Frenzy','Casual','🍉','#36150f,#103a31','8.4','1.4M'],['Rocket Rumble','Action','💥','#3a180d,#0d3042','8.4','920K'],['Cyber Kart','Racing','🏁','#24114a,#0b3344','8.3','1.1M'],['Mystic Mines','RPG','💎','#1e123c,#15313c','8.3','610K'],['Color Collapse','Puzzle','🌈','#35142c,#10283b','8.2','780K'],['Aero Ace','Arcade','✈️','#0a2b43,#25114a','8.2','530K'],['Dungeon Dash','Action','🏃','#34180f,#111e3d','8.1','1.7M']
+const saveKey='kacper_clicker_save_v1';
+let s=JSON.parse(localStorage.getItem(saveKey)||'null')||{
+k:0,clicks:0,perClick:1,perSec:0,level:1,total:0,
+up:{cursor:0,auto:0,lab:0,quantum:0},settings:{compact:false}
+};
+const upgrades=[
+{id:'cursor',name:'Kacper Cursor',desc:'+1 Kacper per click',base:15,scale:1.17,apply:()=>s.perClick+=1},
+{id:'auto',name:'Auto Kacper',desc:'+1 Kacper per second',base:75,scale:1.22,apply:()=>s.perSec+=1},
+{id:'lab',name:'Kacper Lab',desc:'+8 Kacpers per second',base:500,scale:1.27,apply:()=>s.perSec+=8},
+{id:'quantum',name:'Quantum Kacper',desc:'+10 Kacpers per click',base:2500,scale:1.32,apply:()=>s.perClick+=10}
 ];
-const cats=['All','Action','Arcade','Casual','Puzzle','Racing','RPG','Sports','Strategy'];
-let current='All';
-const grid=document.querySelector('#grid'), chips=document.querySelector('#chips'), count=document.querySelector('#count'), search=document.querySelector('#search');
-cats.forEach(c=>{let b=document.createElement('button');b.className='chip'+(c==='All'?' active':'');b.textContent=c;b.onclick=()=>{current=c;document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()};chips.appendChild(b)});
-function render(){let q=search.value.toLowerCase();let arr=games.filter(g=>(current==='All'||g[1]===current)&&g[0].toLowerCase().includes(q));count.textContent=arr.length+' worlds online';grid.innerHTML=arr.map((g,i)=>`<article class="card ${i<2?'wide':''}" onclick="launch('${g[0].replace(/'/g,"\\'")}')"><div class="thumb" style="--g:linear-gradient(135deg,${g[3]})"><span>${g[2]}</span><button class="play">▶</button></div><div class="card-body"><div class="title">${g[0]}</div><div class="meta"><span>★ ${g[4]}</span><span>${g[5]} plays</span></div></div></article>`).join('')||'<div class="muted">No worlds found. Try another search.</div>'}
-function launch(name){document.querySelector('#modalTitle').textContent='NEBULA // '+name.toUpperCase();document.querySelector('#gameTitle').textContent=name;let g=games.find(x=>x[0]===name);document.querySelector('#modalIcon').textContent=g?.[2]||'🎮';document.querySelector('#modal').classList.add('show')}
-function closeGame(){document.querySelector('#modal').classList.remove('show')}
-function toast(msg){let t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove('show'),2200)}
-function randomGame(){launch(games[Math.floor(Math.random()*games.length)][0])}
-function scrollToGames(){document.querySelector('#games').scrollIntoView({behavior:'smooth'})}
-search.addEventListener('input',render);document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGame();if(e.key.toLowerCase()==='r'&&document.activeElement!==search)randomGame()});
-const mini=[games[1],games[3],games[8],games[14]];
-document.querySelector('#mini').innerHTML=mini.map(g=>`<div class="mini" onclick="launch('${g[0]}')" style="cursor:pointer"><div class="icon" style="--g:linear-gradient(135deg,${g[3]})">${g[2]}</div><div style="flex:1"><b>${g[0]}</b><div class="muted">${g[1]} · ★ ${g[4]}</div></div><span>→</span></div>`).join('');
+function cost(u){return Math.floor(u.base*Math.pow(u.scale,s.up[u.id]))}
+function fmt(n){if(n<1000)return Math.floor(n).toLocaleString();let x=['K','M','B','T','Qa','Qi'];let i=-1;while(n>=1000&&i<x.length-1){n/=1000;i++}return n.toFixed(n<10?1:0)+x[i]}
+function save(){localStorage.setItem(saveKey,JSON.stringify(s))}
+function toast(t){let e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800)}
+function clickK(){s.k+=s.perClick;s.clicks++;s.total+=s.perClick;checkLevel();save();render()}
+function buy(id){let u=upgrades.find(x=>x.id===id),c=cost(u);if(s.k<c)return toast('Not enough Kacpers');s.k-=c;s.up[id]++;u.apply();toast(u.name+' purchased!');save();render()}
+function checkLevel(){let next=Math.pow(10,s.level)*100;if(s.k>=next){s.level++;toast('Level up! You are now level '+s.level)}}
+function contentClicker(){return `<div class="hero"><div class="eyebrow">Your Kacper Empire</div><div class="count" id="big">${fmt(s.k)} Kacpers</div><div class="rate">${fmt(s.perSec)} / sec • ${fmt(s.perClick)} / click</div><div class="cookie" onclick="clickK()">K</div><div class="muted" style="text-align:center">Click the K to generate Kacpers</div></div>
+<div class="grid">${upgrades.slice(0,3).map(u=>card(u)).join('')}</div>`}
+function card(u){let c=cost(u);return `<div class="card"><b>${u.name}</b><p class="muted">${u.desc}</p><div class="stat"><span>Owned</span><b>${s.up[u.id]}</b></div><button class="buy" onclick="buy('${u.id}')" ${s.k<c?'disabled':''}>Buy • ${fmt(c)}</button></div>`}
+function page(p){let c=document.getElementById('content');if(p==='clicker')c.innerHTML=contentClicker();
+if(p==='upgrades')c.innerHTML='<h2>Upgrades</h2><p class="muted">Invest in the machinery behind your Kacper production.</p><div class="grid">'+upgrades.map(card).join('')+'</div>';
+if(p==='achievements'){let a=[['First Click',s.clicks>=1],['Kacper Collector',s.k>=100],['Kacper Tycoon',s.k>=10000],['Speed Demon',s.perSec>=25],['Click Machine',s.clicks>=1000],['Level 10',s.level>=10]];c.innerHTML='<h2>Achievements</h2>'+a.map(x=>`<div class="ach ${x[1]?'done':''}"><span class="dot"></span><div><b>${x[0]}</b><div class="muted">${x[1]?'Unlocked!':'Locked achievement'}</div></div></div>`).join('')}
+if(p==='stats')c.innerHTML=`<h2>Statistics</h2><div class="grid"><div class="card"><b>Total earned</b><p class="count">${fmt(s.total)}</p></div><div class="card"><b>Total clicks</b><p class="count">${fmt(s.clicks)}</p></div><div class="card"><b>Level</b><p class="count">${s.level}</p></div></div>`;
+if(p==='settings')c.innerHTML=`<h2>Settings</h2><div class="card"><b>Save data</b><p class="muted">Progress is stored automatically in your browser.</p><button class="buy" onclick="save();toast('Saved!')">Save now</button><button class="buy" onclick="if(confirm('Reset all progress?')){localStorage.removeItem(saveKey);location.reload()}">Reset progress</button></div>`;
+document.getElementById('pageTitle').textContent=p[0].toUpperCase()+p.slice(1)}
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');page(b.dataset.page)});
+function render(){let active=document.querySelector('#nav button.active').dataset.page;page(active);document.getElementById('sideCount').textContent=fmt(s.k);document.getElementById('sideClick').textContent=fmt(s.perClick);document.getElementById('sideSec').textContent=fmt(s.perSec);document.getElementById('sideClicks').textContent=fmt(s.clicks);document.getElementById('prestigeBadge').textContent='Level '+s.level;let m=Math.pow(10,s.level)*100;document.getElementById('milestone').textContent=fmt(m)+' Kacpers';document.getElementById('milestoneText').textContent=fmt(Math.max(0,m-s.k))+' remaining'}
+setInterval(()=>{if(s.perSec){s.k+=s.perSec;s.total+=s.perSec;checkLevel();save();render()}},1000);
 render();
 </script>
 </body>
