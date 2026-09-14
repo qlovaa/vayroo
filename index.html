@@ -1,929 +1,231 @@
-```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VOIDCRAFT // Voxel Protocol</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>INFINITE // ROAD</title>
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #02040a;
-    font-family: Arial, Helvetica, sans-serif;
-    color: white;
-}
-
-#game {
-    position: fixed;
-    inset: 0;
-}
-
-canvas {
-    display: block;
-}
-
-/* Futuristic HUD */
-.hud {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-}
-
-.topbar {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    padding: 12px 18px;
-    background: rgba(3, 10, 20, .72);
-    border: 1px solid rgba(0, 240, 255, .45);
-    box-shadow: 0 0 25px rgba(0, 240, 255, .12);
-    backdrop-filter: blur(10px);
-    letter-spacing: 4px;
-    font-weight: 900;
-    color: #5ffaff;
-}
-
-.logo span {
-    color: #fff;
-}
-
-.stats {
-    padding: 10px 15px;
-    background: rgba(3, 10, 20, .65);
-    border: 1px solid rgba(0, 240, 255, .3);
-    font-size: 12px;
-    letter-spacing: 2px;
-    color: #9befff;
-}
-
-.crosshair {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 22px;
-    height: 22px;
-    transform: translate(-50%, -50%);
-}
-
-.crosshair::before,
-.crosshair::after {
-    content: "";
-    position: absolute;
-    background: #ffffff;
-    box-shadow: 0 0 8px #00f6ff;
-}
-
-.crosshair::before {
-    width: 2px;
-    height: 22px;
-    left: 10px;
-}
-
-.crosshair::after {
-    width: 22px;
-    height: 2px;
-    top: 10px;
-}
-
-.bottom {
-    position: absolute;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-}
-
-.controls {
-    padding: 8px 14px;
-    background: rgba(2, 7, 15, .7);
-    border: 1px solid rgba(255,255,255,.12);
-    font-size: 11px;
-    color: #91a5b5;
-    letter-spacing: 1px;
-}
-
-.hotbar {
-    display: flex;
-    gap: 5px;
-    padding: 7px;
-    background: rgba(2, 7, 15, .82);
-    border: 1px solid rgba(0,240,255,.35);
-    box-shadow: 0 0 35px rgba(0,240,255,.12);
-    backdrop-filter: blur(12px);
-}
-
-.slot {
-    width: 58px;
-    height: 58px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #243848;
-    background: rgba(12, 23, 34, .9);
-    cursor: pointer;
-}
-
-.slot.selected {
-    border: 2px solid #00f6ff;
-    box-shadow:
-        inset 0 0 18px rgba(0,246,255,.15),
-        0 0 15px rgba(0,246,255,.25);
-}
-
-.slot::after {
-    content: attr(data-key);
-    position: absolute;
-    top: 3px;
-    left: 5px;
-    font-size: 9px;
-    color: #8095a5;
-}
-
-.block-icon {
-    width: 30px;
-    height: 30px;
-    box-shadow: inset 5px 5px rgba(255,255,255,.12);
-}
-
-.grass { background: linear-gradient(#56d96c 0 25%, #875d32 25%); }
-.dirt { background: #875d32; }
-.stone { background: #68727c; }
-.glass { background: rgba(65,220,255,.35); border: 1px solid #55eaff; }
-.glow { background: #b94cff; box-shadow: 0 0 15px #b94cff; }
-.metal { background: linear-gradient(135deg,#b9c4cc,#45515a); }
-.leaves { background: #267849; }
-
-#startScreen {
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background:
-        radial-gradient(circle at center, rgba(0,240,255,.08), transparent 40%),
-        #02040a;
-}
-
-.startBox {
-    width: min(650px, 90vw);
-    text-align: center;
-    padding: 55px;
-    background: rgba(4,12,23,.82);
-    border: 1px solid rgba(0,240,255,.35);
-    box-shadow:
-        0 0 80px rgba(0,240,255,.1),
-        inset 0 0 50px rgba(0,240,255,.025);
-    backdrop-filter: blur(15px);
-}
-
-.startBox h1 {
-    font-size: clamp(45px, 9vw, 90px);
-    letter-spacing: 10px;
-    line-height: .9;
-    color: #fff;
-    text-shadow:
-        0 0 15px #00eaff,
-        0 0 50px rgba(0,234,255,.4);
-}
-
-.startBox h1 span {
-    color: #00f6ff;
-}
-
-.subtitle {
-    margin: 25px 0 35px;
-    color: #79909e;
-    letter-spacing: 4px;
-    font-size: 12px;
-}
-
-.startButton {
-    pointer-events: auto;
-    border: 1px solid #00f6ff;
-    color: #00f6ff;
-    background: rgba(0,240,255,.05);
-    padding: 17px 40px;
-    font-weight: bold;
-    letter-spacing: 4px;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.startButton:hover {
-    background: #00f6ff;
-    color: #001015;
-    box-shadow: 0 0 35px rgba(0,246,255,.5);
-}
-
-.hint {
-    margin-top: 25px;
-    color: #4c606c;
-    font-size: 10px;
-    letter-spacing: 2px;
-}
-
-#loading {
-    position: fixed;
-    inset: 0;
-    z-index: 20;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    background: #02040a;
-    color: #00f6ff;
-    letter-spacing: 5px;
-}
-
-#blockName {
-    position: fixed;
-    left: 50%;
-    bottom: 115px;
-    transform: translateX(-50%);
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: #a7f8ff;
-    opacity: .8;
-}
-
-.damage {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    width: 70px;
-    height: 70px;
-    transform: translate(-50%,-50%);
-    border: 2px solid transparent;
-    pointer-events: none;
-}
+:root{--cyan:#61e7ff;--amber:#ffbd5a;--red:#ff5268;--glass:rgba(7,11,18,.58)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#03060a;color:#eaf8ff;font-family:Inter,ui-sans-serif,system-ui,sans-serif}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+#hud{position:fixed;inset:0;pointer-events:none}
+.panel{position:absolute;background:linear-gradient(135deg,rgba(12,20,31,.72),rgba(3,7,13,.42));border:1px solid rgba(150,220,255,.18);box-shadow:0 18px 70px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.08);backdrop-filter:blur(16px);border-radius:18px}
+#brand{left:24px;top:24px;padding:15px 18px}
+#brand b{letter-spacing:.22em;font-size:13px}#brand span{display:block;color:#78a1b0;font-size:9px;letter-spacing:.28em;margin-top:5px}
+#stats{right:24px;top:24px;padding:14px 16px;min-width:205px}
+.row{display:flex;justify-content:space-between;gap:28px;margin:5px 0;font-size:11px;color:#87a6b3}.row strong{color:#fff;font-size:13px}
+#event{left:50%;top:34px;transform:translateX(-50%);padding:12px 22px;text-align:center;opacity:0;transition:.3s}
+#event.show{opacity:1}.event-title{font-size:11px;letter-spacing:.22em;color:var(--amber)}.event-text{font-size:13px;margin-top:4px}
+#help{left:24px;bottom:24px;padding:12px 15px;color:#78929f;font-size:10px;line-height:1.7}
+kbd{border:1px solid #31424c;border-radius:5px;padding:2px 5px;color:#dff7ff}
+#telemetry{right:24px;bottom:24px;width:230px;padding:13px}
+.bar{height:5px;background:#16232c;border-radius:9px;overflow:hidden;margin-top:5px}.bar i{display:block;height:100%;width:70%;background:linear-gradient(90deg,var(--cyan),#fff)}
+#start{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle at center,rgba(8,16,24,.35),rgba(1,3,6,.88));pointer-events:auto;transition:opacity .7s}
+#start.hide{opacity:0;pointer-events:none}.card{width:min(600px,90vw);padding:38px;text-align:center}.eyebrow{font-size:10px;letter-spacing:.42em;color:var(--cyan)}
+h1{font-size:clamp(46px,9vw,104px);line-height:.86;margin:15px 0;background:linear-gradient(#fff,#8fb6c3);color:transparent;background-clip:text;letter-spacing:-.07em}
+.sub{color:#91a7b1;max-width:500px;margin:0 auto 25px;font-size:13px;line-height:1.7}
+button{border:1px solid rgba(120,231,255,.45);background:rgba(40,150,180,.1);color:#e8fcff;padding:13px 25px;border-radius:9px;letter-spacing:.18em;font-weight:700;cursor:pointer}button:hover{background:rgba(60,200,230,.2)}
+#damage{position:absolute;inset:0;border:0 solid rgba(255,40,60,0);transition:border .1s}
+#minimap{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);width:130px;height:70px;border-radius:12px;opacity:.8}
 </style>
 </head>
-
 <body>
-
-<div id="game"></div>
-
-<div id="startScreen">
-    <div class="startBox">
-        <h1>VOID<span>CRAFT</span></h1>
-        <div class="subtitle">VOXEL SURVIVAL PROTOCOL // 0.1</div>
-
-        <button class="startButton" id="startButton">
-            INITIALIZE WORLD
-        </button>
-
-        <div class="hint">
-            W A S D &nbsp; // &nbsp; MOUSE &nbsp; // &nbsp; SPACE &nbsp; // &nbsp; ESC
-        </div>
-    </div>
+<canvas id="world"></canvas>
+<div id="hud">
+  <div id="brand" class="panel"><b>INFINITE // ROAD</b><span>PROCEDURAL DRIVING SIMULATION</span></div>
+  <div id="stats" class="panel">
+    <div class="row"><span>SPEED</span><strong id="speed">000 KM/H</strong></div>
+    <div class="row"><span>DISTANCE</span><strong id="distance">0.0 KM</strong></div>
+    <div class="row"><span>TIME</span><strong id="time">00:00</strong></div>
+    <div class="row"><span>WEATHER</span><strong id="weather">CLEAR</strong></div>
+  </div>
+  <div id="event" class="panel"><div class="event-title" id="eventTitle">SYSTEM EVENT</div><div class="event-text" id="eventText"></div></div>
+  <div id="telemetry" class="panel">
+    <div class="row"><span>ENGINE</span><strong id="rpm">IDLE</strong></div>
+    <div class="row"><span>FUEL</span><strong id="fuel">100%</strong></div>
+    <div class="bar"><i id="fuelbar"></i></div>
+    <div class="row"><span>ROAD GRIP</span><strong id="grip">100%</strong></div>
+    <div class="bar"><i id="gripbar"></i></div>
+  </div>
+  <div id="help" class="panel"><kbd>W</kbd>/<kbd>↑</kbd> ACCELERATE &nbsp; <kbd>S</kbd>/<kbd>↓</kbd> BRAKE<br><kbd>A</kbd>/<kbd>←</kbd> <kbd>D</kbd>/<kbd>→</kbd> STEER &nbsp; <kbd>R</kbd> RESET</div>
+  <canvas id="minimap" width="260" height="140"></canvas>
+  <div id="damage"></div>
+</div>
+<div id="start">
+  <div class="card panel">
+    <div class="eyebrow">AN INFINITE PROCEDURAL WORLD</div>
+    <h1>DRIVE<br>FOREVER.</h1>
+    <p class="sub">A cinematic endless-road experiment. The world generates as you move: mountains, forests, traffic, storms, tunnels, wildlife, roadworks, sunsets, fog banks and things the simulation refuses to explain.</p>
+    <button id="startBtn">START ENGINE</button>
+  </div>
 </div>
 
-<div id="loading">GENERATING TERRAIN...</div>
+<script>
+"use strict";
+const canvas=document.getElementById("world"),ctx=canvas.getContext("2d",{alpha:false});
+const mini=document.getElementById("minimap"),mctx=mini.getContext("2d");
+let W=innerWidth,H=innerHeight,DPR=Math.min(devicePixelRatio||1,2);
+function resize(){W=innerWidth;H=innerHeight;canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}addEventListener("resize",resize);resize();
 
-<div class="hud">
-    <div class="topbar">
-        <div class="logo">VOIDCRAFT <span>// ONLINE</span></div>
-        <div class="stats">
-            SECTOR 07 &nbsp;|&nbsp; FPS <span id="fps">60</span>
-        </div>
-    </div>
+const ui={speed:document.getElementById("speed"),distance:document.getElementById("distance"),time:document.getElementById("time"),weather:document.getElementById("weather"),rpm:document.getElementById("rpm"),fuel:document.getElementById("fuel"),fuelbar:document.getElementById("fuelbar"),grip:document.getElementById("grip"),gripbar:document.getElementById("gripbar"),event:document.getElementById("event"),eventTitle:document.getElementById("eventTitle"),eventText:document.getElementById("eventText"),damage:document.getElementById("damage")};
 
-    <div class="crosshair"></div>
+const keys={};addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(e.key.toLowerCase()))e.preventDefault();if(e.key.toLowerCase()==="r")reset()});addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
 
-    <div id="blockName">GRASS</div>
+function hash(n){let x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)}
+function noise(x){const i=Math.floor(x),f=x-i,u=f*f*(3-2*f);return hash(i)*(1-u)+hash(i+1)*u}
+function fbm(x){return noise(x)*.55+noise(x*2.1)*.25+noise(x*4.7)*.12+noise(x*9.3)*.08}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function lerp(a,b,t){return a+(b-a)*t}
+function rr(c,x,y,w,h,r){c.beginPath();c.roundRect(x,y,w,h,r);c.fill()}
+function glowLine(points,width,alpha){ctx.save();ctx.lineCap="round";ctx.lineJoin="round";ctx.shadowBlur=width*3;ctx.shadowColor=`rgba(180,230,255,${alpha})`;ctx.strokeStyle=`rgba(210,235,245,${alpha})`;ctx.lineWidth=width;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.restore()}
 
-    <div class="bottom">
-        <div class="controls">
-            WASD MOVE &nbsp; • &nbsp; SPACE JUMP &nbsp; • &nbsp; LMB MINE &nbsp; • &nbsp; RMB BUILD
-        </div>
+const state={running:false,t:0,dist:0,speed:0,steer:0,x:0,fuel:100,grip:1,damage:0,weather:"CLEAR",eventTimer:7,eventText:"",eventTitle:"",eventFade:0,seed:Math.random()*99999,night:0};
+function reset(){state.t=0;state.dist=0;state.speed=0;state.steer=0;state.x=0;state.fuel=100;state.grip=1;state.damage=0;state.weather="CLEAR";state.eventTimer=5;state.eventFade=0}
+document.getElementById("startBtn").onclick=()=>{state.running=true;document.getElementById("start").classList.add("hide");reset();last=performance.now();requestAnimationFrame(loop)};
 
-        <div class="hotbar">
-            <div class="slot selected" data-key="1" data-block="grass">
-                <div class="block-icon grass"></div>
-            </div>
-
-            <div class="slot" data-key="2" data-block="dirt">
-                <div class="block-icon dirt"></div>
-            </div>
-
-            <div class="slot" data-key="3" data-block="stone">
-                <div class="block-icon stone"></div>
-            </div>
-
-            <div class="slot" data-key="4" data-block="glass">
-                <div class="block-icon glass"></div>
-            </div>
-
-            <div class="slot" data-key="5" data-block="glow">
-                <div class="block-icon glow"></div>
-            </div>
-
-            <div class="slot" data-key="6" data-block="metal">
-                <div class="block-icon metal"></div>
-            </div>
-
-            <div class="slot" data-key="7" data-block="leaves">
-                <div class="block-icon leaves"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script type="module">
-
-import * as THREE from
-"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
-
-import { PointerLockControls } from
-"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/PointerLockControls.js";
-
-/* -------------------------
-   SCENE
-------------------------- */
-
-const scene = new THREE.Scene();
-
-scene.background = new THREE.Color(0x07111c);
-
-scene.fog = new THREE.FogExp2(
-    0x07111c,
-    0.018
-);
-
-/* -------------------------
-   CAMERA
-------------------------- */
-
-const camera = new THREE.PerspectiveCamera(
-    75,
-    innerWidth / innerHeight,
-    .1,
-    500
-);
-
-camera.position.set(0, 8, 15);
-
-/* -------------------------
-   RENDERER
-------------------------- */
-
-const renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    powerPreference: "high-performance"
-});
-
-renderer.setSize(innerWidth, innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-document
-    .getElementById("game")
-    .appendChild(renderer.domElement);
-
-/* -------------------------
-   LIGHTING
-------------------------- */
-
-const ambient = new THREE.HemisphereLight(
-    0x8de8ff,
-    0x182030,
-    1.8
-);
-
-scene.add(ambient);
-
-const sun = new THREE.DirectionalLight(
-    0xffffff,
-    2.5
-);
-
-sun.position.set(80,120,40);
-sun.castShadow = true;
-
-sun.shadow.mapSize.set(2048,2048);
-
-scene.add(sun);
-
-/* -------------------------
-   MATERIALS
-------------------------- */
-
-const materials = {
-
-    grass: new THREE.MeshStandardMaterial({
-        color: 0x4caf55,
-        roughness: .9
-    }),
-
-    dirt: new THREE.MeshStandardMaterial({
-        color: 0x795331,
-        roughness: 1
-    }),
-
-    stone: new THREE.MeshStandardMaterial({
-        color: 0x69737d,
-        roughness: .85
-    }),
-
-    glass: new THREE.MeshPhysicalMaterial({
-        color: 0x38d9ff,
-        transparent: true,
-        opacity: .35,
-        roughness: .05,
-        metalness: .1
-    }),
-
-    glow: new THREE.MeshStandardMaterial({
-        color: 0xb83dff,
-        emissive: 0x7d18c7,
-        emissiveIntensity: 2.5
-    }),
-
-    metal: new THREE.MeshStandardMaterial({
-        color: 0x788791,
-        metalness: .85,
-        roughness: .25
-    }),
-
-    leaves: new THREE.MeshStandardMaterial({
-        color: 0x237849,
-        roughness: 1
-    })
-};
-
-/* -------------------------
-   VOXEL WORLD
-------------------------- */
-
-const world = [];
-
-const cubeGeometry = new THREE.BoxGeometry(1,1,1);
-
-function addBlock(x,y,z,type) {
-
-    const mesh = new THREE.Mesh(
-        cubeGeometry,
-        materials[type] || materials.grass
-    );
-
-    mesh.position.set(
-        x + .5,
-        y + .5,
-        z + .5
-    );
-
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-
-    mesh.userData.block = type;
-    mesh.userData.grid = {x,y,z};
-
-    scene.add(mesh);
-    world.push(mesh);
-
-    return mesh;
+const events=[
+ ["WILDLIFE","A deer crosses the road ahead."],["ROADWORK","Temporary lane shift detected."],["WEATHER","A storm front is forming on the horizon."],
+ ["TRAFFIC","A convoy appears from the mist."],["SIGNAL","Unknown roadside beacon detected."],["FOG","Dense fog bank approaching."],
+ ["TUNNEL","A mountain tunnel has generated ahead."],["SUNSET","Atmospheric transition: golden hour."],["RAIN","Rainfall intensity increasing."],
+ ["MIRAGE","Heat shimmer distorts the horizon."],["NIGHT","Night cycle commencing."],["CLEAR","Clouds break. Visibility restored."]
+];
+let worldSeed=Math.random()*10000;
+function roadCenter(z){return Math.sin(z*.00055)*1.7+Math.sin(z*.00143+2)*.75+Math.sin(z*.00013)*2.5}
+function terrain(z,side){return fbm(z*.004+side*7+worldSeed)*1.8+fbm(z*.0011+9)*3}
+function roadWidth(z){return 5.4+Math.sin(z*.0008)*.25}
+function project(z,side=0){let d=z-state.dist;let depth=1/(1+Math.max(d,0)*.00075);let horizon=H*.47;let y=horizon+(1-depth)*H*.53;let cx=W/2+(roadCenter(z)-state.x)*depth*W*.085;let x=cx+side*depth*W*.34;return{x,y,depth,cx}}
+function setEvent(title,text){ui.eventTitle.textContent=title;ui.eventText.textContent=text;ui.event.classList.add("show");state.eventFade=4}
+function update(dt){
+ const accel=(keys.w||keys.arrowup)?1:0, brake=(keys.s||keys.arrowdown)?1:0;
+ const steer=((keys.a||keys.arrowleft)?-1:0)+((keys.d||keys.arrowright)?1:0);
+ state.steer=lerp(state.steer,steer,1-Math.pow(.001,dt));
+ state.speed+=accel*105*dt-brake*150*dt;
+ state.speed-=state.speed*.055*dt;
+ state.speed=clamp(state.speed,0,245);
+ state.x+=state.steer*(state.speed/190)*dt*3.5;
+ state.dist+=state.speed*dt/3.6;
+ state.t+=dt;
+ state.fuel=clamp(state.fuel-state.speed*dt*.00095,0,100);
+ if(state.fuel<=0)state.speed=Math.max(0,state.speed-50*dt);
+ const n=fbm(state.t*.025+worldSeed);
+ state.grip=state.weather==="RAIN"?lerp(.72,.92,n):state.weather==="FOG"?.86:1;
+ state.eventTimer-=dt;state.eventFade-=dt;
+ if(state.eventTimer<=0){
+   const e=events[Math.floor(hash(Math.floor(state.dist/100)+worldSeed)*events.length)];
+   setEvent(e[0],e[1]);state.eventTimer=18+hash(state.dist)*24;
+   if(["RAIN","FOG","NIGHT"].includes(e[0]))state.weather=e[0];
+   if(e[0]==="CLEAR")state.weather="CLEAR";
+ }
+ if(state.eventFade<=0)ui.event.classList.remove("show");
+ state.night=clamp((Math.sin(state.t*.018-.7)+1)/2,0,1);
+ ui.speed.textContent=String(Math.round(state.speed)).padStart(3,"0")+" KM/H";
+ ui.distance.textContent=(state.dist/1000).toFixed(1)+" KM";
+ ui.time.textContent=new Date(state.t*1000).toISOString().slice(14,19);
+ ui.weather.textContent=state.weather;
+ ui.rpm.textContent=state.speed<2?"IDLE":Math.round(1100+state.speed*31)+" RPM";
+ ui.fuel.textContent=Math.round(state.fuel)+"%";ui.fuelbar.style.width=state.fuel+"%";
+ ui.grip.textContent=Math.round(state.grip*100)+"%";ui.gripbar.style.width=(state.grip*100)+"%";
+ const danger=clamp(Math.abs(state.x)-2.1,0,2);state.damage=lerp(state.damage,danger/2,dt*2);
+ ui.damage.style.borderWidth=(state.damage*24)+"px";ui.damage.style.borderColor=`rgba(255,45,65,${state.damage*.45})`;
 }
 
-/* Simple deterministic terrain */
-
-function terrainHeight(x,z) {
-
-    const a =
-        Math.sin(x * .35) * 1.8;
-
-    const b =
-        Math.cos(z * .28) * 1.6;
-
-    const c =
-        Math.sin((x+z) * .13) * 2.2;
-
-    return Math.max(
-        1,
-        Math.floor(4 + a + b + c)
-    );
+function sky(){
+ const night=state.night;
+ const g=ctx.createLinearGradient(0,0,0,H);
+ g.addColorStop(0,`rgb(${lerp(7,2,night)},${lerp(18,5,night)},${lerp(30,12,night)})`);
+ g.addColorStop(.5,`rgb(${lerp(60,10,night)},${lerp(105,22,night)},${lerp(125,35,night)})`);
+ g.addColorStop(1,`rgb(${lerp(24,3,night)},${lerp(31,7,night)},${lerp(32,10,night)})`);
+ ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ // stars
+ if(night>.55){ctx.fillStyle=`rgba(220,245,255,${(night-.55)*1.4})`;for(let i=0;i<180;i++){let x=hash(i+worldSeed)*W,y=hash(i*4.2+2)*H*.42,r=hash(i*8.1)*1.4;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}}
+ // sun / moon
+ const sx=W*(.72+Math.sin(state.t*.01)*.08),sy=H*(.2+Math.cos(state.t*.012)*.035);
+ const glow=ctx.createRadialGradient(sx,sy,4,sx,sy,130);glow.addColorStop(0,`rgba(255,220,150,${1-night})`);glow.addColorStop(1,"rgba(255,180,90,0)");
+ ctx.fillStyle=glow;ctx.fillRect(sx-140,sy-140,280,280);ctx.fillStyle=`rgba(255,231,178,${1-night})`;ctx.beginPath();ctx.arc(sx,sy,28,0,Math.PI*2);ctx.fill();
 }
-
-function generateWorld() {
-
-    const size = 42;
-
-    for(let x=-size;x<=size;x++) {
-
-        for(let z=-size;z<=size;z++) {
-
-            const h = terrainHeight(x,z);
-
-            for(let y=0;y<=h;y++) {
-
-                let type = "stone";
-
-                if(y === h)
-                    type = "grass";
-
-                else if(y > h-3)
-                    type = "dirt";
-
-                addBlock(x,y,z,type);
-            }
-
-            /* Occasional alien crystals */
-
-            if(
-                Math.random() < .015 &&
-                h > 3
-            ) {
-
-                addBlock(
-                    x,
-                    h+1,
-                    z,
-                    "glow"
-                );
-
-                addBlock(
-                    x,
-                    h+2,
-                    z,
-                    "glow"
-                );
-            }
-        }
-    }
-
-    /* Floating structures */
-
-    for(let i=0;i<18;i++) {
-
-        const x =
-            Math.floor(Math.random()*60)-30;
-
-        const z =
-            Math.floor(Math.random()*60)-30;
-
-        const y =
-            Math.floor(Math.random()*10)+12;
-
-        addBlock(x,y,z,"metal");
-        addBlock(x+1,y,z,"metal");
-        addBlock(x,y,z+1,"metal");
-        addBlock(x+1,y,z+1,"metal");
-    }
+function mountains(){
+ const horizon=H*.47;
+ for(let layer=0;layer<4;layer++){
+   ctx.beginPath();ctx.moveTo(0,horizon+layer*8);
+   for(let x=0;x<=W;x+=14){let z=x*.006+layer*13;let y=horizon+layer*22-fbm(z)*H*(.12-layer*.015);ctx.lineTo(x,y)}
+   ctx.lineTo(W,H*.58);ctx.lineTo(0,H*.58);ctx.closePath();
+   ctx.fillStyle=`rgba(${18+layer*5},${29+layer*6},${38+layer*6},${.9-layer*.1})`;ctx.fill();
+ }
 }
-
-/* -------------------------
-   CONTROLS
-------------------------- */
-
-const controls =
-    new PointerLockControls(
-        camera,
-        document.body
-    );
-
-scene.add(controls.object);
-
-const keys = {};
-
-let velocityY = 0;
-let canJump = false;
-
-document.addEventListener(
-    "keydown",
-    e => {
-
-        keys[e.code] = true;
-
-        if(
-            e.code === "Space" &&
-            canJump
-        ) {
-
-            velocityY = 10;
-            canJump = false;
-        }
-
-        if(e.key >= "1" && e.key <= "7") {
-
-            const index =
-                Number(e.key)-1;
-
-            document
-                .querySelectorAll(".slot")
-                [index]
-                ?.click();
-        }
-    }
-);
-
-document.addEventListener(
-    "keyup",
-    e => {
-        keys[e.code] = false;
-    }
-);
-
-/* -------------------------
-   HOTBAR
-------------------------- */
-
-let selectedBlock = "grass";
-
-document
-.querySelectorAll(".slot")
-.forEach(slot => {
-
-    slot.addEventListener("click", () => {
-
-        document
-        .querySelectorAll(".slot")
-        .forEach(s =>
-            s.classList.remove("selected")
-        );
-
-        slot.classList.add("selected");
-
-        selectedBlock =
-            slot.dataset.block;
-
-        document
-            .getElementById("blockName")
-            .textContent =
-            selectedBlock.toUpperCase();
-    });
-});
-
-/* -------------------------
-   RAYCASTING
-------------------------- */
-
-const raycaster = new THREE.Raycaster();
-
-const center =
-    new THREE.Vector2(0,0);
-
-function getTarget() {
-
-    raycaster.setFromCamera(
-        center,
-        camera
-    );
-
-    const hits =
-        raycaster.intersectObjects(
-            world,
-            false
-        );
-
-    return hits[0];
+function ground(){
+ const horizon=H*.49;ctx.fillStyle="#07100e";ctx.fillRect(0,horizon,W,H-horizon);
+ // road slabs from horizon outward
+ const maxZ=state.dist+9000;
+ for(let i=0;i<70;i++){
+   const z=state.dist+Math.pow(i/69,1.9)*9000;
+   const p=project(z), left=project(z,-roadWidth(z)/2),right=project(z,roadWidth(z)/2);
+   const farZ=z+140, fl=project(farZ,-roadWidth(farZ)/2),fr=project(farZ,roadWidth(farZ)/2);
+   ctx.beginPath();ctx.moveTo(left.x,left.y);ctx.lineTo(right.x,right.y);ctx.lineTo(fr.x,fr.y);ctx.lineTo(fl.x,fl.y);ctx.closePath();
+   ctx.fillStyle=i%2?"#111518":"#101416";ctx.fill();
+ }
+ // shoulders
+ const ptsL=[],ptsR=[];for(let i=0;i<45;i++){let z=state.dist+Math.pow(i/44,1.8)*8500;let w=roadWidth(z);ptsL.push([project(z,-w*.58).x,project(z,-w*.58).y]);ptsR.push([project(z,w*.58).x,project(z,w*.58).y])}
+ glowLine(ptsL,2,.38);glowLine(ptsR,2,.38);
+ // center markings
+ for(let i=0;i<34;i++){let z=state.dist+100+Math.pow(i/33,2)*7600;if(Math.floor(z/65)%2===0){let p=project(z);let p2=project(z+26);ctx.strokeStyle=`rgba(230,236,222,${p.depth*.9})`;ctx.lineWidth=Math.max(1,p.depth*7);ctx.beginPath();ctx.moveTo(p.cx,p.y);ctx.lineTo(p2.cx,p2.y);ctx.stroke()}}
 }
-
-/* Mine block */
-
-document.addEventListener(
-    "mousedown",
-    e => {
-
-        if(!controls.isLocked)
-            return;
-
-        const hit = getTarget();
-
-        if(!hit)
-            return;
-
-        const block = hit.object;
-
-        if(e.button === 0) {
-
-            scene.remove(block);
-
-            const index =
-                world.indexOf(block);
-
-            if(index !== -1)
-                world.splice(index,1);
-        }
-
-        if(e.button === 2) {
-
-            const normal =
-                hit.face.normal.clone();
-
-            const pos =
-                block.position.clone()
-                .subScalar(.5)
-                .add(normal);
-
-            addBlock(
-                Math.floor(pos.x),
-                Math.floor(pos.y),
-                Math.floor(pos.z),
-                selectedBlock
-            );
-        }
-    }
-);
-
-document.addEventListener(
-    "contextmenu",
-    e => e.preventDefault()
-);
-
-/* -------------------------
-   START GAME
-------------------------- */
-
-const startScreen =
-    document.getElementById(
-        "startScreen"
-    );
-
-const startButton =
-    document.getElementById(
-        "startButton"
-    );
-
-startButton.addEventListener(
-    "click",
-    () => {
-
-        startScreen.style.display =
-            "none";
-
-        document.getElementById(
-            "loading"
-        ).style.display =
-            "flex";
-
-        setTimeout(() => {
-
-            generateWorld();
-
-            document.getElementById(
-                "loading"
-            ).style.display =
-                "none";
-
-            controls.lock();
-
-        }, 200);
-    }
-);
-
-/* -------------------------
-   GAME LOOP
-------------------------- */
-
-let lastTime = performance.now();
-let frames = 0;
-let fpsTimer = 0;
-
-function animate() {
-
-    requestAnimationFrame(animate);
-
-    const now =
-        performance.now();
-
-    const delta =
-        Math.min(
-            (now-lastTime)/1000,
-            .05
-        );
-
-    lastTime = now;
-
-    /* FPS */
-
-    frames++;
-    fpsTimer += delta;
-
-    if(fpsTimer >= 1) {
-
-        document
-            .getElementById("fps")
-            .textContent = frames;
-
-        frames = 0;
-        fpsTimer = 0;
-    }
-
-    if(controls.isLocked) {
-
-        const speed = 9;
-
-        if(keys["KeyW"])
-            controls.moveForward(
-                speed * delta
-            );
-
-        if(keys["KeyS"])
-            controls.moveForward(
-                -speed * delta
-            );
-
-        if(keys["KeyA"])
-            controls.moveRight(
-                -speed * delta
-            );
-
-        if(keys["KeyD"])
-            controls.moveRight(
-                speed * delta
-            );
-
-        /* Gravity */
-
-        velocityY -=
-            25 * delta;
-
-        camera.position.y +=
-            velocityY * delta;
-
-        if(camera.position.y < 7) {
-
-            camera.position.y = 7;
-            velocityY = 0;
-            canJump = true;
-        }
-
-        /* Prevent falling forever */
-
-        if(camera.position.y < -20) {
-
-            camera.position.set(
-                0,15,0
-            );
-
-            velocityY = 0;
-        }
-    }
-
-    /* Slowly move sun for atmosphere */
-
-    const t =
-        performance.now() * .00005;
-
-    sun.position.x =
-        Math.cos(t)*120;
-
-    sun.position.z =
-        Math.sin(t)*120;
-
-    renderer.render(
-        scene,
-        camera
-    );
+function roadside(){
+ for(let i=0;i<75;i++){
+   const z=state.dist+120+((i*173)%8500);const side=i%2?-1:1;const p=project(z,side*(roadWidth(z)*(.62+hash(i)*1.8)));if(p.y<H*.5||p.y>H)continue;
+   const scale=p.depth*45;const type=Math.floor(hash(i*7.3+worldSeed)*5);
+   ctx.save();ctx.translate(p.x,p.y);ctx.globalAlpha=clamp(p.depth*2.4,0,.85);
+   if(type<3){ // tree
+     ctx.fillStyle="#161b18";ctx.fillRect(-scale*.07,-scale*.7,scale*.14,scale*.7);
+     ctx.fillStyle=type===2?"#173329":"#10261f";ctx.beginPath();ctx.arc(0,-scale*.72,scale*.48,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(-scale*.25,-scale*.48,scale*.4,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(scale*.25,-scale*.5,scale*.42,0,Math.PI*2);ctx.fill();
+   }else if(type===3){ // sign
+     ctx.fillStyle="#4b5960";ctx.fillRect(-2,-scale*.75,4,scale*.75);ctx.fillStyle="#c7d4d5";rr(ctx,-scale*.35,-scale*.95,scale*.7,scale*.3,2);
+   }else{ // reflector
+     ctx.fillStyle="#d8f8ff";ctx.shadowBlur=12;ctx.shadowColor="#bff4ff";ctx.beginPath();ctx.arc(0,-scale*.3,scale*.06,0,Math.PI*2);ctx.fill()
+   }ctx.restore();
+ }
 }
-
-animate();
-
-/* -------------------------
-   RESIZE
-------------------------- */
-
-window.addEventListener(
-    "resize",
-    () => {
-
-        camera.aspect =
-            innerWidth / innerHeight;
-
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(
-            innerWidth,
-            innerHeight
-        );
-    }
-);
-
+function traffic(){
+ for(let i=0;i<13;i++){
+   const z=state.dist+500+((i*913+Math.floor(state.dist/600)*317)%6500);const lane=i%2?-1:1;const p=project(z,lane*1.2);if(p.y<H*.5||p.y>H+30)continue;
+   const s=p.depth*55;ctx.save();ctx.translate(p.x,p.y);ctx.scale(s/50,s/50);ctx.globalAlpha=clamp(p.depth*2.8,0,1);
+   ctx.fillStyle="#161b20";rr(ctx,-24,-10,48,20,5);ctx.fillStyle="#25323a";rr(ctx,-15,-7,30,9,3);
+   ctx.fillStyle="#ff3348";ctx.shadowBlur=18;ctx.shadowColor="#ff3348";ctx.fillRect(-18,5,6,3);ctx.fillRect(12,5,6,3);ctx.restore();
+ }
+}
+function weather(){
+ if(state.weather==="RAIN"){ctx.strokeStyle="rgba(160,210,235,.28)";ctx.lineWidth=1;for(let i=0;i<260;i++){let x=hash(i+state.t*40)*W,y=hash(i*2.3+state.t*65)*H;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-5,y+18);ctx.stroke()}}
+ if(state.weather==="FOG"){let g=ctx.createLinearGradient(0,H*.4,0,H);g.addColorStop(0,"rgba(210,230,230,.02)");g.addColorStop(.7,"rgba(190,215,220,.18)");g.addColorStop(1,"rgba(220,235,235,.26)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
+}
+function car(){
+ const cx=W/2+state.steer*W*.075,cy=H*.86;
+ ctx.save();ctx.translate(cx,cy);ctx.rotate(state.steer*.045);
+ // shadow
+ ctx.fillStyle="rgba(0,0,0,.55)";ctx.beginPath();ctx.ellipse(0,35,170,38,0,0,Math.PI*2);ctx.fill();
+ // rear body
+ const body=ctx.createLinearGradient(0,-100,0,100);body.addColorStop(0,"#364750");body.addColorStop(.45,"#121a1f");body.addColorStop(1,"#05080b");ctx.fillStyle=body;
+ ctx.beginPath();ctx.moveTo(-125,72);ctx.quadraticCurveTo(-140,20,-104,-45);ctx.quadraticCurveTo(-75,-105,0,-112);ctx.quadraticCurveTo(75,-105,104,-45);ctx.quadraticCurveTo(140,20,125,72);ctx.quadraticCurveTo(60,98,0,101);ctx.quadraticCurveTo(-60,98,-125,72);ctx.fill();
+ // glass
+ const glass=ctx.createLinearGradient(0,-105,0,-15);glass.addColorStop(0,"#9bd0dc");glass.addColorStop(.5,"#1a343e");glass.addColorStop(1,"#081117");ctx.fillStyle=glass;ctx.beginPath();ctx.moveTo(-72,-52);ctx.quadraticCurveTo(-53,-91,0,-96);ctx.quadraticCurveTo(53,-91,72,-52);ctx.lineTo(60,-22);ctx.lineTo(-60,-22);ctx.closePath();ctx.fill();
+ // lights
+ ctx.fillStyle="#ff334d";ctx.shadowBlur=28;ctx.shadowColor="#ff334d";rr(ctx,-103,35,48,15,7);rr(ctx,55,35,48,15,7);
+ ctx.shadowBlur=0;ctx.fillStyle="rgba(255,255,255,.14)";ctx.fillRect(-90,-2,180,3);
+ // wheels
+ ctx.fillStyle="#030405";ctx.fillRect(-137,32,23,57);ctx.fillRect(114,32,23,57);
+ ctx.restore();
+}
+function minimap(){
+ mctx.clearRect(0,0,260,140);mctx.fillStyle="rgba(4,8,12,.82)";mctx.fillRect(0,0,260,140);
+ mctx.strokeStyle="rgba(110,220,240,.7)";mctx.lineWidth=5;mctx.beginPath();
+ for(let i=0;i<80;i++){let y=135-i*1.65,x=130+roadCenter(state.dist+i*80)*12;if(i===0)mctx.moveTo(x,y);else mctx.lineTo(x,y)}mctx.stroke();
+ mctx.fillStyle="#fff";mctx.beginPath();mctx.arc(130,125,4,0,Math.PI*2);mctx.fill();
+}
+function render(){
+ sky();mountains();ground();roadside();traffic();weather();car();minimap();
+ // subtle film grain
+ ctx.fillStyle="rgba(255,255,255,.018)";for(let i=0;i<900;i++){ctx.fillRect(hash(i+state.t*2)*W,hash(i*4+state.t)*H,1,1)}
+}
+let last=0;
+function loop(now){if(!state.running)return;let dt=Math.min((now-last)/1000,.05);last=now;update(dt);render();requestAnimationFrame(loop)}
 </script>
-
 </body>
 </html>
-```
