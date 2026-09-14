@@ -1,433 +1,929 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SlopBox Arcade — 200+ Browser Games</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOIDCRAFT // Voxel Protocol</title>
+
 <style>
-:root{--bg:#080b12;--panel:#101622;--panel2:#151d2d;--text:#eef3ff;--muted:#93a0b8;--accent:#66e3ff;--accent2:#9b7bff;--danger:#ff5577;--good:#66ef9b}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0%,#152447 0,#080b12 38%);color:var(--text);font:15px system-ui,Segoe UI,Arial,sans-serif;min-height:100vh}
-header{position:sticky;top:0;z-index:20;background:#080b12e8;backdrop-filter:blur(12px);border-bottom:1px solid #24304a;padding:14px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-.logo{font-size:22px;font-weight:900;letter-spacing:.5px}.logo b{color:var(--accent)}.tag{color:var(--muted);font-size:12px}
-input,select,button{font:inherit;border:1px solid #2a3958;background:#111a2a;color:var(--text);border-radius:10px;padding:9px 12px}
-input{min-width:220px;outline:none}button{cursor:pointer}button:hover{border-color:var(--accent);transform:translateY(-1px)}
-#app{display:grid;grid-template-columns:290px 1fr;min-height:calc(100vh - 67px)}
-aside{border-right:1px solid #202b43;padding:16px;position:sticky;top:67px;height:calc(100vh - 67px);overflow:auto;background:#0b101a}
-aside h3{margin:8px 0 10px}.cats{display:grid;gap:7px}.cat{width:100%;text-align:left}.cat.active{background:linear-gradient(90deg,#183a55,#201a43);border-color:var(--accent)}
-main{padding:22px;max-width:1500px;width:100%;margin:auto}
-.hero{padding:22px;border:1px solid #263452;border-radius:20px;background:linear-gradient(135deg,#111b2d,#111323);box-shadow:0 18px 60px #0005;margin-bottom:18px}
-.hero h1{margin:0 0 7px;font-size:34px}.hero p{margin:0;color:var(--muted)}
-.stats{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.pill{padding:7px 10px;border-radius:999px;background:#0c1422;border:1px solid #263452;color:#b7c4dc}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
-.card{border:1px solid #263452;background:linear-gradient(160deg,#121a29,#0e1420);border-radius:16px;padding:15px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;transition:.15s}
-.card:hover{transform:translateY(-3px);border-color:#5a7bad;box-shadow:0 12px 30px #0006}.emoji{font-size:30px}.card h3{margin:6px 0 4px}.card p{color:var(--muted);font-size:12px;margin:0 0 12px}.play{width:100%;background:linear-gradient(90deg,#173d52,#272047);border-color:#426080}
-#gameView{display:none}.gameTop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.gameTop h2{margin:0}.stage{background:#05070b;border:1px solid #273551;border-radius:18px;overflow:hidden;position:relative;min-height:540px;display:flex;align-items:center;justify-content:center}
-canvas{display:block;background:#070b12;max-width:100%;image-rendering:auto}.hud{position:absolute;left:12px;top:10px;z-index:4;background:#09101bcc;border:1px solid #2a3958;padding:8px 10px;border-radius:10px;font-weight:700;pointer-events:none}
-.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;background:#060912cc;z-index:5}.modal{background:#101827;border:1px solid #344664;border-radius:18px;padding:24px;max-width:440px;box-shadow:0 20px 80px #000}.modal h2{margin-top:0}
-.controls{margin-top:12px;color:var(--muted);font-size:13px}.shop{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.shop button{flex:1;min-width:150px}.wide{width:min(900px,100%);padding:20px}.bigScore{font-size:52px;font-weight:900;text-align:center;margin:15px}.bar{height:14px;background:#1a2436;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0}
-#toast{position:fixed;right:16px;bottom:16px;z-index:50;background:#111b2b;border:1px solid #3a4d70;border-radius:12px;padding:11px 14px;display:none}
-@media(max-width:800px){#app{grid-template-columns:1fr}aside{position:static;height:auto;border-right:0;border-bottom:1px solid #202b43}.cats{grid-template-columns:repeat(3,1fr)}main{padding:12px}.stage{min-height:460px}}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #02040a;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+}
+
+#game {
+    position: fixed;
+    inset: 0;
+}
+
+canvas {
+    display: block;
+}
+
+/* Futuristic HUD */
+.hud {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+}
+
+.topbar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    padding: 12px 18px;
+    background: rgba(3, 10, 20, .72);
+    border: 1px solid rgba(0, 240, 255, .45);
+    box-shadow: 0 0 25px rgba(0, 240, 255, .12);
+    backdrop-filter: blur(10px);
+    letter-spacing: 4px;
+    font-weight: 900;
+    color: #5ffaff;
+}
+
+.logo span {
+    color: #fff;
+}
+
+.stats {
+    padding: 10px 15px;
+    background: rgba(3, 10, 20, .65);
+    border: 1px solid rgba(0, 240, 255, .3);
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #9befff;
+}
+
+.crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    transform: translate(-50%, -50%);
+}
+
+.crosshair::before,
+.crosshair::after {
+    content: "";
+    position: absolute;
+    background: #ffffff;
+    box-shadow: 0 0 8px #00f6ff;
+}
+
+.crosshair::before {
+    width: 2px;
+    height: 22px;
+    left: 10px;
+}
+
+.crosshair::after {
+    width: 22px;
+    height: 2px;
+    top: 10px;
+}
+
+.bottom {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.controls {
+    padding: 8px 14px;
+    background: rgba(2, 7, 15, .7);
+    border: 1px solid rgba(255,255,255,.12);
+    font-size: 11px;
+    color: #91a5b5;
+    letter-spacing: 1px;
+}
+
+.hotbar {
+    display: flex;
+    gap: 5px;
+    padding: 7px;
+    background: rgba(2, 7, 15, .82);
+    border: 1px solid rgba(0,240,255,.35);
+    box-shadow: 0 0 35px rgba(0,240,255,.12);
+    backdrop-filter: blur(12px);
+}
+
+.slot {
+    width: 58px;
+    height: 58px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #243848;
+    background: rgba(12, 23, 34, .9);
+    cursor: pointer;
+}
+
+.slot.selected {
+    border: 2px solid #00f6ff;
+    box-shadow:
+        inset 0 0 18px rgba(0,246,255,.15),
+        0 0 15px rgba(0,246,255,.25);
+}
+
+.slot::after {
+    content: attr(data-key);
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    font-size: 9px;
+    color: #8095a5;
+}
+
+.block-icon {
+    width: 30px;
+    height: 30px;
+    box-shadow: inset 5px 5px rgba(255,255,255,.12);
+}
+
+.grass { background: linear-gradient(#56d96c 0 25%, #875d32 25%); }
+.dirt { background: #875d32; }
+.stone { background: #68727c; }
+.glass { background: rgba(65,220,255,.35); border: 1px solid #55eaff; }
+.glow { background: #b94cff; box-shadow: 0 0 15px #b94cff; }
+.metal { background: linear-gradient(135deg,#b9c4cc,#45515a); }
+.leaves { background: #267849; }
+
+#startScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at center, rgba(0,240,255,.08), transparent 40%),
+        #02040a;
+}
+
+.startBox {
+    width: min(650px, 90vw);
+    text-align: center;
+    padding: 55px;
+    background: rgba(4,12,23,.82);
+    border: 1px solid rgba(0,240,255,.35);
+    box-shadow:
+        0 0 80px rgba(0,240,255,.1),
+        inset 0 0 50px rgba(0,240,255,.025);
+    backdrop-filter: blur(15px);
+}
+
+.startBox h1 {
+    font-size: clamp(45px, 9vw, 90px);
+    letter-spacing: 10px;
+    line-height: .9;
+    color: #fff;
+    text-shadow:
+        0 0 15px #00eaff,
+        0 0 50px rgba(0,234,255,.4);
+}
+
+.startBox h1 span {
+    color: #00f6ff;
+}
+
+.subtitle {
+    margin: 25px 0 35px;
+    color: #79909e;
+    letter-spacing: 4px;
+    font-size: 12px;
+}
+
+.startButton {
+    pointer-events: auto;
+    border: 1px solid #00f6ff;
+    color: #00f6ff;
+    background: rgba(0,240,255,.05);
+    padding: 17px 40px;
+    font-weight: bold;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.startButton:hover {
+    background: #00f6ff;
+    color: #001015;
+    box-shadow: 0 0 35px rgba(0,246,255,.5);
+}
+
+.hint {
+    margin-top: 25px;
+    color: #4c606c;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+#loading {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #02040a;
+    color: #00f6ff;
+    letter-spacing: 5px;
+}
+
+#blockName {
+    position: fixed;
+    left: 50%;
+    bottom: 115px;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #a7f8ff;
+    opacity: .8;
+}
+
+.damage {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 70px;
+    height: 70px;
+    transform: translate(-50%,-50%);
+    border: 2px solid transparent;
+    pointer-events: none;
+}
 </style>
 </head>
+
 <body>
-<header>
-  <div class="logo">SLOP<b>BOX</b> ARCADE</div><span class="tag">240 REAL PLAYABLE GAMES • NO INSTALL • ONE HTML FILE</span>
-  <input id="search" placeholder="Search 200+ games…">
-  <select id="sort"><option value="popular">Popular</option><option value="name">Name</option><option value="new">Newest</option></select>
-</header>
-<div id="app">
-<aside>
-  <h3>Game zones</h3>
-  <div class="cats" id="cats"></div>
-  <div class="controls">Everything runs locally in your browser. High scores are stored in localStorage.</div>
-</aside>
-<main>
-<section id="library">
-  <div class="hero">
-    <h1>The Infinite-ish Arcade</h1>
-    <p>Clickers with upgrade loops, arcade shooters, racers, platformers, puzzles, survival, and a tiny voxel sandbox. The catalogue contains 200+ playable entries generated from real game systems.</p>
-    <div class="stats"><span class="pill" id="countPill">0 games</span><span class="pill">Keyboard + mouse</span><span class="pill">Offline friendly</span><span class="pill">Local saves</span></div>
-  </div>
-  <div class="grid" id="grid"></div>
-</section>
-<section id="gameView">
-  <div class="gameTop"><h2 id="gameTitle"></h2><div><button onclick="backToLibrary()">← Arcade</button> <button onclick="restartGame()">Restart</button></div></div>
-  <div class="stage" id="stage"></div>
-</section>
-</main>
+
+<div id="game"></div>
+
+<div id="startScreen">
+    <div class="startBox">
+        <h1>VOID<span>CRAFT</span></h1>
+        <div class="subtitle">VOXEL SURVIVAL PROTOCOL // 0.1</div>
+
+        <button class="startButton" id="startButton">
+            INITIALIZE WORLD
+        </button>
+
+        <div class="hint">
+            W A S D &nbsp; // &nbsp; MOUSE &nbsp; // &nbsp; SPACE &nbsp; // &nbsp; ESC
+        </div>
+    </div>
 </div>
-<div id="toast"></div>
 
-<script>
-"use strict";
+<div id="loading">GENERATING TERRAIN...</div>
 
-/* ============================================================
-   SLOPBOX ARCADE ENGINE
-   ------------------------------------------------------------
-   The catalogue intentionally contains 200+ entries, but games
-   share robust mini-engines so the file stays maintainable.
-   ============================================================ */
+<div class="hud">
+    <div class="topbar">
+        <div class="logo">VOIDCRAFT <span>// ONLINE</span></div>
+        <div class="stats">
+            SECTOR 07 &nbsp;|&nbsp; FPS <span id="fps">60</span>
+        </div>
+    </div>
 
-const TYPES = {
- clicker:{emoji:"🖱️",desc:"Idle-style clicking, upgrades, combos and milestones."},
- shooter:{emoji:"🔫",desc:"Canvas arena FPS-ish blaster: move, aim, shoot, survive waves."},
- runner:{emoji:"🏃",desc:"Infinite runner with hazards, coins and escalating speed."},
- dodge:{emoji:"💥",desc:"Survive a growing storm of enemies and collect powerups."},
- snake:{emoji:"🐍",desc:"Classic snake with food, walls and score chasing."},
- breakout:{emoji:"🧱",desc:"Break every block while the ball gets faster."},
- memory:{emoji:"🧠",desc:"Flip cards and clear the board in as few moves as possible."},
- mines:{emoji:"💣",desc:"Minesweeper-style grid with flags and safe reveals."},
- platform:{emoji:"🕹️",desc:"Jump, land, grab gems and reach the exit."},
- voxel:{emoji:"⛏️",desc:"A tiny 2D voxel sandbox: mine, place and build."},
- typing:{emoji:"⌨️",desc:"Typing sprint with accuracy, streaks and timed rounds."},
- reaction:{emoji:"⚡",desc:"Reflex tests and increasingly strict timing windows."},
- pong:{emoji:"🏓",desc:"Pong against a simple adaptive opponent."},
- invaders:{emoji:"👾",desc:"Move, fire and clear descending alien waves."},
- fishing:{emoji:"🎣",desc:"Timing-based fishing with rarity and upgrades."},
- tower:{emoji:"🏰",desc:"Defend the core against increasingly nasty waves."},
-}
+    <div class="crosshair"></div>
 
-const names = [
-"Neon","Turbo","Cosmic","Mega","Hyper","Pixel","Shadow","Golden","Frost","Chaos",
-"Bubble","Laser","Dungeon","Galaxy","Cyber","Jelly","Retro","Meteor","Tiny","Giga",
-"Arcade","Moon","Solar","Thunder","Crystal","Plasma","Rocket","Secret","Ultra","Wild"
-];
-const themes = [
-"Clicker","Blaster","Runner","Dodge","Snake","Breakout","Memory","Mines","Platform",
-"Sandbox","Typing","Reaction","Pong","Invaders","Fishing","Tower"
-];
-const gameList=[]; let gid=0;
+    <div id="blockName">GRASS</div>
 
-/* 240 distinct catalogue entries: variations alter difficulty,
-   rules, speed, colours/theme and progression parameters. */
-for(let t=0;t<themes.length;t++){
-  for(let v=0;v<15;v++){
-    const type=({
-  Clicker:"clicker", Blaster:"shooter", Runner:"runner", Dodge:"dodge",
-  Snake:"snake", Breakout:"breakout", Memory:"memory", Mines:"mines",
-  Platform:"platform", Sandbox:"voxel", Typing:"typing", Reaction:"reaction",
-  Pong:"pong", Invaders:"invaders", Fishing:"fishing", Tower:"tower"
-})[themes[t]];
-    gameList.push({
-      id:"g"+(++gid),
-      name:`${names[(v+t*2)%names.length]} ${themes[t]} ${v+1}`,
-      type, level:(v%5)+1, variant:v,
-      tags:`${type} ${v%2?"arcade":"classic"} ${v%3===0?"hard":"fun"}`
-    });
-  }
-}
-document.getElementById("countPill").textContent=gameList.length+" playable games";
+    <div class="bottom">
+        <div class="controls">
+            WASD MOVE &nbsp; • &nbsp; SPACE JUMP &nbsp; • &nbsp; LMB MINE &nbsp; • &nbsp; RMB BUILD
+        </div>
 
-const $=s=>document.querySelector(s);
-const stage=$("#stage"), grid=$("#grid"), library=$("#library"), gameView=$("#gameView");
-let current=null, cleanup=()=>{}, frame=0;
+        <div class="hotbar">
+            <div class="slot selected" data-key="1" data-block="grass">
+                <div class="block-icon grass"></div>
+            </div>
 
-const categories=["All",...themes];
-for(const c of categories){
-  const b=document.createElement("button"); b.className="cat"+(c==="All"?" active":"");
-  b.textContent=c; b.dataset.cat=c; b.onclick=()=>{document.querySelectorAll(".cat").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();};
-  $("#cats").appendChild(b);
-}
-$("#search").oninput=render; $("#sort").onchange=render;
+            <div class="slot" data-key="2" data-block="dirt">
+                <div class="block-icon dirt"></div>
+            </div>
 
-function render(){
-  const q=$("#search").value.toLowerCase();
-  const cat=document.querySelector(".cat.active")?.dataset.cat||"All";
-  let arr=gameList.filter(g=>(cat==="All" || ({Clicker:"clicker",Blaster:"shooter",Runner:"runner",Dodge:"dodge",Snake:"snake",Breakout:"breakout",Memory:"memory",Mines:"mines",Platform:"platform",Sandbox:"voxel",Typing:"typing",Reaction:"reaction",Pong:"pong",Invaders:"invaders",Fishing:"fishing",Tower:"tower"})[cat]===g.type) &&
-    (!q||(g.name+" "+g.tags).toLowerCase().includes(q)));
-  if($("#sort").value==="name")arr.sort((a,b)=>a.name.localeCompare(b.name));
-  if($("#sort").value==="new")arr.sort((a,b)=>b.id.localeCompare(a.id));
-  grid.innerHTML="";
-  for(const g of arr){
-    const c=document.createElement("article");c.className="card";
-    c.innerHTML=`<div><div class="emoji">${TYPES[g.type].emoji}</div><h3>${g.name}</h3><p>${TYPES[g.type].desc}<br>Variant ${g.variant+1} • Difficulty ${"★".repeat(g.level)}</p></div><button class="play">PLAY</button>`;
-    c.querySelector(".play").onclick=()=>launch(g);
-    grid.appendChild(c);
-  }
-}
-render();
+            <div class="slot" data-key="3" data-block="stone">
+                <div class="block-icon stone"></div>
+            </div>
 
-function toast(s){const x=$("#toast");x.textContent=s;x.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>x.style.display="none",1800)}
-function clearStage(){cancelAnimationFrame(frame);cleanup();cleanup=()=>{};stage.innerHTML=""}
-function launch(g){
-  clearStage();current=g;library.style.display="none";gameView.style.display="block";$("#gameTitle").textContent=`${TYPES[g.type].emoji} ${g.name}`;
-  const fn=engines[g.type]||engines.clicker;cleanup=fn(g)||(()=>{});
-}
-function backToLibrary(){clearStage();gameView.style.display="none";library.style.display="block";current=null}
-function restartGame(){if(current)launch(current)}
-window.backToLibrary=backToLibrary;window.restartGame=restartGame;
+            <div class="slot" data-key="4" data-block="glass">
+                <div class="block-icon glass"></div>
+            </div>
 
-/* ---------- shared canvas helpers ---------- */
-function makeCanvas(w=900,h=540){
-  const c=document.createElement("canvas");c.width=w;c.height=h;c.tabIndex=0;stage.appendChild(c);c.focus();return [c,c.getContext("2d")];
-}
-function keys(){
-  const k={};const dn=e=>{k[e.key.toLowerCase()]=true;k[e.code]=true;if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault()};
-  const up=e=>{k[e.key.toLowerCase()]=false;k[e.code]=false};
-  addEventListener("keydown",dn);addEventListener("keyup",up);return [k,()=>{removeEventListener("keydown",dn);removeEventListener("keyup",up)}];
-}
-function text(ctx,s,x,y,size=18){ctx.font=`${size}px system-ui`;ctx.fillStyle="#eef3ff";ctx.fillText(s,x,y)}
-function rand(a,b){return Math.random()*(b-a)+a}
-function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
-function saveScore(g,score){const k="slop_"+g.id;const old=+localStorage.getItem(k)||0;if(score>old){localStorage.setItem(k,score);toast("New local high score: "+Math.floor(score))}}
-function endOverlay(title,sub,again=true){
-  const o=document.createElement("div");o.className="overlay";o.innerHTML=`<div class="modal"><h2>${title}</h2><p>${sub}</p>${again?'<button id="again">Play again</button> <button id="arc">Arcade</button>':""}</div>`;stage.appendChild(o);
-  if(again){o.querySelector("#again").onclick=restartGame;o.querySelector("#arc").onclick=backToLibrary}
-}
+            <div class="slot" data-key="5" data-block="glow">
+                <div class="block-icon glow"></div>
+            </div>
 
-/* ============================================================
-   CLICKER: persistent progression, crits, automation and shop
-   ============================================================ */
-function clicker(g){
-  const box=document.createElement("div");box.className="wide";box.innerHTML=`
-    <div class="bigScore" id="cs">0</div>
-    <div style="text-align:center"><button id="click" style="font-size:40px;width:190px;height:190px;border-radius:50%">💥</button></div>
-    <p id="cstats" style="text-align:center"></p><div class="bar"><i id="xp"></i></div>
-    <div class="shop" id="shop"></div>`;
-  stage.appendChild(box);
-  let score=+localStorage.getItem("click_score_"+g.id)||0;
-  let power=1+g.variant%4, auto=0, crit=0.05+g.variant*.005, level=1, xp=0;
-  const upgrades=[
-    ["Power +1",()=>power++,()=>25*power],
-    ["Auto-clicker",()=>auto++,()=>100*(auto+1)],
-    ["Crit chance",()=>crit=Math.min(.6,crit+.03),()=>180*(Math.floor(crit*100)-4)],
-    ["Mega power",()=>power+=10,()=>800+power*15]
-  ];
-  function update(){
-    $("#cs").textContent=Math.floor(score).toLocaleString();
-    $("#cstats").textContent=`Power ${power} • Auto ${auto}/sec • Crit ${(crit*100).toFixed(0)}% • Level ${level}`;
-    $("#xp").style.width=(xp%100)+"%";
-    $("#shop").innerHTML="";
-    upgrades.forEach((u,i)=>{const b=document.createElement("button");const cost=Math.floor(u[2]());b.textContent=`${u[0]} — ${cost} pts`;b.onclick=()=>{if(score>=cost){score-=cost;u[1]();update()}};$("#shop").appendChild(b)});
-  }
-  $("#click").onclick=()=>{
-    const n=Math.random()<crit?power*10:power;score+=n;xp+=n;
-    if(xp>=100){level++;xp-=100;power+=Math.ceil(level/5);toast("LEVEL UP!")}
-    saveScore(g,score);update();
-  };
-  update();
-  const timer=setInterval(()=>{score+=auto/2;saveScore(g,score);update()},500);
-  return ()=>clearInterval(timer);
-}
+            <div class="slot" data-key="6" data-block="metal">
+                <div class="block-icon metal"></div>
+            </div>
 
-/* ---------- shooter: top-down FPS-ish canvas shooter ---------- */
-function shooter(g){
-  const [c,x]=makeCanvas();const [k,uk]=keys();let mx=450,my=270,shoot=false,dead=false;
-  const p={x:450,y:270,hp:100,spd:3.3+g.level*.25,ammo:999};
-  let enemies=[],bullets=[],parts=[],score=0,wave=1,last=0,spawn=0;
-  c.onmousemove=e=>{const r=c.getBoundingClientRect();mx=(e.clientX-r.left)*c.width/r.width;my=(e.clientY-r.top)*c.height/r.height};
-  c.onmousedown=()=>shoot=true;c.onmouseup=()=>shoot=false;
-  function spawnEnemy(){const side=Math.floor(rand(0,4)),e={x:side<2?rand(0,900):(side===2?0:900),y:side<2?(side?540:0):rand(0,540),hp:1+Math.floor(g.level/2),r:13+g.level};enemies.push(e)}
-  function fire(){const a=Math.atan2(my-p.y,mx-p.x);bullets.push({x:p.x,y:p.y,vx:Math.cos(a)*8,vy:Math.sin(a)*8,r:4})}
-  function loop(t){
-    const dt=Math.min(32,t-last||16);last=t;if(dead)return;
-    if(k.w||k.arrowup)p.y-=p.spd;if(k.s||k.arrowdown)p.y+=p.spd;if(k.a||k.arrowleft)p.x-=p.spd;if(k.d||k.arrowright)p.x+=p.spd;
-    p.x=clamp(p.x,20,880);p.y=clamp(p.y,20,520);
-    spawn-=dt;if(spawn<=0){for(let i=0;i<1+Math.floor(wave/4);i++)spawnEnemy();spawn=Math.max(180,900-wave*35)}
-    if((shoot||k[" "])&&t%110<18)fire();
-    bullets.forEach(b=>{b.x+=b.vx;b.y+=b.vy});
-    bullets=bullets.filter(b=>b.x>-20&&b.x<920&&b.y>-20&&b.y<560);
-    for(const e of enemies){const a=Math.atan2(p.y-e.y,p.x-e.x);e.x+=Math.cos(a)*(1+g.level*.12);e.y+=Math.sin(a)*(1+g.level*.12);if(Math.hypot(e.x-p.x,e.y-p.y)<e.r+13){p.hp-=.55;if(p.hp<=0)dead=true}}
-    for(let i=enemies.length-1;i>=0;i--)for(let j=bullets.length-1;j>=0;j--)if(Math.hypot(enemies[i].x-bullets[j].x,enemies[i].y-bullets[j].y)<enemies[i].r+5){enemies[i].hp--;bullets.splice(j,1);if(enemies[i].hp<=0){score+=10*wave;for(let z=0;z<6;z++)parts.push({x:enemies[i].x,y:enemies[i].y,vx:rand(-3,3),vy:rand(-3,3),life:25});enemies.splice(i,1);break}}
-    if(score/100>wave)wave++;
-    x.clearRect(0,0,900,540);x.fillStyle="#07101a";x.fillRect(0,0,900,540);
-    x.strokeStyle="#13263b";for(let i=0;i<900;i+=45){x.beginPath();x.moveTo(i,0);x.lineTo(i,540);x.stroke()}for(let i=0;i<540;i+=45){x.beginPath();x.moveTo(0,i);x.lineTo(900,i);x.stroke()}
-    x.fillStyle="#4ce4ff";x.beginPath();x.arc(p.x,p.y,13,0,7);x.fill();x.strokeStyle="#fff";x.beginPath();x.moveTo(p.x,p.y);x.lineTo(mx,my);x.stroke();
-    x.fillStyle="#ff5577";enemies.forEach(e=>{x.beginPath();x.arc(e.x,e.y,e.r,0,7);x.fill()});x.fillStyle="#ffe66d";bullets.forEach(b=>{x.beginPath();x.arc(b.x,b.y,4,0,7);x.fill()});
-    parts.forEach(q=>{q.x+=q.vx;q.y+=q.vy;q.life--;x.globalAlpha=Math.max(0,q.life/25);x.fillRect(q.x,q.y,3,3);x.globalAlpha=1});parts=parts.filter(q=>q.life>0);
-    x.fillStyle="#fff";x.fillText(`HP ${Math.max(0,Math.floor(p.hp))}   SCORE ${score}   WAVE ${wave}`,15,25);
-    if(dead){saveScore(g,score);endOverlay("You got deleted 💀",`Score ${score} • Wave ${wave}`);return}
-    frame=requestAnimationFrame(loop)
-  }
-  frame=requestAnimationFrame(loop);return uk;
-}
+            <div class="slot" data-key="7" data-block="leaves">
+                <div class="block-icon leaves"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
-/* ---------- runner ---------- */
-function runner(g){
-  const [c,x]=makeCanvas();const [k,uk]=keys();let py=420,vy=0,ground=true,dist=0,score=0,speed=5+g.level*.7,obs=[],coins=[],timer=0,dead=false,last=0;
-  function loop(t){const dt=Math.min(32,t-last||16);last=t;if(dead)return;timer-=dt;dist+=speed*dt/16;score=Math.floor(dist/10);
-    if(k[" "]&&ground){vy=-12-ground*0.1;ground=false}vy+=.55;py+=vy;if(py>=420){py=420;vy=0;ground=true}
-    if(timer<=0){obs.push({x:920,w:rand(20,45),h:rand(30,90)});if(Math.random()<.7)coins.push({x:920,y:rand(280,390),r:8});timer=rand(550,1000)-g.level*35}
-    obs.forEach(o=>o.x-=speed);coins.forEach(o=>o.x-=speed);
-    obs=obs.filter(o=>o.x>-80);coins=coins.filter(o=>o.x>-30);
-    for(const o of obs)if(o.x<105&&o.x+o.w>70&&py>420-o.h)dead=true;
-    for(let i=coins.length-1;i>=0;i--)if(Math.hypot(coins[i].x-80,coins[i].y-py)<20){score+=50;coins.splice(i,1)}
-    x.clearRect(0,0,900,540);x.fillStyle="#09121c";x.fillRect(0,0,900,540);x.fillStyle="#14263a";x.fillRect(0,435,900,105);
-    x.fillStyle="#66e3ff";x.fillRect(65,py-28,30,28);x.fillStyle="#ff5577";obs.forEach(o=>x.fillRect(o.x,435-o.h,o.w,o.h));
-    x.fillStyle="#ffe66d";coins.forEach(o=>{x.beginPath();x.arc(o.x,o.y,o.r,0,7);x.fill()});text(x,`DISTANCE ${score}   SPEED ${speed.toFixed(1)}`,15,25);
-    if(dead){saveScore(g,score);endOverlay("CRASH!",`Distance ${score}`);return}frame=requestAnimationFrame(loop)}
-  frame=requestAnimationFrame(loop);return uk;
-}
+<script type="module">
 
-/* ---------- dodge ---------- */
-function dodge(g){
-  const [c,x]=makeCanvas();const [k,uk]=keys();let px=450,py=270,t=0,score=0,orbs=[],boost=0,dead=false;
-  function loop(){
-    if(dead)return;t++;score=Math.floor(t/6);let sp=2.2+g.level*.2;
-    if(k.w||k.arrowup)py-=sp;if(k.s||k.arrowdown)py+=sp;if(k.a||k.arrowleft)px-=sp;if(k.d||k.arrowright)px+=sp;px=clamp(px,10,890);py=clamp(py,10,530);
-    if(t%Math.max(10,70-g.level*5)===0){const a=rand(0,7),r=rand(0,5);orbs.push({x:450+Math.cos(a)*r,y:270+Math.sin(a)*r,vx:Math.cos(a)*rand(1,3),vy:Math.sin(a)*rand(1,3),r:rand(5,12)})}
-    orbs.forEach(o=>{o.x+=o.vx;o.y+=o.vy;if(o.x<0||o.x>900)o.vx*=-1;if(o.y<0||o.y>540)o.vy*=-1});
-    for(const o of orbs)if(Math.hypot(o.x-px,o.y-py)<o.r+10){dead=true}
-    x.clearRect(0,0,900,540);x.fillStyle="#080b13";x.fillRect(0,0,900,540);x.fillStyle="#ff5577";orbs.forEach(o=>{x.beginPath();x.arc(o.x,o.y,o.r,0,7);x.fill()});x.fillStyle="#66ef9b";x.beginPath();x.arc(px,py,10,0,7);x.fill();text(x,`SURVIVAL ${score}`,15,25);
-    if(dead){saveScore(g,score);endOverlay("WIPED OUT",`You survived ${score} ticks`);return}frame=requestAnimationFrame(loop)}
-  frame=requestAnimationFrame(loop);return uk;
-}
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
-/* ---------- snake ---------- */
-function snake(g){
- const [c,x]=makeCanvas(600,600),[k,uk]=keys();const n=20,cell=30;let s=[{x:10,y:10}],d={x:1,y:0},next=d,food={x:15,y:10},score=0,t=0,dead=false;
- function place(){do{food={x:Math.floor(Math.random()*n),y:Math.floor(Math.random()*n)}}while(s.some(a=>a.x===food.x&&a.y===food.y))}
- function loop(){if(dead)return;if(k.arrowup||k.w)next={x:0,y:-1};if(k.arrowdown||k.s)next={x:0,y:1};if(k.arrowleft||k.a)next={x:-1,y:0};if(k.arrowright||k.d)next={x:1,y:0};if(++t%(Math.max(3,8-g.level))!==0){frame=requestAnimationFrame(loop);return}if(next.x!==-d.x||next.y!==-d.y)d=next;let h={x:s[0].x+d.x,y:s[0].y+d.y};if(h.x<0||h.x>=n||h.y<0||h.y>=n||s.some(a=>a.x===h.x&&a.y===h.y)){dead=true;saveScore(g,score);endOverlay("Snake over",`Score ${score}`);return}s.unshift(h);if(h.x===food.x&&h.y===food.y){score+=10;place()}else s.pop();
- x.fillStyle="#070b12";x.fillRect(0,0,600,600);x.fillStyle="#17243a";for(let i=0;i<n;i++)for(let j=0;j<n;j++)x.strokeRect(i*cell,j*cell,cell,cell);x.fillStyle="#ff5577";x.fillRect(food.x*cell+5,food.y*cell+5,20,20);x.fillStyle="#66e3ff";s.forEach((a,i)=>x.fillRect(a.x*cell+3,a.y*cell+3,24,24));text(x,"SCORE "+score,10,22);frame=requestAnimationFrame(loop)}
- frame=requestAnimationFrame(loop);return uk;
-}
+import { PointerLockControls } from
+"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/PointerLockControls.js";
 
-/* ---------- breakout ---------- */
-function breakout(g){
- const [c,x]=makeCanvas();const [k,uk]=keys();let px=380,bx=450,by=480,vx=4+g.level*.2,vy=-4-g.level*.2,blocks=[],score=0,dead=false;
- for(let r=0;r<5+g.level;r++)for(let col=0;col<12;col++)blocks.push({x:col*72+18,y:r*24+45,w:66,h:18,hp:1+(r%3===0&&g.level>2)});
- function loop(){if(dead)return;if(k.arrowleft||k.a)px-=7;if(k.arrowright||k.d)px+=7;px=clamp(px,0,800);bx+=vx;by+=vy;if(bx<5||bx>895)vx*=-1;if(by<5)vy*=-1;
-  if(by>500&&by<525&&bx>px&&bx<px+120)vy=-Math.abs(vy);if(by>560){dead=true;saveScore(g,score);endOverlay("Ball dropped",`Score ${score}`);return}
-  for(let i=blocks.length-1;i>=0;i--){let b=blocks[i];if(bx>b.x&&bx<b.x+b.w&&by>b.y&&by<b.y+b.h){vy*=-1;b.hp--;if(b.hp<=0){blocks.splice(i,1);score+=10}break}}
-  x.clearRect(0,0,900,540);x.fillStyle="#070b12";x.fillRect(0,0,900,540);x.fillStyle="#9b7bff";blocks.forEach(b=>x.fillRect(b.x,b.y,b.w,b.h));x.fillStyle="#66e3ff";x.fillRect(px,505,120,15);x.fillStyle="#fff";x.beginPath();x.arc(bx,by,8,0,7);x.fill();text(x,"SCORE "+score,15,25);
-  if(!blocks.length){saveScore(g,score);endOverlay("BOARD CLEARED!",`Score ${score}`);return}frame=requestAnimationFrame(loop)}
- frame=requestAnimationFrame(loop);return uk;
-}
+/* -------------------------
+   SCENE
+------------------------- */
 
-/* ---------- memory ---------- */
-function memory(g){
- const box=document.createElement("div");box.className="wide";stage.appendChild(box);let size=4+(g.level>3?2:0),total=size*size,vals=[];
- for(let i=0;i<total/2;i++)vals.push(i,i);vals.sort(()=>Math.random()-.5);let open=[],matched=0,moves=0;
- box.innerHTML=`<p>Find all matching pairs. Moves: <b id="mv">0</b></p><div id="cards" style="display:grid;grid-template-columns:repeat(${size},1fr);gap:8px"></div>`;
- const cards=$("#cards");
- vals.forEach((v,i)=>{const b=document.createElement("button");b.style.height=size>4?"70px":"100px";b.textContent="?";b.dataset.v=v;b.onclick=()=>flip(b,i);cards.appendChild(b)});
- function flip(b,i){if(open.length>=2||b.disabled||open.includes(i))return;b.textContent=String.fromCharCode(65+vals[i]%26);open.push(i);if(open.length===2){moves++;$("#mv").textContent=moves;const[a,z]=open;if(vals[a]===vals[z]){cards.children[a].disabled=true;cards.children[z].disabled=true;matched+=2;open=[];if(matched===total){saveScore(g,Math.max(1,10000-moves*100));endOverlay("Memory cleared!",`${moves} moves`)}}else setTimeout(()=>{cards.children[a].textContent="?";cards.children[z].textContent="?";open=[]},550)}} 
- return ()=>{};
-}
+const scene = new THREE.Scene();
 
-/* ---------- minesweeper ---------- */
-function mines(g){
- const box=document.createElement("div");box.className="wide";stage.appendChild(box);const n=9+g.level*2,bombs=Math.floor(n*n*.15),cells=[];
- box.innerHTML=`<p>Reveal safe cells. Right-click to flag. Mines: ${bombs}</p><div id="minegrid" style="display:grid;grid-template-columns:repeat(${n},1fr);gap:2px"></div>`;
- const gr=$("#minegrid");let mine=new Set();while(mine.size<bombs)mine.add(Math.floor(Math.random()*n*n));let revealed=0,ended=false;
- function neigh(i){let x=i%n,y=Math.floor(i/n),a=[];for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){if(!dx&&!dy)continue;let X=x+dx,Y=y+dy;if(X>=0&&X<n&&Y>=0&&Y<n)a.push(Y*n+X)}return a}
- function reveal(i){if(ended)return;const b=cells[i];if(b.disabled)return;if(mine.has(i)){ended=true;b.textContent="💣";endOverlay("Boom!",`You revealed a mine after ${revealed} safe cells`);return}b.disabled=true;revealed++;const count=neigh(i).filter(j=>mine.has(j)).length;b.textContent=count||"";if(!count)neigh(i).forEach(reveal);if(revealed===n*n-bombs){ended=true;saveScore(g,revealed);endOverlay("Minefield cleared!",`Safe cells: ${revealed}`)}}
- for(let i=0;i<n*n;i++){const b=document.createElement("button");b.textContent="";b.style.padding="0";b.style.aspectRatio="1";b.oncontextmenu=e=>{e.preventDefault();if(!b.disabled)b.textContent=b.textContent==="⚑"?"":"⚑"};b.onclick=()=>{if(b.textContent!=="⚑")reveal(i)};cells.push(b);gr.appendChild(b)}
- return ()=>{};
-}
+scene.background = new THREE.Color(0x07111c);
 
-/* ---------- platformer ---------- */
-function platform(g){
- const [c,x]=makeCanvas();const [k,uk]=keys();let p={x:40,y:430,vx:0,vy:0},cam=0,gem=0,dead=false;
- const plats=[{x:0,y:500,w:250,h:40},{x:300,y:430,w:180,h:30},{x:540,y:350,w:160,h:30},{x:760,y:450,w:130,h:30},{x:960,y:380,w:220,h:30},{x:1250,y:300,w:160,h:30},{x:1480,y:440,w:250,h:30}];
- const gems=plats.slice(1).map(a=>({x:a.x+50,y:a.y-25,t:1}));const exit={x:1630,y:380};
- function loop(){if(dead)return;let left=k.a||k.arrowleft,right=k.d||k.arrowright;p.vx=(right?3:0)-(left?3:0);if((k[" "]||k.w||k.arrowup)&&p.vy===0)p.vy=-12;p.vy+=.55;p.x+=p.vx;p.y+=p.vy;
-  let on=false;for(const q of plats)if(p.x+22>q.x&&p.x<q.x+q.w&&p.y+25>=q.y&&p.y+25<=q.y+18&&p.vy>=0){p.y=q.y-25;p.vy=0;on=true}if(p.y>570){dead=true;endOverlay("Fall!",`Gems ${gem}`);return}for(const q of gems)if(q.t&&Math.hypot(q.x-(p.x+10),q.y-(p.y+10))<25){q.t=0;gem++}
-  if(p.x>exit.x-20&&p.x<exit.x+40&&p.y<exit.y+40){saveScore(g,gem*100+p.x);endOverlay("LEVEL COMPLETE!",`Gems ${gem}`);return}
-  cam=clamp(p.x-300,0,850);x.clearRect(0,0,900,540);x.fillStyle="#07101a";x.fillRect(0,0,900,540);x.save();x.translate(-cam,0);x.fillStyle="#29445c";plats.forEach(q=>x.fillRect(q.x,q.y,q.w,q.h));x.fillStyle="#ffe66d";gems.forEach(q=>q.t&&x.fillRect(q.x,q.y,14,14));x.fillStyle="#66e3ff";x.fillRect(p.x,p.y,24,25);x.fillStyle="#66ef9b";x.fillRect(exit.x,exit.y,35,55);x.restore();text(x,`GEMS ${gem} • A/D or arrows • SPACE jump`,15,25);frame=requestAnimationFrame(loop)}
- frame=requestAnimationFrame(loop);return uk;
-}
+scene.fog = new THREE.FogExp2(
+    0x07111c,
+    0.018
+);
 
-/* ---------- 2D voxel sandbox ---------- */
-function voxel(g){
- const [c,x]=makeCanvas(900,540);let tile=27,W=33,H=20,world=[],selected=1;
- for(let y=0;y<H;y++){world[y]=[];for(let xx=0;xx<W;xx++){world[y][xx]=y<10?0:y===10?1:y<15?2:3;if(y<8&&Math.random()<.06)world[y][xx]=4}}
- let mouse={x:0,y:0};c.onmousemove=e=>{const r=c.getBoundingClientRect();mouse.x=Math.floor((e.clientX-r.left)*c.width/r.width/tile);mouse.y=Math.floor((e.clientY-r.top)*c.height/r.height/tile)};
- c.oncontextmenu=e=>e.preventDefault();c.onmousedown=e=>{const X=mouse.x,Y=mouse.y;if(X<0||Y<0||X>=W||Y>=H)return;if(e.button===2){world[Y][X]=selected}else if(world[Y][X]!==0){world[Y][X]=0}};
- addEventListener("keydown",e=>{if(e.key>="1"&&e.key<="4")selected=+e.key});
- function loop(){x.clearRect(0,0,900,540);const colors=["#152333","#8b5a3c","#6d7482","#6b4530","#3b9c5b"];for(let y=0;y<H;y++)for(let xx=0;xx<W;xx++){let v=world[y][xx];x.fillStyle=colors[v];x.fillRect(xx*tile,y*tile,tile-1,tile-1);if(v===3)x.fillStyle="#4d3527",x.fillRect(xx*tile+8,y*tile+5,5,18)}x.fillStyle="#fff";x.strokeRect(mouse.x*tile,mouse.y*tile,tile,tile);text(x,`BLOCK ${selected} | Left: mine • Right: place • 1-4 select`,12,22);frame=requestAnimationFrame(loop)}
- frame=requestAnimationFrame(loop);return ()=>cancelAnimationFrame(frame);
-}
+/* -------------------------
+   CAMERA
+------------------------- */
 
-/* ---------- typing ---------- */
-function typing(g){
- const words=["galaxy","rocket","banana","castle","shadow","pixel","dragon","thunder","coffee","keyboard","slop","arcade","meteor","wizard","speed","planet","diamond","forest","neon","machine"];
- let time=30+g.level*5,score=0,correct=0,total=0,current=words[Math.floor(Math.random()*words.length)];
- const box=document.createElement("div");box.className="wide";box.innerHTML=`<h2 id="word" style="font-size:44px;text-align:center">${current}</h2><input id="typein" autofocus style="width:100%;font-size:25px"><div class="bigScore" id="ts">30</div><p id="acc">Accuracy 100%</p>`;
- stage.appendChild(box);const inp=$("#typein"),wd=$("#word"),ts=$("#ts"),acc=$("#acc");
- const timer=setInterval(()=>{time--;ts.textContent=time;if(time<=0){clearInterval(timer);inp.disabled=true;saveScore(g,score);endOverlay("Time!",`Score ${score} • Accuracy ${total?Math.round(correct/total*100):100}%`)}},1000);
- inp.oninput=()=>{const v=inp.value;total=v.length;if(current.startsWith(v)){if(v===current){score+=current.length*10;correct+=current.length;current=words[Math.floor(Math.random()*words.length)];wd.textContent=current;inp.value=""}}else{score=Math.max(0,score-2);inp.value=v.slice(0,-1)}acc.textContent=`Score ${score} • Accuracy ${total?Math.round(correct/Math.max(total,1)*100):100}%`};
- return ()=>clearInterval(timer);
-}
+const camera = new THREE.PerspectiveCamera(
+    75,
+    innerWidth / innerHeight,
+    .1,
+    500
+);
 
-/* ---------- reaction ---------- */
-function reaction(g){
- const b=document.createElement("button");b.style.cssText="font-size:28px;padding:60px 100px";b.textContent="WAIT…";stage.appendChild(b);let start=0,armed=false,done=false,delay=rand(900,3000);
- const timer=setTimeout(()=>{armed=true;start=performance.now();b.textContent="CLICK NOW!"},delay);
- b.onclick=()=>{if(done)return;if(!armed){clearTimeout(timer);done=true;endOverlay("Too early!","Your reflexes betrayed you.");return}let ms=Math.round(performance.now()-start);done=true;saveScore(g,Math.max(1,1000-ms));endOverlay(`${ms} ms`,ms<220?"Lightning reflexes!":ms<350?"Nice!":"Warm up those fingers.")};
- return ()=>clearTimeout(timer);
-}
+camera.position.set(0, 8, 15);
 
-/* ---------- pong ---------- */
-function pong(g){
- const [c,x]=makeCanvas(),[k,uk]=keys();let py=220,ey=220,bx=450,by=270,vx=5,vy=3,ps=0,es=0,dead=false;
- function loop(){if(dead)return;if(k.w||k.arrowup)py-=6;if(k.s||k.arrowdown)py+=6;py=clamp(py,0,460);ey+=(by-(ey+40))*.07;
-  bx+=vx;by+=vy;if(by<8||by>532)vy*=-1;if(bx<30&&by>py&&by<py+80)vx=Math.abs(vx)*1.03;if(bx>870&&by>ey&&by<ey+80)vx=-Math.abs(vx)*1.03;
-  if(bx<0){es++;bx=450;by=270;vx=5;if(es>=7)dead=true}if(bx>900){ps++;bx=450;by=270;vx=-5}
-  x.fillStyle="#06090e";x.fillRect(0,0,900,540);x.fillStyle="#66e3ff";x.fillRect(15,py,15,80);x.fillStyle="#ff5577";x.fillRect(870,ey,15,80);x.fillStyle="#fff";x.beginPath();x.arc(bx,by,8,0,7);x.fill();text(x,`${ps} : ${es}`,420,35,28);
-  if(dead){endOverlay("PONG LOST",`Final ${ps} : ${es}`);return}frame=requestAnimationFrame(loop)}
- frame=requestAnimationFrame(loop);return uk;
-}
+/* -------------------------
+   RENDERER
+------------------------- */
 
-/* ---------- space invaders ---------- */
-function invaders(g){
- const [c,x]=makeCanvas(),[k,uk]=keys();let px=430,dir=1,shot=0,score=0,dead=false,aliens=[];
- for(let r=0;r<3+g.level;r++)for(let q=0;q<8;q++)aliens.push({x:120+q*80,y:70+r*40});
- const bullets=[];
- function loop(){if(dead)return;if(k.a||k.arrowleft)px-=6;if(k.d||k.arrowright)px+=6;px=clamp(px,0,850);shot--;if(k[" "]&&shot<=0){bullets.push({x:px+25,y:500});shot=180}
-  bullets.forEach(b=>b.y-=8);if(Math.random()<.025+g.level*.003)dir*=-1;aliens.forEach(a=>a.x+=dir*(.35+g.level*.05));if(aliens.some(a=>a.x<30||a.x>870)){dir*=-1;aliens.forEach(a=>a.y+=15)}
-  for(let i=bullets.length-1;i>=0;i--)for(let j=aliens.length-1;j>=0;j--)if(Math.hypot(bullets[i].x-aliens[j].x,bullets[i].y-aliens[j].y)<18){bullets.splice(i,1);aliens.splice(j,1);score+=10;break}
-  if(aliens.some(a=>a.y>470)){dead=true;endOverlay("ALIENS LANDED",`Score ${score}`);return}x.fillStyle="#060a11";x.fillRect(0,0,900,540);x.fillStyle="#ff5577";aliens.forEach(a=>x.fillRect(a.x,a.y,30,22));x.fillStyle="#66e3ff";x.fillRect(px,500,50,20);x.fillStyle="#ffe66d";bullets.forEach(b=>x.fillRect(b.x,b.y,4,12));text(x,"SCORE "+score,15,25);if(!aliens.length){saveScore(g,score);endOverlay("WAVE CLEARED!",`Score ${score}`);return}frame=requestAnimationFrame(loop)}
- frame=requestAnimationFrame(loop);return uk;
-}
-
-/* ---------- fishing ---------- */
-function fishing(g){
- const box=document.createElement("div");box.className="wide";box.innerHTML=`<div class="bigScore" id="fishScore">0</div><div style="text-align:center"><button id="cast" style="font-size:25px;padding:25px 70px">🎣 CAST LINE</button></div><p id="fishMsg" style="text-align:center">Wait for a bite…</p><div class="shop"><button id="rod">Upgrade rod (100)</button><button id="luck">Upgrade luck (150)</button></div>`;stage.appendChild(box);
- let score=0,rod=1,luck=0,armed=false,timer;
- function cast(){if(armed)return;armed=true;$("#fishMsg").textContent="The bobber is moving…";timer=setTimeout(()=>{$("#fishMsg").textContent="🐟 BITE! CLICK!";$("#cast").textContent="REEL IT IN!";$("#cast").onclick=reel},rand(700,2600)/(1+luck*.1))}
- function reel(){if(!armed)return;clearTimeout(timer);let r=Math.random()*(100-luck*8);let val=r<5?1000:r<20?300:r<55?100:30;val*=rod;score+=val;$("#fishScore").textContent=score;$("#fishMsg").textContent=`You caught a ${val>=1000?"LEGENDARY":val>=300?"RARE":"fish"}!`;armed=false;$("#cast").textContent="🎣 CAST LINE";$("#cast").onclick=cast;saveScore(g,score)}
- $("#cast").onclick=cast;$("#rod").onclick=()=>{if(score>=100){score-=100;rod++;$("#fishScore").textContent=score}};$("#luck").onclick=()=>{if(score>=150){score-=150;luck++;$("#fishScore").textContent=score}};return ()=>clearTimeout(timer);
-}
-
-/* ---------- tower defense ---------- */
-function tower(g){
- const [c,x]=makeCanvas();const [k,uk]=keys();let hp=20,money=120,wave=1,en=[],t=0,score=0,dead=false,towers=[];
- c.onclick=e=>{const r=c.getBoundingClientRect();let X=(e.clientX-r.left)*900/r.width,Y=(e.clientY-r.top)*540/r.height;if(money>=50){money-=50;towers.push({x:X,y:Y,cd:0})}};
- function loop(){if(dead)return;t++;if(t%Math.max(25,70-g.level*5)===0)en.push({x:0,y:rand(80,460),hp:30+wave*8,v:1+wave*.04});en.forEach(e=>e.x+=e.v);
-  towers.forEach(q=>{q.cd--;if(q.cd<=0){let target=en.find(e=>Math.hypot(e.x-q.x,e.y-q.y)<170);if(target){target.hp-=20+g.level*4;q.cd=25}}});
-  for(let i=en.length-1;i>=0;i--)if(en[i].hp<=0){money+=20;score+=30;en.splice(i,1)}else if(en[i].x>900){hp--;en.splice(i,1)}
-  if(hp<=0){dead=true;saveScore(g,score);endOverlay("BASE DESTROYED",`Score ${score} • Wave ${wave}`);return}if(t%(600-Math.min(450,g.level*35))===0)wave++;
-  x.fillStyle="#07101a";x.fillRect(0,0,900,540);x.fillStyle="#16263a";x.fillRect(0,80,900,380);x.fillStyle="#ff5577";en.forEach(e=>{x.beginPath();x.arc(e.x,e.y,12,0,7);x.fill()});x.fillStyle="#66e3ff";towers.forEach(q=>{x.beginPath();x.arc(q.x,q.y,13,0,7);x.fill();x.strokeStyle="#66e3ff";x.beginPath();x.arc(q.x,q.y,170,0,7);x.stroke()});text(x,`CORE ${hp} • MONEY ${money} • WAVE ${wave} • SCORE ${score}`,15,25);text(x,"Click to build turret (50)",650,25);frame=requestAnimationFrame(loop)}
- frame=requestAnimationFrame(loop);return uk;
-}
-
-/* ---------- generic fallback with a real playable loop ---------- */
-function genericArcade(g){
- const [c,x]=makeCanvas(),[k,uk]=keys();let px=450,py=270,score=0,t=0,target={x:rand(40,860),y:rand(60,500)},dead=false;
- function loop(){if(dead)return;t++;score+=Math.random()<.05?1:0;if(k.w||k.arrowup)py-=4;if(k.s||k.arrowdown)py+=4;if(k.a||k.arrowleft)px-=4;if(k.d||k.arrowright)px+=4;px=clamp(px,10,890);py=clamp(py,40,530);if(Math.hypot(px-target.x,py-target.y)<25){score+=100;target={x:rand(40,860),y:rand(60,500)}}x.fillStyle="#070b12";x.fillRect(0,0,900,540);x.fillStyle="#ff5577";x.beginPath();x.arc(target.x,target.y,16+Math.sin(t/8)*4,0,7);x.fill();x.fillStyle="#66e3ff";x.fillRect(px-10,py-10,20,20);text(x,`SCORE ${score} • Move with WASD/arrows • Touch targets`,15,25);frame=requestAnimationFrame(loop)}
- frame=requestAnimationFrame(loop);return uk;
-}
-
-const engines={clicker,shooter,runner,dodge,snake,breakout,memory,mines,platform,voxel,typing,reaction,pong,invaders,fishing,tower,
-  /* Every catalogue type is wired to a functioning engine. */
-};
-for(const g of gameList)if(!engines[g.type])engines[g.type]=genericArcade;
-
-/* Keyboard shortcut: Escape returns to the library. */
-addEventListener("keydown",e=>{if(e.key==="Escape"&&gameView.style.display!=="none")backToLibrary()});
-window.addEventListener("error",e=>{
-  console.error(e.error||e.message);
-  if(gameView.style.display!=="none"){
-    const old=stage.querySelector(".runtime-error"); if(old) old.remove();
-    const o=document.createElement("div"); o.className="overlay runtime-error";
-    o.innerHTML=`<div class="modal"><h2>Game error</h2><p>This game hit a browser error. Try Restart or choose another game.</p><button id="errRestart">Restart</button> <button id="errBack">Arcade</button></div>`;
-    stage.appendChild(o);
-    o.querySelector("#errRestart").onclick=restartGame;
-    o.querySelector("#errBack").onclick=backToLibrary;
-  }
+const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: "high-performance"
 });
 
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+document
+    .getElementById("game")
+    .appendChild(renderer.domElement);
+
+/* -------------------------
+   LIGHTING
+------------------------- */
+
+const ambient = new THREE.HemisphereLight(
+    0x8de8ff,
+    0x182030,
+    1.8
+);
+
+scene.add(ambient);
+
+const sun = new THREE.DirectionalLight(
+    0xffffff,
+    2.5
+);
+
+sun.position.set(80,120,40);
+sun.castShadow = true;
+
+sun.shadow.mapSize.set(2048,2048);
+
+scene.add(sun);
+
+/* -------------------------
+   MATERIALS
+------------------------- */
+
+const materials = {
+
+    grass: new THREE.MeshStandardMaterial({
+        color: 0x4caf55,
+        roughness: .9
+    }),
+
+    dirt: new THREE.MeshStandardMaterial({
+        color: 0x795331,
+        roughness: 1
+    }),
+
+    stone: new THREE.MeshStandardMaterial({
+        color: 0x69737d,
+        roughness: .85
+    }),
+
+    glass: new THREE.MeshPhysicalMaterial({
+        color: 0x38d9ff,
+        transparent: true,
+        opacity: .35,
+        roughness: .05,
+        metalness: .1
+    }),
+
+    glow: new THREE.MeshStandardMaterial({
+        color: 0xb83dff,
+        emissive: 0x7d18c7,
+        emissiveIntensity: 2.5
+    }),
+
+    metal: new THREE.MeshStandardMaterial({
+        color: 0x788791,
+        metalness: .85,
+        roughness: .25
+    }),
+
+    leaves: new THREE.MeshStandardMaterial({
+        color: 0x237849,
+        roughness: 1
+    })
+};
+
+/* -------------------------
+   VOXEL WORLD
+------------------------- */
+
+const world = [];
+
+const cubeGeometry = new THREE.BoxGeometry(1,1,1);
+
+function addBlock(x,y,z,type) {
+
+    const mesh = new THREE.Mesh(
+        cubeGeometry,
+        materials[type] || materials.grass
+    );
+
+    mesh.position.set(
+        x + .5,
+        y + .5,
+        z + .5
+    );
+
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+
+    mesh.userData.block = type;
+    mesh.userData.grid = {x,y,z};
+
+    scene.add(mesh);
+    world.push(mesh);
+
+    return mesh;
+}
+
+/* Simple deterministic terrain */
+
+function terrainHeight(x,z) {
+
+    const a =
+        Math.sin(x * .35) * 1.8;
+
+    const b =
+        Math.cos(z * .28) * 1.6;
+
+    const c =
+        Math.sin((x+z) * .13) * 2.2;
+
+    return Math.max(
+        1,
+        Math.floor(4 + a + b + c)
+    );
+}
+
+function generateWorld() {
+
+    const size = 42;
+
+    for(let x=-size;x<=size;x++) {
+
+        for(let z=-size;z<=size;z++) {
+
+            const h = terrainHeight(x,z);
+
+            for(let y=0;y<=h;y++) {
+
+                let type = "stone";
+
+                if(y === h)
+                    type = "grass";
+
+                else if(y > h-3)
+                    type = "dirt";
+
+                addBlock(x,y,z,type);
+            }
+
+            /* Occasional alien crystals */
+
+            if(
+                Math.random() < .015 &&
+                h > 3
+            ) {
+
+                addBlock(
+                    x,
+                    h+1,
+                    z,
+                    "glow"
+                );
+
+                addBlock(
+                    x,
+                    h+2,
+                    z,
+                    "glow"
+                );
+            }
+        }
+    }
+
+    /* Floating structures */
+
+    for(let i=0;i<18;i++) {
+
+        const x =
+            Math.floor(Math.random()*60)-30;
+
+        const z =
+            Math.floor(Math.random()*60)-30;
+
+        const y =
+            Math.floor(Math.random()*10)+12;
+
+        addBlock(x,y,z,"metal");
+        addBlock(x+1,y,z,"metal");
+        addBlock(x,y,z+1,"metal");
+        addBlock(x+1,y,z+1,"metal");
+    }
+}
+
+/* -------------------------
+   CONTROLS
+------------------------- */
+
+const controls =
+    new PointerLockControls(
+        camera,
+        document.body
+    );
+
+scene.add(controls.object);
+
+const keys = {};
+
+let velocityY = 0;
+let canJump = false;
+
+document.addEventListener(
+    "keydown",
+    e => {
+
+        keys[e.code] = true;
+
+        if(
+            e.code === "Space" &&
+            canJump
+        ) {
+
+            velocityY = 10;
+            canJump = false;
+        }
+
+        if(e.key >= "1" && e.key <= "7") {
+
+            const index =
+                Number(e.key)-1;
+
+            document
+                .querySelectorAll(".slot")
+                [index]
+                ?.click();
+        }
+    }
+);
+
+document.addEventListener(
+    "keyup",
+    e => {
+        keys[e.code] = false;
+    }
+);
+
+/* -------------------------
+   HOTBAR
+------------------------- */
+
+let selectedBlock = "grass";
+
+document
+.querySelectorAll(".slot")
+.forEach(slot => {
+
+    slot.addEventListener("click", () => {
+
+        document
+        .querySelectorAll(".slot")
+        .forEach(s =>
+            s.classList.remove("selected")
+        );
+
+        slot.classList.add("selected");
+
+        selectedBlock =
+            slot.dataset.block;
+
+        document
+            .getElementById("blockName")
+            .textContent =
+            selectedBlock.toUpperCase();
+    });
+});
+
+/* -------------------------
+   RAYCASTING
+------------------------- */
+
+const raycaster = new THREE.Raycaster();
+
+const center =
+    new THREE.Vector2(0,0);
+
+function getTarget() {
+
+    raycaster.setFromCamera(
+        center,
+        camera
+    );
+
+    const hits =
+        raycaster.intersectObjects(
+            world,
+            false
+        );
+
+    return hits[0];
+}
+
+/* Mine block */
+
+document.addEventListener(
+    "mousedown",
+    e => {
+
+        if(!controls.isLocked)
+            return;
+
+        const hit = getTarget();
+
+        if(!hit)
+            return;
+
+        const block = hit.object;
+
+        if(e.button === 0) {
+
+            scene.remove(block);
+
+            const index =
+                world.indexOf(block);
+
+            if(index !== -1)
+                world.splice(index,1);
+        }
+
+        if(e.button === 2) {
+
+            const normal =
+                hit.face.normal.clone();
+
+            const pos =
+                block.position.clone()
+                .subScalar(.5)
+                .add(normal);
+
+            addBlock(
+                Math.floor(pos.x),
+                Math.floor(pos.y),
+                Math.floor(pos.z),
+                selectedBlock
+            );
+        }
+    }
+);
+
+document.addEventListener(
+    "contextmenu",
+    e => e.preventDefault()
+);
+
+/* -------------------------
+   START GAME
+------------------------- */
+
+const startScreen =
+    document.getElementById(
+        "startScreen"
+    );
+
+const startButton =
+    document.getElementById(
+        "startButton"
+    );
+
+startButton.addEventListener(
+    "click",
+    () => {
+
+        startScreen.style.display =
+            "none";
+
+        document.getElementById(
+            "loading"
+        ).style.display =
+            "flex";
+
+        setTimeout(() => {
+
+            generateWorld();
+
+            document.getElementById(
+                "loading"
+            ).style.display =
+                "none";
+
+            controls.lock();
+
+        }, 200);
+    }
+);
+
+/* -------------------------
+   GAME LOOP
+------------------------- */
+
+let lastTime = performance.now();
+let frames = 0;
+let fpsTimer = 0;
+
+function animate() {
+
+    requestAnimationFrame(animate);
+
+    const now =
+        performance.now();
+
+    const delta =
+        Math.min(
+            (now-lastTime)/1000,
+            .05
+        );
+
+    lastTime = now;
+
+    /* FPS */
+
+    frames++;
+    fpsTimer += delta;
+
+    if(fpsTimer >= 1) {
+
+        document
+            .getElementById("fps")
+            .textContent = frames;
+
+        frames = 0;
+        fpsTimer = 0;
+    }
+
+    if(controls.isLocked) {
+
+        const speed = 9;
+
+        if(keys["KeyW"])
+            controls.moveForward(
+                speed * delta
+            );
+
+        if(keys["KeyS"])
+            controls.moveForward(
+                -speed * delta
+            );
+
+        if(keys["KeyA"])
+            controls.moveRight(
+                -speed * delta
+            );
+
+        if(keys["KeyD"])
+            controls.moveRight(
+                speed * delta
+            );
+
+        /* Gravity */
+
+        velocityY -=
+            25 * delta;
+
+        camera.position.y +=
+            velocityY * delta;
+
+        if(camera.position.y < 7) {
+
+            camera.position.y = 7;
+            velocityY = 0;
+            canJump = true;
+        }
+
+        /* Prevent falling forever */
+
+        if(camera.position.y < -20) {
+
+            camera.position.set(
+                0,15,0
+            );
+
+            velocityY = 0;
+        }
+    }
+
+    /* Slowly move sun for atmosphere */
+
+    const t =
+        performance.now() * .00005;
+
+    sun.position.x =
+        Math.cos(t)*120;
+
+    sun.position.z =
+        Math.sin(t)*120;
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
+
+animate();
+
+/* -------------------------
+   RESIZE
+------------------------- */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        camera.aspect =
+            innerWidth / innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            innerWidth,
+            innerHeight
+        );
+    }
+);
+
 </script>
+
 </body>
 </html>
+```
